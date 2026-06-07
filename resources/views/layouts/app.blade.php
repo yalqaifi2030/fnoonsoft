@@ -19,6 +19,12 @@
         <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
     @endif
 
+    {{-- Google AdSense (admin-toggled). Auto Ads place themselves; manual units use <x-ad>. --}}
+    @php($ads = app(\App\Support\Ads::class))
+    @if ($ads->enabled())
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ $ads->publisherId() }}" crossorigin="anonymous"></script>
+    @endif
+
     {{-- Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -140,6 +146,8 @@
 <body class="min-h-screen flex flex-col antialiased">
     @include('partials.header')
 
+    <x-ad placement="header" :label="false" class="max-w-7xl mx-auto w-full px-4 mt-3" />
+
     <main class="flex-1">
         @if (session('status'))
             <div class="max-w-7xl mx-auto px-4 mt-4">
@@ -151,6 +159,8 @@
 
         @yield('content')
     </main>
+
+    <x-ad placement="footer" class="max-w-7xl mx-auto w-full px-4 mb-6" />
 
     @include('partials.footer')
 

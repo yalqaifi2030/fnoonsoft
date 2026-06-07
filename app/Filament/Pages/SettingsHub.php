@@ -68,6 +68,11 @@ class SettingsHub extends Page
                 'url' => ScanSettings::getUrl(),
             ],
             [
+                'icon' => 'fa-brands fa-google', 'color' => '#ea4335',
+                'title' => __('settings.hub.ads'), 'desc' => __('settings.hub.ads_desc'),
+                'url' => AdSettings::getUrl(),
+            ],
+            [
                 'icon' => 'fa-solid fa-file-lines', 'color' => '#7c3aed',
                 'title' => __('settings.hub.pages'), 'desc' => __('settings.hub.pages_desc'),
                 'url' => PageResource::getUrl('index'),

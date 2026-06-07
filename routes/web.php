@@ -21,6 +21,14 @@ use Illuminate\Support\Facades\Route;
 */
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+// AdSense verification file (generated from the publisher id in Site settings → Ads).
+Route::get('/ads.txt', function () {
+    $txt = app(\App\Support\Ads::class)->adsTxt();
+    abort_if(! $txt, 404);
+
+    return response($txt, 200, ['Content-Type' => 'text/plain; charset=UTF-8']);
+})->name('ads.txt');
+
 Route::get('/browse', [BrowseController::class, 'index'])->name('browse');
 
 // Learn & Build — interactive student hub

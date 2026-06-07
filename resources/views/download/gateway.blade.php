@@ -38,5 +38,7 @@
             </div>
         @endif
     </div>
+
+    <x-ad placement="gateway" class="mt-6" />
 </div>
 @endsection

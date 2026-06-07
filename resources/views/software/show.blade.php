@@ -182,6 +182,8 @@
                 </div>
             @endif
 
+            <x-ad placement="incontent" />
+
             {{-- Screenshots --}}
             @if ($software->screenshots->isNotEmpty())
                 <div id="screenshots" data-spy class="card-luxury p-6 scroll-mt-32">
@@ -472,6 +474,8 @@
                     </div>
                 </div>
             @endif
+
+            <x-ad placement="sidebar" />
         </aside>
     </div>
 

@@ -33,6 +33,7 @@ return [
     'browse_by_type_sub' => 'Pick what you need — apps, scripts, templates or plugins.',
     'view_all' => 'View all',
     'spotlight_cta' => 'View software',
+    'ads' => ['label' => 'Advertisement'],
     'items_count' => ':count items',
     'why' => [
         'title' => 'Why download from Fnoon',

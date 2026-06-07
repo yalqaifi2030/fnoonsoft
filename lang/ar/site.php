@@ -33,6 +33,7 @@ return [
     'browse_by_type_sub' => 'اختر ما تحتاجه — برامج، سكربتات، قوالب أو إضافات.',
     'view_all' => 'عرض الكل',
     'spotlight_cta' => 'عرض البرنامج',
+    'ads' => ['label' => 'إعلان'],
     'items_count' => ':count عنصر',
     'why' => [
         'title' => 'لماذا التحميل من فنون',
