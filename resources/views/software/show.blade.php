@@ -2,6 +2,13 @@
 
 @section('title', $software->name)
 @section('meta_description', $software->short_description)
+@section('og_title', $software->name)
+@section('og_description', $software->short_description)
+@section('og_image', $software->icon ? \Illuminate\Support\Facades\Storage::disk('public')->url($software->icon) : '')
+
+@push('jsonld')
+    <script type="application/ld+json">{!! json_encode($software->structuredData(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+@endpush
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 py-8" x-data="{ lb:false, lbSrc:'', open(s){ this.lbSrc=s; this.lb=true } }">

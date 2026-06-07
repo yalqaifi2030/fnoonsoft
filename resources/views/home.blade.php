@@ -2,6 +2,20 @@
 
 @section('title', __('site.hero.title'))
 
+@push('jsonld')
+    <script type="application/ld+json">{!! json_encode([
+        '@context' => 'https://schema.org',
+        '@type' => 'WebSite',
+        'name' => \App\Models\Setting::text('site_name', config('app.name')),
+        'url' => url('/'),
+        'potentialAction' => [
+            '@type' => 'SearchAction',
+            'target' => ['@type' => 'EntryPoint', 'urlTemplate' => route('search').'?q={search_term_string}'],
+            'query-input' => 'required name=search_term_string',
+        ],
+    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+@endpush
+
 @php
     $typeMeta = [
         'application' => ['grad' => 'from-emerald-500 to-green-700'],

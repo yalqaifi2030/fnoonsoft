@@ -9,6 +9,25 @@
     <title>@yield('title', \App\Models\Setting::text('site_name', config('app.name'))) — {{ \App\Models\Setting::text('tagline', __('site.tagline')) }}</title>
     <meta name="description" content="@yield('meta_description', \App\Models\Setting::text('hero_subtitle', __('site.hero.subtitle')))">
 
+    {{-- SEO: canonical + Open Graph + Twitter Card + structured data --}}
+    @php($seoName = \App\Models\Setting::text('site_name', config('app.name')))
+    @php($seoTitle = trim($__env->yieldContent('og_title')) ?: $seoName)
+    @php($seoDesc = trim($__env->yieldContent('og_description')) ?: \App\Models\Setting::text('hero_subtitle', __('site.hero.subtitle')))
+    @php($seoImage = trim($__env->yieldContent('og_image')) ?: (\App\Support\SiteBranding::logo() ?: asset('favicon.ico')))
+    <link rel="canonical" href="{{ url()->current() }}">
+    <meta property="og:site_name" content="{{ $seoName }}">
+    <meta property="og:type" content="@yield('og_type', 'website')">
+    <meta property="og:title" content="{{ $seoTitle }}">
+    <meta property="og:description" content="{{ $seoDesc }}">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:image" content="{{ $seoImage }}">
+    <meta property="og:locale" content="{{ $locale === 'ar' ? 'ar_AR' : 'en_US' }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $seoTitle }}">
+    <meta name="twitter:description" content="{{ $seoDesc }}">
+    <meta name="twitter:image" content="{{ $seoImage }}">
+    @stack('jsonld')
+
     {{-- Favicon (admin-configurable, falls back to the bundled icon) --}}
     @php($favicon = \App\Support\SiteBranding::favicon())
     @if ($favicon)

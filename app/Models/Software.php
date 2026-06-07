@@ -110,6 +110,40 @@ class Software extends Model
         }
     }
 
+    /** Schema.org SoftwareApplication structured data (JSON-LD) for rich results. */
+    public function structuredData(): array
+    {
+        $data = [
+            '@context' => 'https://schema.org',
+            '@type' => 'SoftwareApplication',
+            'name' => $this->name,
+            'description' => $this->short_description ?: \Illuminate\Support\Str::limit(strip_tags((string) $this->description), 300),
+            'url' => route('software.show', $this),
+            'applicationCategory' => $this->content_type?->label() ?? 'Application',
+            'softwareVersion' => $this->current_version ?: null,
+            'operatingSystem' => (is_array($this->os_support) && $this->os_support) ? implode(', ', $this->os_support) : null,
+            'datePublished' => $this->published_at?->toDateString(),
+            'image' => $this->icon ? \Illuminate\Support\Facades\Storage::disk('public')->url($this->icon) : null,
+            'offers' => [
+                '@type' => 'Offer',
+                'price' => $this->isPaid() ? (string) $this->price : '0',
+                'priceCurrency' => 'USD',
+                'availability' => 'https://schema.org/InStock',
+            ],
+        ];
+
+        if ($this->reviews_count > 0 && (float) $this->rating_avg > 0) {
+            $data['aggregateRating'] = [
+                '@type' => 'AggregateRating',
+                'ratingValue' => (string) $this->rating_avg,
+                'reviewCount' => (string) $this->reviews_count,
+                'bestRating' => '5',
+            ];
+        }
+
+        return array_filter($data, fn ($v) => $v !== null && $v !== '');
+    }
+
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class);

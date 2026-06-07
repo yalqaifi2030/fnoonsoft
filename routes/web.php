@@ -29,6 +29,20 @@ Route::get('/ads.txt', function () {
     return response($txt, 200, ['Content-Type' => 'text/plain; charset=UTF-8']);
 })->name('ads.txt');
 
+// SEO: dynamic sitemap + robots (point crawlers to the sitemap).
+Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
+Route::get('/robots.txt', function () {
+    return response(implode("\n", [
+        'User-agent: *',
+        'Disallow: /admin',
+        'Disallow: /upload',
+        'Disallow: /go/',
+        'Disallow: /d/',
+        '',
+        'Sitemap: '.url('/sitemap.xml'),
+    ]), 200, ['Content-Type' => 'text/plain; charset=UTF-8']);
+})->name('robots');
+
 Route::get('/browse', [BrowseController::class, 'index'])->name('browse');
 
 // Learn & Build — interactive student hub
