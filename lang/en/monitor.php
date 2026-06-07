@@ -1,0 +1,36 @@
+<?php
+
+return [
+    'section' => [
+        'file' => 'File',
+        'storage' => 'Storage (R2)',
+        'scan' => 'Verification',
+        'status' => 'Status',
+    ],
+    'file' => 'File',
+    'mime' => 'MIME type',
+    'size' => 'Size',
+    'r2_key' => 'R2 object key',
+    'parts_done' => 'Parts completed',
+    'parts_total' => 'Parts total',
+    'scan' => 'Scan result',
+    'scan_report' => 'Scan report',
+    'scan_clean' => 'Clean',
+    'scan_infected' => 'Infected',
+    'scan_skipped' => 'Unknown',
+    'scan_error' => 'Error',
+    'error' => 'Error',
+    'status' => 'Status',
+    'status_hint' => 'Force a status only if you know what you are doing.',
+    'progress' => 'Progress',
+    'uploader' => 'Uploader',
+    'received' => 'Received',
+    'empty' => 'No uploads recorded yet.',
+    'action' => [
+        'menu' => 'Actions',
+        'reprocess' => 'Process again',
+        'reprocessing' => 'Re-processing queued.',
+        'download' => 'Download file',
+        'open' => 'Open',
+    ],
+];

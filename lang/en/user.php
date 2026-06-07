@@ -1,0 +1,43 @@
+<?php
+
+return [
+    'section' => [
+        'account' => 'Account',
+        'avatar' => 'Avatar',
+        'access' => 'Access',
+        'preferences' => 'Preferences',
+    ],
+    'name' => 'Name',
+    'email' => 'Email',
+    'password' => 'Password',
+    'password_hint' => 'Leave blank to keep the current password.',
+    'avatar' => 'Avatar',
+    'roles' => 'Roles',
+    'status' => 'Status',
+    'active' => 'Active',
+    'inactive' => 'Inactive',
+    'locale' => 'Language',
+    'country' => 'Country (ISO-2)',
+    'joined' => 'Joined',
+    'empty' => 'No users yet.',
+    'role' => [
+        'super_admin' => 'Super Admin',
+        'editor' => 'Editor',
+        'author' => 'Author',
+        'moderator' => 'Moderator',
+    ],
+    'new_password' => 'New password',
+    'confirm_password' => 'Confirm password',
+    'action' => [
+        'menu' => 'Actions',
+        'activate' => 'Activate',
+        'deactivate' => 'Deactivate',
+        'change_password' => 'Change password',
+        'password_changed' => 'Password changed.',
+        'verify_email' => 'Verify email',
+        'email_verified' => 'Email verified.',
+        'send_reset' => 'Send reset link',
+        'reset_sent' => 'Password reset link sent.',
+        'updated' => 'User updated.',
+    ],
+];

@@ -1,0 +1,109 @@
+<?php
+
+use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\BrowseController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\DownloadController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LearnController;
+use App\Http\Controllers\LocaleController;
+use App\Http\Controllers\NewsletterController;
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\SearchController;
+use App\Http\Controllers\SoftwareController;
+use App\Http\Controllers\Upload\MultipartUploadController;
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Public site
+|--------------------------------------------------------------------------
+*/
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+Route::get('/browse', [BrowseController::class, 'index'])->name('browse');
+
+// Learn & Build — interactive student hub
+Route::get('/learn', [LearnController::class, 'index'])->name('learn');
+Route::get('/learn/videos', [LearnController::class, 'videos'])->name('learn.videos');
+Route::get('/learn/lab/{lab}', [LearnController::class, 'lab'])->name('learn.lab');
+Route::get('/learn/{category}', [LearnController::class, 'category'])->name('learn.category');
+
+Route::get('/search', [SearchController::class, 'index'])->name('search');
+Route::get('/api/search/live', [SearchController::class, 'live'])
+    ->middleware('throttle:60,1')->name('search.live');
+
+// Blog / articles
+Route::get('/blog', [ArticleController::class, 'index'])->name('blog.index');
+Route::get('/blog/{article}', [ArticleController::class, 'show'])->name('blog.show');
+
+// Contact + newsletter
+Route::get('/contact', [ContactController::class, 'show'])->name('contact');
+Route::post('/contact', [ContactController::class, 'store'])
+    ->middleware('throttle:5,1')->name('contact.store');
+Route::post('/newsletter', [NewsletterController::class, 'store'])
+    ->middleware('throttle:5,1')->name('newsletter.store');
+
+// Language switch (public site)
+Route::get('/locale/{locale}', [LocaleController::class, 'switch'])->name('locale.switch');
+// Language switch (Filament panels — separate session key)
+Route::get('/panel-locale/{locale}', [LocaleController::class, 'switchPanel'])->name('panel.locale.switch');
+
+// Download gateway (rate-limited) — keep ABOVE the {software} catch-all
+Route::get('/download/{software}/{link}', [DownloadController::class, 'gateway'])
+    ->name('download.gateway');
+Route::get('/go/{software}/{link}', [DownloadController::class, 'start'])
+    ->middleware('throttle:30,1')->name('download.start');
+
+/*
+|--------------------------------------------------------------------------
+| Upload engine (multipart → R2). Session-authenticated uploaders only.
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth'])->prefix('upload/multipart')->name('upload.multipart.')->group(function () {
+    Route::post('/create', [MultipartUploadController::class, 'create'])->name('create');
+    Route::post('/sign', [MultipartUploadController::class, 'sign'])->name('sign');
+    Route::post('/complete', [MultipartUploadController::class, 'complete'])->name('complete');
+    Route::post('/abort', [MultipartUploadController::class, 'abort'])->name('abort');
+
+    // Local-disk fallback: receive one raw chunk. Tamper-proofed by a signed URL
+    // (Uppy PUTs the chunk directly, so it carries no CSRF token — see bootstrap/app.php).
+    Route::put('/put-part/{session}', [MultipartUploadController::class, 'putPart'])
+        ->middleware('signed')->name('put-part');
+});
+
+// Direct media upload (images & PDF) — public, hotlinkable, with share kit.
+Route::middleware(['auth'])->post('/upload/media', [\App\Http\Controllers\Upload\MediaUploadController::class, 'store'])
+    ->name('upload.media');
+
+// Public shared-asset landing + download (/d/{slug}) — above the {software} catch-all.
+Route::get('/d/{asset}', [\App\Http\Controllers\AssetController::class, 'show'])->name('assets.show');
+Route::post('/d/{asset}/unlock', [\App\Http\Controllers\AssetController::class, 'unlock'])
+    ->middleware('throttle:10,1')->name('assets.unlock');
+Route::get('/d/{asset}/download', [\App\Http\Controllers\AssetController::class, 'download'])
+    ->middleware('throttle:60,1')->name('assets.download');
+
+// Clear application caches from the admin topbar (staff only).
+Route::post('/system/clear-cache', function () {
+    \Illuminate\Support\Facades\Artisan::call('optimize:clear');
+    \Filament\Notifications\Notification::make()->success()->title(__('admin.cache_cleared'))->send();
+
+    return back();
+})->middleware('auth')->name('system.clear-cache');
+
+// Maintenance-page preview for signed-in staff (the live toggle is in admin settings).
+Route::get('/preview/maintenance', fn () => view('maintenance', \App\Support\MaintenancePage::data()))
+    ->middleware('auth')->name('maintenance.preview');
+
+// Public comments on a product
+Route::post('/software/{software}/comments', [\App\Http\Controllers\CommentController::class, 'store'])
+    ->middleware('throttle:5,1')->name('comments.store');
+
+// Product page — slug catch-all, registered last so it can't shadow the above.
+Route::get('/software/{software}', [SoftwareController::class, 'show'])->name('software.show');
+
+// Static pages by slug. The negative lookahead keeps this from swallowing the
+// Filament panels (/admin, /upload), Livewire, storage, or any named route above.
+Route::get('/{page}', [PageController::class, 'show'])
+    ->where('page', '^(?!admin|upload|api|livewire|filament|storage|build|go|download|software|browse|search|blog|contact|newsletter|locale|learn|up).+')
+    ->name('page.show');

@@ -1,0 +1,34 @@
+<?php
+
+return [
+    'section' => [
+        'details' => 'التفاصيل',
+        'icon' => 'الأيقونة',
+        'settings' => 'الإعدادات',
+    ],
+    'name' => 'الاسم',
+    'slug' => 'الرابط (Slug)',
+    'description' => 'الوصف',
+    'icon' => 'صنف الأيقونة',
+    'icon_hint' => 'صنف Font Awesome، مثل: "fa-solid fa-globe".',
+    'preview' => 'معاينة',
+    'status' => 'الحالة',
+    'active' => 'مفعّلة',
+    'inactive' => 'متوقّفة',
+    'parent' => 'الفئة الأم',
+    'no_parent' => 'لا شيء (مستوى أعلى)',
+    'content_type' => 'نوع المحتوى',
+    'any_type' => 'الكل',
+    'sort_order' => 'الترتيب',
+    'sort_hint' => 'الأرقام الأقل تظهر أولًا. اسحب الصفوف لإعادة الترتيب.',
+    'items' => 'العناصر',
+    'empty' => 'لا توجد فئات بعد. أضف أوّل فئة.',
+    'action' => [
+        'menu' => 'إجراءات',
+        'view_site' => 'عرض في الموقع',
+        'activate' => 'تفعيل',
+        'deactivate' => 'إيقاف',
+        'duplicate' => 'تكرار',
+        'updated' => 'تم تحديث الفئة.',
+    ],
+];

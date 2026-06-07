@@ -1,0 +1,100 @@
+# ---------------------------------------------------------------------------
+# Fnoon — Coolify / Docker Compose deployment.
+# Services: app (web) · worker (queue) · scheduler · mysql · redis.
+# Secrets come from Coolify env vars ( ${VAR} ) — never hard-code them here.
+# In Coolify: point your domain at the `app` service, port 80 (HTTPS is automatic).
+# ---------------------------------------------------------------------------
+
+x-app: &app
+  build:
+    context: .
+    dockerfile: Dockerfile
+  restart: unless-stopped
+  environment: &app-env
+    APP_NAME: ${APP_NAME:-Fnoon}
+    APP_ENV: production
+    APP_KEY: ${APP_KEY}
+    APP_DEBUG: "false"
+    APP_URL: ${APP_URL}
+    APP_LOCALE: ${APP_LOCALE:-ar}
+    APP_FALLBACK_LOCALE: en
+    LOG_CHANNEL: stderr
+    LOG_LEVEL: ${LOG_LEVEL:-warning}
+
+    DB_CONNECTION: mysql
+    DB_HOST: mysql
+    DB_PORT: "3306"
+    DB_DATABASE: ${DB_DATABASE:-fnoon}
+    DB_USERNAME: ${DB_USERNAME:-fnoon}
+    DB_PASSWORD: ${DB_PASSWORD}
+
+    SESSION_DRIVER: redis
+    SESSION_LIFETIME: "120"
+    CACHE_STORE: redis
+    QUEUE_CONNECTION: redis
+    REDIS_CLIENT: phpredis
+    REDIS_HOST: redis
+    REDIS_PORT: "6379"
+
+    FILESYSTEM_DISK: ${FILESYSTEM_DISK:-local}
+    UPLOAD_MAX_BYTES: ${UPLOAD_MAX_BYTES:-32212254720}
+    UPLOAD_PART_SIZE: ${UPLOAD_PART_SIZE:-16777216}
+    UPLOAD_URL_TTL: ${UPLOAD_URL_TTL:-60}
+    MEDIA_MAX_KB: ${MEDIA_MAX_KB:-51200}
+  volumes:
+    - fnoon-storage:/var/www/html/storage
+  depends_on:
+    mysql:
+      condition: service_healthy
+    redis:
+      condition: service_started
+
+services:
+  app:
+    <<: *app
+    environment:
+      <<: *app-env
+      RUN_MIGRATIONS: "true"   # migrations run from the web container only
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/up"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  worker:
+    <<: *app
+    command: php artisan queue:work --sleep=3 --tries=3 --max-time=3600 --timeout=600
+
+  scheduler:
+    <<: *app
+    command: php artisan schedule:work
+
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-fnoon}
+      MYSQL_USER: ${DB_USERNAME:-fnoon}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    command: --default-authentication-plugin=mysql_native_password --max_allowed_packet=64M
+    volumes:
+      - fnoon-db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-p${DB_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - fnoon-redis:/data
+
+volumes:
+  fnoon-storage:
+  fnoon-db:
+  fnoon-redis:

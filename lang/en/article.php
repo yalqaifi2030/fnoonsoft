@@ -1,0 +1,36 @@
+<?php
+
+return [
+    'section' => [
+        'content' => 'Content',
+        'publish' => 'Publish',
+        'organize' => 'Organize',
+        'cover' => 'Cover image',
+        'seo' => 'SEO',
+    ],
+    'title' => 'Title',
+    'slug' => 'Slug',
+    'excerpt' => 'Excerpt',
+    'excerpt_hint' => 'A short summary shown in listings.',
+    'body' => 'Body',
+    'status' => 'Status',
+    'draft' => 'Draft',
+    'published' => 'Published',
+    'published_at' => 'Publish date',
+    'category' => 'Category',
+    'author' => 'Author',
+    'cover' => 'Cover image',
+    'views' => 'Views',
+    'meta_title' => 'Meta title',
+    'meta_description' => 'Meta description',
+    'seo_hint' => 'Override how this article appears in search engines and social shares.',
+    'empty' => 'No articles yet. Create your first one.',
+    'action' => [
+        'menu' => 'Actions',
+        'view_site' => 'View on site',
+        'publish' => 'Publish',
+        'unpublish' => 'Unpublish',
+        'duplicate' => 'Duplicate',
+        'updated' => 'Article updated.',
+    ],
+];
