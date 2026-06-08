@@ -1,0 +1,11 @@
+# Nixpacks build for Laravel on Coolify (the resource is set to the Nixpacks
+# build pack). The PHP provider auto-runs `composer install`; these steps publish
+# Filament's assets + create the public/storage symlink so the admin panel and
+# uploaded media render. Migrations run at runtime (set AUTORUN or a post-deploy
+# command in Coolify) so a missing DB never fails the build.
+
+[phases.build]
+cmds = [
+    "php artisan storage:link || true",
+    "php artisan filament:assets || true",
+]
