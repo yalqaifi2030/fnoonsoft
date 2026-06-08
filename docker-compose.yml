@@ -55,6 +55,8 @@ services:
     environment:
       <<: *app-env
       RUN_MIGRATIONS: "true"   # migrations run from the web container only
+    expose:
+      - "80"                   # Coolify routes the domain to this port
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1/up"]
       interval: 30s
