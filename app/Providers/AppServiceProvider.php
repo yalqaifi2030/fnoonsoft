@@ -25,6 +25,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Behind a TLS-terminating proxy (Coolify/Traefik), force https:// URL
+        // generation when APP_URL is https — otherwise asset URLs come out as
+        // http:// and the browser blocks them as mixed content (broken admin CSS).
+        if (str_starts_with((string) config('app.url'), 'https://')) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
         // Apply storage (S3/iDrive) + mail settings saved from the admin panel,
         // overriding .env so they take effect immediately without a redeploy.
         $this->applyDynamicConfig();
