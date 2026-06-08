@@ -1,0 +1,16 @@
+# Nixpacks build for Laravel on Coolify.
+# The PHP provider (detected via composer.json) installs the Composer
+# dependencies and runs nginx + php-fpm; nginx.template.conf points the web
+# root at public/. These build steps prepare the app after the install phase.
+
+[phases.build]
+cmds = [
+    "php artisan storage:link || true",
+    "php artisan filament:assets || true",
+    "php artisan view:cache || true",
+    "php artisan route:cache || true",
+]
+
+# Note: run migrations once after the first deploy from the Coolify terminal:
+#   php artisan migrate --force
+# (left out of build so a missing DB connection never fails the build).
