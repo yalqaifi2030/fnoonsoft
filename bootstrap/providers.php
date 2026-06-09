@@ -4,4 +4,5 @@ return [
     App\Providers\AppServiceProvider::class,
     App\Providers\Filament\AdminPanelProvider::class,
     App\Providers\Filament\UploadPanelProvider::class,
+    App\Providers\Filament\MemberPanelProvider::class,
 ];

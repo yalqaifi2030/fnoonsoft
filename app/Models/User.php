@@ -5,6 +5,8 @@ namespace App\Models;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
+use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
+use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -13,11 +15,12 @@ use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements FilamentUser, HasAvatar
+class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerifyEmailContract
 {
     use HasApiTokens;
     use HasFactory;
     use HasRoles;
+    use MustVerifyEmailTrait;
     use Notifiable;
 
     protected $fillable = [
@@ -59,8 +62,53 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
 
     public function canAccessPanel(Panel $panel): bool
     {
-        // Any active user may reach both the admin and upload panels.
-        return $this->is_active;
+        if (! $this->is_active) {
+            return false;
+        }
+
+        // Member dashboard (/dashboard): only when the feature is enabled.
+        // Email verification is enforced separately by the panel's
+        // ->emailVerification() middleware.
+        if ($panel->getId() === 'member') {
+            return (bool) Setting::get('member_uploads_enabled', false);
+        }
+
+        // Admin & upload panels: any active user (unchanged).
+        return true;
+    }
+
+    // --- Member storage quota -------------------------------------------
+
+    /** True for staff (any assigned role); members have no role. */
+    public function isStaff(): bool
+    {
+        try {
+            return $this->roles()->exists();
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
+    /** Storage quota in bytes — staff are unlimited, members get the configured GB. */
+    public function storageQuotaBytes(): int
+    {
+        if ($this->isStaff()) {
+            return PHP_INT_MAX;
+        }
+
+        $gb = (float) (Setting::get('member_quota_gb', 10) ?: 10);
+
+        return (int) round($gb * 1024 * 1024 * 1024);
+    }
+
+    public function storageUsedBytes(): int
+    {
+        return (int) Asset::where('user_id', $this->id)->sum('size_bytes');
+    }
+
+    public function storageRemainingBytes(): int
+    {
+        return max(0, $this->storageQuotaBytes() - $this->storageUsedBytes());
     }
 
     // --- Relationships ---------------------------------------------------

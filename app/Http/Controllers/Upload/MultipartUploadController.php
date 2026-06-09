@@ -56,6 +56,27 @@ class MultipartUploadController extends Controller
             ], 422);
         }
 
+        // Per-member limits: staff are unlimited (User::storageQuotaBytes), members
+        // are capped by the configured quota + an optional per-file ceiling.
+        $user = $request->user();
+        if ($user && ! $user->isStaff()) {
+            $maxFileGb = (float) (Setting::get('member_max_file_gb', 0) ?: 0);
+            if ($maxFileGb > 0 && $data['size'] > $maxFileGb * 1024 ** 3) {
+                return response()->json([
+                    'message' => __('member.errors.too_large', ['max' => $maxFileGb]),
+                ], 422);
+            }
+
+            if ($data['size'] > $user->storageRemainingBytes()) {
+                return response()->json([
+                    'message' => __('member.errors.quota', [
+                        'used' => round($user->storageUsedBytes() / 1024 ** 3, 2),
+                        'quota' => round($user->storageQuotaBytes() / 1024 ** 3, 2),
+                    ]),
+                ], 422);
+            }
+        }
+
         // Use R2/S3 when configured; otherwise transparently fall back to local disk.
         $disk = $this->r2->isConfigured() ? 'r2' : 'local';
 

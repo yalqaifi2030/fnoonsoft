@@ -13,6 +13,7 @@ return [
         'blog' => 'المدوّنة',
         'contact' => 'تواصل',
         'upload' => 'رفع',
+        'my_files' => 'لوحتي',
         'admin' => 'الإدارة',
     ],
     'hero' => [

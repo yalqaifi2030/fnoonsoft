@@ -13,6 +13,7 @@ return [
         'blog' => 'Blog',
         'contact' => 'Contact',
         'upload' => 'Upload',
+        'my_files' => 'My Space',
         'admin' => 'Admin',
     ],
     'hero' => [

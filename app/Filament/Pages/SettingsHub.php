@@ -73,6 +73,11 @@ class SettingsHub extends Page
                 'url' => AdSettings::getUrl(),
             ],
             [
+                'icon' => 'fa-solid fa-users', 'color' => '#0ea5e9',
+                'title' => __('settings.hub.members'), 'desc' => __('settings.hub.members_desc'),
+                'url' => MemberSettings::getUrl(),
+            ],
+            [
                 'icon' => 'fa-solid fa-file-lines', 'color' => '#7c3aed',
                 'title' => __('settings.hub.pages'), 'desc' => __('settings.hub.pages_desc'),
                 'url' => PageResource::getUrl('index'),

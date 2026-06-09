@@ -64,6 +64,19 @@ return [
         'branding' => 'Branding', 'branding_desc' => 'Panel name, logo, favicon and theme.',
         'scan' => 'Malware scan', 'scan_desc' => 'Scan uploaded files (VirusTotal).',
         'ads' => 'Ads (AdSense)', 'ads_desc' => 'Google AdSense ads & placements.',
+        'members' => 'Member dashboard', 'members_desc' => 'Member self-uploads + storage quota.',
+    ],
+
+    'members' => [
+        'title' => 'Member dashboard',
+        'section' => 'Member uploads',
+        'hint' => 'Gives registered members a /dashboard to upload, manage and share their own files (after email verification).',
+        'enabled' => 'Enable member uploads',
+        'enabled_hint' => 'Opens the /dashboard panel for verified members.',
+        'quota' => 'Default quota per member',
+        'quota_hint' => 'Total storage allowed per member (staff are unlimited).',
+        'max_file' => 'Max size per file',
+        'max_file_hint' => 'Set 0 for no per-file size limit.',
     ],
 
     'ads' => [
