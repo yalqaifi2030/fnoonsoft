@@ -36,9 +36,6 @@
                    class="hidden sm:inline-flex text-sm px-2 py-1 rounded-lg border border-royal-gold/30 hover:bg-royal-gold/10">
                     {{ $locale === 'ar' ? 'EN' : 'ع' }}
                 </a>
-                <a href="/upload" class="hidden sm:inline-flex btn-outline text-sm">
-                    <i class="fa-solid fa-cloud-arrow-up"></i> {{ __('site.nav.upload') }}
-                </a>
                 @if (\App\Models\Setting::get('member_uploads_enabled'))
                     <a href="/dashboard" class="hidden sm:inline-flex btn-primary text-sm">
                         <i class="fa-solid fa-folder-open"></i> {{ __('site.nav.my_files') }}
@@ -59,7 +56,6 @@
             <a href="{{ route('browse', ['type' => 'template']) }}">{{ __('site.nav.templates') }}</a>
             <a href="{{ route('browse', ['type' => 'plugin']) }}">{{ __('site.nav.plugins') }}</a>
             <a href="{{ route('blog.index') }}">{{ __('site.nav.blog') }}</a>
-            <a href="/upload">{{ __('site.nav.upload') }}</a>
             @if (\App\Models\Setting::get('member_uploads_enabled'))
                 <a href="/dashboard">{{ __('site.nav.my_files') }}</a>
             @endif

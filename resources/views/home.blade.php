@@ -267,7 +267,8 @@
         </section>
     @endif
 
-    {{-- ===== UPLOADER CTA ===== --}}
+    {{-- ===== UPLOADER CTA (member dashboard) ===== --}}
+    @if (\App\Models\Setting::get('member_uploads_enabled'))
     <section class="max-w-7xl mx-auto px-4 py-14">
         <div class="relative overflow-hidden rounded-3xl px-8 py-12 text-center text-white"
              style="background: linear-gradient(135deg, #006C35, #00582b);">
@@ -275,12 +276,13 @@
             <div class="relative">
                 <h2 class="font-cairo font-black text-2xl md:text-3xl">{{ \App\Models\Setting::text('cta_title', __('site.cta.title')) }}</h2>
                 <p class="mt-3 text-green-100 max-w-xl mx-auto">{{ \App\Models\Setting::text('cta_text', __('site.cta.text')) }}</p>
-                <a href="/upload" class="btn-gold mt-6 justify-center">
+                <a href="/dashboard" class="btn-gold mt-6 justify-center">
                     <i class="fa-solid fa-cloud-arrow-up"></i> {{ __('site.cta.button') }}
                 </a>
             </div>
         </div>
     </section>
+    @endif
 @endsection
 
 @push('scripts')
