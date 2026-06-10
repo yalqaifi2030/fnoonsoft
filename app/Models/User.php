@@ -24,7 +24,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
     use Notifiable;
 
     protected $fillable = [
-        'name', 'username', 'email', 'password', 'avatar', 'bio', 'website',
+        'name', 'username', 'email', 'password', 'avatar', 'cover', 'bio', 'website',
         'twitter', 'github', 'country', 'locale', 'is_active',
     ];
 
@@ -124,6 +124,18 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
         return str_starts_with($this->avatar, 'http')
             ? $this->avatar
             : Storage::disk('public')->url($this->avatar);
+    }
+
+    /** A public cover/banner image URL, or null. */
+    public function coverUrl(): ?string
+    {
+        if (blank($this->cover)) {
+            return null;
+        }
+
+        return str_starts_with($this->cover, 'http')
+            ? $this->cover
+            : Storage::disk('public')->url($this->cover);
     }
 
     /** The name shown publicly. */

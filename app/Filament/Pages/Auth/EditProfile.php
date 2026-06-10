@@ -23,6 +23,16 @@ class EditProfile extends BaseEditProfile
             Section::make(__('profile.section_public'))
                 ->description(__('profile.section_public_hint'))
                 ->schema([
+                    FileUpload::make('cover')
+                        ->label(__('profile.cover'))
+                        ->helperText(__('profile.cover_hint'))
+                        ->image()
+                        ->imageEditor()
+                        ->imageEditorAspectRatios(['16:9', '21:9'])
+                        ->disk('public')
+                        ->directory('covers')
+                        ->maxSize(4096),
+
                     FileUpload::make('avatar')
                         ->label(__('profile.avatar'))
                         ->helperText(__('profile.avatar_hint'))

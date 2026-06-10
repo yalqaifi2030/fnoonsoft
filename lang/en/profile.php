@@ -3,6 +3,8 @@
 return [
     'avatar' => 'Profile photo',
     'avatar_hint' => 'Shown in the navbar and your public page. Square image, up to 2 MB.',
+    'cover' => 'Cover image',
+    'cover_hint' => 'A wide banner on your public page. 16:9 recommended, up to 4 MB.',
 
     'section_public' => 'Public profile',
     'section_public_hint' => 'This appears on your public page at /u/username.',

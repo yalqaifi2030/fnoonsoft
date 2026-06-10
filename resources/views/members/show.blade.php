@@ -27,7 +27,11 @@
 
     {{-- ===== Profile header ===== --}}
     <div class="card-luxury overflow-hidden p-0">
-        <div class="h-32" style="background: linear-gradient(120deg, #006C35, #00472a);"></div>
+        @if ($user->coverUrl())
+            <div class="h-40 bg-cover bg-center sm:h-48" style="background-image: url('{{ $user->coverUrl() }}');"></div>
+        @else
+            <div class="h-32" style="background: linear-gradient(120deg, #006C35, #00472a);"></div>
+        @endif
         <div class="px-6 pb-6 -mt-12">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-end">
                 <div class="shrink-0">
