@@ -112,20 +112,20 @@
         <div class="fc-grid4">
             @php
                 $cards = [
-                    ['label' => __('upload.stats.total'), 'value' => number_format($stats['total']), 'icon' => 'heroicon-o-cloud-arrow-up', 'color' => 'text-primary-600', 'bg' => 'bg-primary-50 dark:bg-primary-500/10'],
-                    ['label' => __('upload.stats.images'), 'value' => number_format($stats['images']), 'icon' => 'heroicon-o-photo', 'color' => 'text-blue-600', 'bg' => 'bg-blue-50 dark:bg-blue-500/10'],
-                    ['label' => __('upload.stats.downloads'), 'value' => number_format($stats['downloads']), 'icon' => 'heroicon-o-arrow-down-tray', 'color' => 'text-green-600', 'bg' => 'bg-green-50 dark:bg-green-500/10'],
-                    ['label' => __('upload.stats.storage'), 'value' => $fmt($stats['bytes']), 'icon' => 'heroicon-o-circle-stack', 'color' => 'text-amber-700', 'bg' => 'bg-amber-50 dark:bg-white/5'],
+                    ['label' => __('upload.stats.total'),     'value' => number_format($stats['total']),     'icon' => 'heroicon-o-cloud-arrow-up',  'accent' => '#006C35'],
+                    ['label' => __('upload.stats.images'),    'value' => number_format($stats['images']),    'icon' => 'heroicon-o-photo',           'accent' => '#3b82f6'],
+                    ['label' => __('upload.stats.downloads'), 'value' => number_format($stats['downloads']), 'icon' => 'heroicon-o-arrow-down-tray', 'accent' => '#8b5cf6'],
+                    ['label' => __('upload.stats.storage'),   'value' => $fmt($stats['bytes']),              'icon' => 'heroicon-o-circle-stack',    'accent' => '#b8860b'],
                 ];
             @endphp
             @foreach ($cards as $c)
-                <div class="fc-stat">
-                    <span class="fc-stat-icon {{ $c['bg'] }} {{ $c['color'] }}">
+                <div class="fc-stat" style="--accent: {{ $c['accent'] }}; --accent-soft: {{ $c['accent'] }}1f;">
+                    <span class="fc-stat-icon">
                         <x-filament::icon :icon="$c['icon']" class="h-6 w-6" />
                     </span>
                     <div class="min-w-0">
-                        <div class="text-2xl font-extrabold text-gray-900 dark:text-white leading-tight" dir="ltr">{{ $c['value'] }}</div>
-                        <div class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ $c['label'] }}</div>
+                        <div class="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white" dir="ltr">{{ $c['value'] }}</div>
+                        <div class="truncate text-xs text-gray-500 dark:text-gray-400">{{ $c['label'] }}</div>
                     </div>
                 </div>
             @endforeach
@@ -385,17 +385,30 @@
 
             /* ===== Stat cards ===== */
             .fc-stat {
-                display: flex; align-items: center; gap: 1rem; padding: 1.1rem;
+                position: relative; overflow: hidden;
+                display: flex; align-items: center; gap: 1rem; padding: 1.2rem;
                 border: 1px solid #eef0f2; border-radius: 1.25rem; background: #fff;
-                transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+                transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+            }
+            /* coloured top accent per card (uses the --accent CSS var) */
+            .fc-stat::before {
+                content: ''; position: absolute; top: 0; inset-inline: 0; height: 3px;
+                background: var(--accent, #006C35);
             }
             .dark .fc-stat { background: #0b1220; border-color: rgba(255,255,255,.08); }
-            .fc-stat:hover { transform: translateY(-3px); box-shadow: 0 16px 30px -20px rgba(0,108,53,.45); border-color: rgba(0,108,53,.2); }
+            .fc-stat:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 18px 34px -20px rgba(0,108,53,.4);
+                border-color: var(--accent-soft, rgba(0,108,53,.2));
+            }
             .fc-stat-icon {
                 display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
-                width: 3rem; height: 3rem; border-radius: .9rem; transition: transform .2s ease;
+                width: 3rem; height: 3rem; border-radius: .9rem;
+                background: var(--accent-soft, rgba(0,108,53,.1));
+                color: var(--accent, #006C35);
+                transition: transform .22s ease;
             }
-            .fc-stat:hover .fc-stat-icon { transform: scale(1.08); }
+            .fc-stat:hover .fc-stat-icon { transform: scale(1.1) rotate(-5deg); }
             .uppy-Root, .uppy-Dashboard, .uppy-Dashboard--width-md { width: 100% !important; max-width: 100% !important; }
 
             /* Brand Uppy with the Saudi-green palette */
