@@ -23,18 +23,4 @@
         filter: brightness(1.06);
         color: #fff !important;
     }
-
-    /* Hide the sidebar scrollbar (scrolling still works) across the whole
-       member panel — dashboard, profile, statistics, my files. */
-    .fi-sidebar-nav::-webkit-scrollbar,
-    .fi-sidebar::-webkit-scrollbar {
-        width: 0 !important;
-        height: 0 !important;
-        display: none !important;
-    }
-    .fi-sidebar-nav,
-    .fi-sidebar {
-        scrollbar-width: none !important;      /* Firefox */
-        -ms-overflow-style: none !important;   /* IE/Edge */
-    }
 </style>

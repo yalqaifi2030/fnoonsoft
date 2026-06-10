@@ -49,7 +49,11 @@ class MemberPanelProvider extends PanelProvider
             ->sidebarCollapsibleOnDesktop()
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
-                fn (): string => view('filament.member.chrome-styles')->render(),
+                // Reuse the upload panel's professional chrome (sidebar gradient,
+                // nav items, gold topbar, hidden scrollbars) so both panels match,
+                // then add the member-only register-button CTA on top.
+                fn (): string => view('filament.upload.chrome-styles')->render()
+                    .view('filament.member.chrome-styles')->render(),
             )
             ->discoverResources(in: app_path('Filament/Member/Resources'), for: 'App\\Filament\\Member\\Resources')
             ->discoverPages(in: app_path('Filament/Member/Pages'), for: 'App\\Filament\\Member\\Pages')
