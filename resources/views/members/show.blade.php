@@ -2,6 +2,10 @@
 
 @section('title', $user->displayName().' (@'.$user->username.')')
 
+@section('og_title', $user->displayName().' (@'.$user->username.')')
+@section('og_description', $user->bio ?: __('profile.public.og_desc', ['name' => $user->displayName()]))
+@section('og_image', $user->coverUrl() ?: ($user->avatarUrl() ?: ''))
+
 @section('content')
 @php
     $fmt = function ($b) {
@@ -78,6 +82,20 @@
                 <div><span class="text-xl font-black text-luxury-black" dir="ltr">{{ number_format($stats['files']) }}</span> <span class="text-xs text-gray-400">{{ __('profile.public.files') }}</span></div>
                 <div><span class="text-xl font-black text-luxury-black" dir="ltr">{{ number_format($stats['downloads']) }}</span> <span class="text-xs text-gray-400">{{ __('profile.public.downloads') }}</span></div>
                 <div><span class="text-xl font-black text-luxury-black" dir="ltr">{{ number_format($stats['views']) }}</span> <span class="text-xs text-gray-400">{{ __('profile.public.views') }}</span></div>
+            </div>
+
+            {{-- Share --}}
+            @php $shareUrl = url()->current(); @endphp
+            <div class="mt-4 flex flex-wrap items-center gap-2 border-t border-gray-100 pt-4">
+                <span class="text-xs font-semibold text-gray-400">{{ __('profile.public.share') }}</span>
+                <button type="button"
+                        onclick="navigator.clipboard.writeText('{{ $shareUrl }}').then(() => { const s = this.querySelector('span'); const o = s.textContent; s.textContent = '{{ __('profile.public.copied') }}'; setTimeout(() => s.textContent = o, 1500); })"
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-bold text-gray-600 transition hover:bg-gray-200">
+                    <i class="fa-solid fa-link"></i> <span>{{ __('profile.public.copy') }}</span>
+                </button>
+                <a href="https://wa.me/?text={{ urlencode($shareUrl) }}" target="_blank" rel="noopener" title="WhatsApp" class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-white transition hover:opacity-90" style="background:#25D366;"><i class="fa-brands fa-whatsapp"></i></a>
+                <a href="https://t.me/share/url?url={{ urlencode($shareUrl) }}" target="_blank" rel="noopener" title="Telegram" class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-white transition hover:opacity-90" style="background:#229ED9;"><i class="fa-brands fa-telegram"></i></a>
+                <a href="https://x.com/intent/tweet?url={{ urlencode($shareUrl) }}" target="_blank" rel="noopener" title="X" class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-black text-white transition hover:opacity-90"><i class="fa-brands fa-x-twitter"></i></a>
             </div>
         </div>
     </div>

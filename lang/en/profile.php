@@ -23,5 +23,9 @@ return [
         'views' => 'views',
         'shared_files' => 'Shared files',
         'no_files' => 'No public files yet.',
+        'share' => 'Share page:',
+        'copy' => 'Copy link',
+        'copied' => 'Copied!',
+        'og_desc' => ":name on Fnoon — browse and download their shared files.",
     ],
 ];
