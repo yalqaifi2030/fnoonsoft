@@ -41,12 +41,11 @@
             </div>
         </div>
 
-        {{-- ===== MEMBER STORAGE (member panel only — staff are unlimited) ===== --}}
+        {{-- ===== MEMBER STORAGE (member panel only) ===== --}}
         @if (! empty($stats['quota']))
             @php
-                $qUnlimited = ! empty($stats['unlimited']);
                 $qUsed = max(0, $stats['quota'] - $stats['remaining']);
-                $qPct = (! $qUnlimited && $stats['quota'] > 0) ? min(100, round($qUsed / $stats['quota'] * 100)) : 0;
+                $qPct = $stats['quota'] > 0 ? min(100, round($qUsed / $stats['quota'] * 100)) : 0;
                 $qColor = $qPct >= 90 ? '#ef4444' : ($qPct >= 70 ? '#f59e0b' : '#006C35');
             @endphp
             <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-gray-900">
@@ -57,29 +56,18 @@
                     <div class="min-w-0 flex-1">
                         <div class="mb-1.5 flex items-center justify-between gap-3">
                             <span class="text-sm font-bold text-gray-900 dark:text-white">{{ __('member.quota.title') }}</span>
-                            @if ($qUnlimited)
-                                <span class="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-extrabold text-white" style="background: linear-gradient(135deg,#006C35,#C9A961);">
-                                    <i class="fa-solid fa-infinity"></i> {{ __('member.quota.unlimited') }}
-                                </span>
-                            @else
-                                <span class="text-sm font-semibold text-gray-500" dir="ltr">{{ $fmt($qUsed) }} <span class="text-gray-300">/</span> {{ $fmt($stats['quota']) }}</span>
-                            @endif
+                            <span class="text-sm font-semibold text-gray-500" dir="ltr">{{ $fmt($qUsed) }} <span class="text-gray-300">/</span> {{ $fmt($stats['quota']) }}</span>
                         </div>
-
-                        @if ($qUnlimited)
-                            <p class="text-xs text-gray-400">{{ __('member.quota.staff_note', ['used' => $fmt($qUsed)]) }}</p>
-                        @else
-                            <div class="h-2.5 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-white/10">
-                                <div class="h-full rounded-full transition-all" style="width: {{ max(2, $qPct) }}%; background-color: {{ $qColor }};"></div>
-                            </div>
-                            <p class="mt-1.5 text-xs">
-                                @if ($qPct >= 100)
-                                    <span class="font-semibold text-red-600">{{ __('member.quota.full') }}</span>
-                                @else
-                                    <span class="text-gray-500" dir="ltr">{{ $fmt($stats['remaining']) }} {{ __('member.quota.remaining') }} · {{ $qPct }}%</span>
-                                @endif
-                            </p>
-                        @endif
+                        <div class="h-2.5 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-white/10">
+                            <div class="h-full rounded-full transition-all" style="width: {{ max(2, $qPct) }}%; background-color: {{ $qColor }};"></div>
+                        </div>
+                        <p class="mt-1.5 text-xs">
+                            @if ($qPct >= 100)
+                                <span class="font-semibold text-red-600">{{ __('member.quota.full') }}</span>
+                            @else
+                                <span class="text-gray-500" dir="ltr">{{ $fmt($stats['remaining']) }} {{ __('member.quota.remaining') }} · {{ $qPct }}%</span>
+                            @endif
+                        </p>
                     </div>
                 </div>
             </div>
