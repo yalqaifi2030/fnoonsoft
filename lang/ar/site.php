@@ -14,6 +14,8 @@ return [
         'contact' => 'تواصل',
         'upload' => 'رفع',
         'my_files' => 'لوحتي',
+        'login' => 'تسجيل الدخول',
+        'register' => 'إنشاء حساب',
         'admin' => 'الإدارة',
     ],
     'hero' => [

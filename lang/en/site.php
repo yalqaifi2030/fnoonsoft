@@ -14,6 +14,8 @@ return [
         'contact' => 'Contact',
         'upload' => 'Upload',
         'my_files' => 'My Space',
+        'login' => 'Log in',
+        'register' => 'Sign up',
         'admin' => 'Admin',
     ],
     'hero' => [

@@ -37,9 +37,18 @@
                     {{ $locale === 'ar' ? 'EN' : 'ع' }}
                 </a>
                 @if (\App\Models\Setting::get('member_uploads_enabled'))
-                    <a href="/dashboard" class="hidden sm:inline-flex btn-primary text-sm">
-                        <i class="fa-solid fa-folder-open"></i> {{ __('site.nav.my_files') }}
-                    </a>
+                    @auth
+                        <a href="/dashboard" class="hidden sm:inline-flex btn-primary text-sm">
+                            <i class="fa-solid fa-folder-open"></i> {{ __('site.nav.my_files') }}
+                        </a>
+                    @else
+                        <a href="/dashboard/login" class="hidden sm:inline-flex btn-outline text-sm">
+                            <i class="fa-solid fa-right-to-bracket"></i> {{ __('site.nav.login') }}
+                        </a>
+                        <a href="/dashboard/register" class="hidden sm:inline-flex btn-primary text-sm">
+                            <i class="fa-solid fa-user-plus"></i> {{ __('site.nav.register') }}
+                        </a>
+                    @endauth
                 @endif
                 <button @click="open = !open" class="md:hidden h-10 w-10 inline-flex items-center justify-center rounded-lg border border-royal-gold/30">
                     <i class="fa-solid fa-bars"></i>
@@ -57,7 +66,12 @@
             <a href="{{ route('browse', ['type' => 'plugin']) }}">{{ __('site.nav.plugins') }}</a>
             <a href="{{ route('blog.index') }}">{{ __('site.nav.blog') }}</a>
             @if (\App\Models\Setting::get('member_uploads_enabled'))
-                <a href="/dashboard">{{ __('site.nav.my_files') }}</a>
+                @auth
+                    <a href="/dashboard" class="font-bold text-saudi-green">{{ __('site.nav.my_files') }}</a>
+                @else
+                    <a href="/dashboard/login">{{ __('site.nav.login') }}</a>
+                    <a href="/dashboard/register" class="font-bold text-saudi-green">{{ __('site.nav.register') }}</a>
+                @endauth
             @endif
             <a href="{{ route('locale.switch', $locale === 'ar' ? 'en' : 'ar') }}">{{ $locale === 'ar' ? 'English' : 'العربية' }}</a>
         </nav>
