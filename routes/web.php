@@ -105,6 +105,10 @@ Route::post('/d/{asset}/unlock', [\App\Http\Controllers\AssetController::class, 
 Route::get('/d/{asset}/download', [\App\Http\Controllers\AssetController::class, 'download'])
     ->middleware('throttle:60,1')->name('assets.download');
 
+// Public member "creator" profile (/u/{username}) — their avatar, bio & public files.
+Route::get('/u/{user:username}', [\App\Http\Controllers\MemberProfileController::class, 'show'])
+    ->name('members.show');
+
 // Clear application caches from the admin topbar (staff only).
 Route::post('/system/clear-cache', function () {
     \Illuminate\Support\Facades\Artisan::call('optimize:clear');

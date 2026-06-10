@@ -55,6 +55,12 @@ class MemberPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Member/Widgets'), for: 'App\\Filament\\Member\\Widgets')
             ->userMenuItems([
                 MenuItem::make()
+                    ->label(__('member.public_page'))
+                    ->url(fn () => auth()->user()?->publicProfileUrl() ?? '#')
+                    ->icon('heroicon-o-user-circle')
+                    ->visible(fn () => (bool) auth()->user()?->hasPublicProfile())
+                    ->openUrlInNewTab(),
+                MenuItem::make()
                     ->label(__('member.back_to_site'))
                     ->url(fn () => url('/'))
                     ->icon('heroicon-o-arrow-left-on-rectangle'),

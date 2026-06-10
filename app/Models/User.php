@@ -24,7 +24,8 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
     use Notifiable;
 
     protected $fillable = [
-        'name', 'email', 'password', 'avatar', 'country', 'locale', 'is_active',
+        'name', 'username', 'email', 'password', 'avatar', 'bio', 'website',
+        'twitter', 'github', 'country', 'locale', 'is_active',
     ];
 
     protected $hidden = [
@@ -111,7 +112,44 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
         return max(0, $this->storageQuotaBytes() - $this->storageUsedBytes());
     }
 
+    // --- Public profile --------------------------------------------------
+
+    /** A public avatar URL (stored path or absolute social URL), or null. */
+    public function avatarUrl(): ?string
+    {
+        if (blank($this->avatar)) {
+            return null;
+        }
+
+        return str_starts_with($this->avatar, 'http')
+            ? $this->avatar
+            : Storage::disk('public')->url($this->avatar);
+    }
+
+    /** The name shown publicly. */
+    public function displayName(): string
+    {
+        return $this->name ?: ('@'.$this->username);
+    }
+
+    /** True once the member has claimed a username (required for the public page). */
+    public function hasPublicProfile(): bool
+    {
+        return filled($this->username);
+    }
+
+    /** Link to the public creator page, or null if no username yet. */
+    public function publicProfileUrl(): ?string
+    {
+        return $this->hasPublicProfile() ? route('members.show', $this->username) : null;
+    }
+
     // --- Relationships ---------------------------------------------------
+
+    public function assets(): HasMany
+    {
+        return $this->hasMany(Asset::class);
+    }
 
     public function software(): HasMany
     {

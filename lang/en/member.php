@@ -3,6 +3,7 @@
 return [
     'brand' => 'My Space',
     'back_to_site' => 'Back to site',
+    'public_page' => 'My public page',
 
     'nav' => [
         'dashboard' => 'My files & upload',
