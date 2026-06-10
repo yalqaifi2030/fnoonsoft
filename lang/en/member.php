@@ -47,6 +47,8 @@ return [
         'of' => 'of',
         'remaining' => 'remaining',
         'full' => 'Your storage is full — delete files or contact the admin to raise it.',
+        'unlimited' => 'Unlimited',
+        'staff_note' => 'Unlimited storage (staff account) · Used: :used',
     ],
 
     'welcome' => 'Welcome, :name',

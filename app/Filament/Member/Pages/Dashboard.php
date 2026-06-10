@@ -26,6 +26,7 @@ class Dashboard extends UploadCenter
 
         $stats['quota'] = $user?->storageQuotaBytes() ?? 0;
         $stats['remaining'] = $user?->storageRemainingBytes() ?? 0;
+        $stats['unlimited'] = (bool) $user?->isStaff();
 
         return $stats;
     }
