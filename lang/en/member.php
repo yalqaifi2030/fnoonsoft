@@ -54,6 +54,11 @@ return [
     'welcome' => 'Welcome, :name',
     'hero_note' => 'Upload, manage and share your files — all in one place.',
 
+    'notify' => [
+        'milestone_title' => '🎉 :count downloads!',
+        'milestone_body' => 'Your file ":file" just hit a new milestone. Nice work!',
+    ],
+
     'errors' => [
         'quota' => 'You have exceeded your storage quota (:used of :quota GB used). Delete some files or contact the admin to raise it.',
         'too_large' => 'This file exceeds the per-file limit for members (:max GB).',

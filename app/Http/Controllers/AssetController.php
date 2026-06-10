@@ -61,6 +61,7 @@ class AssetController extends Controller
         }
 
         $asset->increment('downloads_count');
+        $this->notifyMilestone($asset);
 
         // R2: hand off to a short-lived presigned URL.
         if ($asset->disk === 'r2') {
@@ -74,6 +75,30 @@ class AssetController extends Controller
         abort_unless(is_file($absolute), 404);
 
         return response()->download($absolute, $asset->original_name);
+    }
+
+    /** Congratulate the owner when their file crosses a download milestone. */
+    private function notifyMilestone(Asset $asset): void
+    {
+        try {
+            $count = (int) $asset->downloads_count;
+
+            if (! $asset->user_id || ! in_array($count, [100, 500, 1000, 5000, 10000, 50000, 100000], true)) {
+                return;
+            }
+
+            if ($owner = $asset->user) {
+                \Filament\Notifications\Notification::make()
+                    ->title(__('member.notify.milestone_title', ['count' => number_format($count)]))
+                    ->body(__('member.notify.milestone_body', ['file' => $asset->original_name]))
+                    ->icon('heroicon-o-trophy')
+                    ->iconColor('warning')
+                    ->success()
+                    ->sendToDatabase($owner);
+            }
+        } catch (\Throwable $e) {
+            // A notification must never break a download.
+        }
     }
 
     private function unlocked(Request $request, Asset $asset): bool

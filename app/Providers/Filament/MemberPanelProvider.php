@@ -46,6 +46,7 @@ class MemberPanelProvider extends PanelProvider
                 'gold' => Color::hex('#C9A961'),
             ])
             ->font('Tajawal')
+            ->databaseNotifications()
             ->sidebarCollapsibleOnDesktop()
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
