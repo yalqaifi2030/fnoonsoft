@@ -68,27 +68,41 @@
                 $qUsed = max(0, $stats['quota'] - $stats['remaining']);
                 $qPct = $stats['quota'] > 0 ? min(100, round($qUsed / $stats['quota'] * 100)) : 0;
                 $qColor = $qPct >= 90 ? '#ef4444' : ($qPct >= 70 ? '#f59e0b' : '#006C35');
+                $qColor2 = $qPct >= 90 ? '#f87171' : ($qPct >= 70 ? '#fbbf24' : '#00a050');
             @endphp
-            <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-gray-900">
-                <div class="flex items-center gap-4">
-                    <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl" style="background: rgba(0,108,53,.1); color:#006C35;">
-                        <i class="fa-solid fa-database text-xl"></i>
+            <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-white/10 dark:bg-gray-900">
+                {{-- Header: icon + title + big percentage --}}
+                <div class="flex items-center gap-4 p-5 pb-4">
+                    <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-white shadow-md" style="background: linear-gradient(135deg, #006C35, #00a050);">
+                        <i class="fa-solid fa-database text-lg"></i>
                     </span>
                     <div class="min-w-0 flex-1">
-                        <div class="mb-1.5 flex items-center justify-between gap-3">
-                            <span class="text-sm font-bold text-gray-900 dark:text-white">{{ __('member.quota.title') }}</span>
-                            <span class="text-sm font-semibold text-gray-500" dir="ltr">{{ $fmt($qUsed) }} <span class="text-gray-300">/</span> {{ $fmt($stats['quota']) }}</span>
-                        </div>
-                        <div class="h-2.5 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-white/10">
-                            <div class="h-full rounded-full transition-all" style="width: {{ max(2, $qPct) }}%; background-color: {{ $qColor }};"></div>
-                        </div>
-                        <p class="mt-1.5 text-xs">
-                            @if ($qPct >= 100)
-                                <span class="font-semibold text-red-600">{{ __('member.quota.full') }}</span>
-                            @else
-                                <span class="text-gray-500" dir="ltr">{{ $fmt($stats['remaining']) }} {{ __('member.quota.remaining') }} · {{ $qPct }}%</span>
-                            @endif
-                        </p>
+                        <div class="text-sm font-bold text-gray-900 dark:text-white">{{ __('member.quota.title') }}</div>
+                        <div class="mt-0.5 text-xs text-gray-400" dir="ltr">{{ $fmt($qUsed) }} {{ __('member.quota.of') }} {{ $fmt($stats['quota']) }}</div>
+                    </div>
+                    <div class="text-2xl font-black leading-none" style="color: {{ $qColor }};" dir="ltr">{{ $qPct }}%</div>
+                </div>
+
+                {{-- Gradient progress bar --}}
+                <div class="px-5">
+                    <div class="h-3 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-white/10">
+                        <div class="h-full rounded-full transition-all duration-700" style="width: {{ max(2, $qPct) }}%; background: linear-gradient(90deg, {{ $qColor }}, {{ $qColor2 }});"></div>
+                    </div>
+                </div>
+
+                @if ($qPct >= 100)
+                    <p class="px-5 pt-3 text-xs font-semibold text-red-600">{{ __('member.quota.full') }}</p>
+                @endif
+
+                {{-- Footer: used / remaining --}}
+                <div class="mt-4 grid grid-cols-2 border-t border-gray-100 dark:border-white/5">
+                    <div class="border-e border-gray-100 px-5 py-3 text-center dark:border-white/5">
+                        <div class="text-base font-extrabold text-gray-900 dark:text-white" dir="ltr">{{ $fmt($qUsed) }}</div>
+                        <div class="text-[11px] text-gray-400">{{ __('member.quota.used') }}</div>
+                    </div>
+                    <div class="px-5 py-3 text-center">
+                        <div class="text-base font-extrabold text-gray-900 dark:text-white" dir="ltr">{{ $fmt($stats['remaining']) }}</div>
+                        <div class="text-[11px] text-gray-400">{{ __('member.quota.remaining') }}</div>
                     </div>
                 </div>
             </div>
