@@ -6,6 +6,23 @@ return [
     'public_page' => 'My public page',
     'profile' => 'Profile',
 
+    'stats' => [
+        'nav' => 'Statistics',
+        'title' => 'My statistics',
+        'your_rank' => 'Your rank',
+        'files' => 'Files',
+        'downloads' => 'Downloads',
+        'views' => 'Views',
+        'storage' => 'Storage',
+        'uploads_14' => 'Uploads, last 14 days',
+        'by_type' => 'By type',
+        'top_files' => 'Your top files (most downloaded)',
+        'rank_beginner' => 'Beginner',
+        'rank_active' => 'Active',
+        'rank_pro' => 'Pro',
+        'rank_star' => 'Star',
+    ],
+
     'nav' => [
         'dashboard' => 'My files & upload',
     ],

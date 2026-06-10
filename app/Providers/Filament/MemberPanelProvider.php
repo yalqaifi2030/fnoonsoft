@@ -60,7 +60,7 @@ class MemberPanelProvider extends PanelProvider
                     ->icon('heroicon-o-user-circle')
                     ->url(fn () => route('filament.member.auth.profile'))
                     ->isActiveWhen(fn () => request()->routeIs('filament.member.auth.profile'))
-                    ->sort(3),
+                    ->sort(10),
             ])
             ->userMenuItems([
                 MenuItem::make()
