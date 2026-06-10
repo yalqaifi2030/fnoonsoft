@@ -4,6 +4,7 @@ return [
     'brand' => 'My Space',
     'back_to_site' => 'Back to site',
     'public_page' => 'My public page',
+    'profile' => 'Profile',
 
     'nav' => [
         'dashboard' => 'My files & upload',

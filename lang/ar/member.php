@@ -4,6 +4,7 @@ return [
     'brand' => 'لوحتي',
     'back_to_site' => 'العودة للموقع',
     'public_page' => 'صفحتي العامة',
+    'profile' => 'الملف الشخصي',
 
     'nav' => [
         'dashboard' => 'ملفاتي والرفع',

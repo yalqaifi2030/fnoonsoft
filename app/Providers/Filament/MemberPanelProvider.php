@@ -8,6 +8,7 @@ use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
+use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -34,7 +35,7 @@ class MemberPanelProvider extends PanelProvider
             ->login()
             ->registration()
             ->emailVerification()
-            ->profile(\App\Filament\Pages\Auth\EditProfile::class)
+            ->profile(\App\Filament\Pages\Auth\EditProfile::class, isSimple: false)
             ->brandName(fn () => \App\Support\Branding::name('admin', 'Fnoon').' · '.__('member.brand'))
             ->brandLogo(fn () => \App\Support\Branding::logo('admin'))
             ->brandLogoHeight(fn () => \App\Support\Branding::logoHeight())
@@ -53,6 +54,14 @@ class MemberPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Member/Resources'), for: 'App\\Filament\\Member\\Resources')
             ->discoverPages(in: app_path('Filament/Member/Pages'), for: 'App\\Filament\\Member\\Pages')
             ->discoverWidgets(in: app_path('Filament/Member/Widgets'), for: 'App\\Filament\\Member\\Widgets')
+            ->navigationItems([
+                NavigationItem::make('profile')
+                    ->label(__('member.profile'))
+                    ->icon('heroicon-o-user-circle')
+                    ->url(fn () => route('filament.member.auth.profile'))
+                    ->isActiveWhen(fn () => request()->routeIs('filament.member.auth.profile'))
+                    ->sort(3),
+            ])
             ->userMenuItems([
                 MenuItem::make()
                     ->label(__('member.public_page'))
