@@ -5,6 +5,9 @@
             $u = ['B','KB','MB','GB','TB']; $i = (int) floor(log($b, 1024));
             return round($b / (1024 ** $i), 1).' '.$u[min($i, 4)];
         };
+        // The member panel sets a quota in the stats; the staff upload panel does not.
+        $isMember = ! empty($stats['quota']);
+        $me = auth()->user();
     @endphp
 
     <div class="space-y-6">
@@ -19,8 +22,26 @@
                     <x-filament::icon icon="heroicon-o-cloud-arrow-up" class="h-8 w-8" />
                 </span>
                 <div class="min-w-0 flex-1">
-                    <h1 class="text-2xl font-extrabold leading-tight text-white">{{ __('upload.center.title') }}</h1>
-                    <p class="mt-1 text-sm text-green-100/90">{{ __('upload.center.dashboard_note') }}</p>
+                    @if ($isMember)
+                        <h1 class="text-2xl font-extrabold leading-tight text-white">{{ __('member.welcome', ['name' => $me?->name ?: __('member.brand')]) }} 👋</h1>
+                        <p class="mt-1 text-sm text-green-100/90">{{ __('member.hero_note') }}</p>
+                        <div class="mt-3 flex flex-wrap gap-2">
+                            <a href="/dashboard/assets" class="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-white/25">
+                                <i class="fa-solid fa-folder"></i> {{ __('member.files.nav') }}
+                            </a>
+                            <a href="/dashboard/statistics" class="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-white/25">
+                                <i class="fa-solid fa-chart-simple"></i> {{ __('member.stats.nav') }}
+                            </a>
+                            @if ($me?->publicProfileUrl())
+                                <a href="{{ $me->publicProfileUrl() }}" target="_blank" class="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-white/25">
+                                    <i class="fa-solid fa-user"></i> {{ __('member.public_page') }}
+                                </a>
+                            @endif
+                        </div>
+                    @else
+                        <h1 class="text-2xl font-extrabold leading-tight text-white">{{ __('upload.center.title') }}</h1>
+                        <p class="mt-1 text-sm text-green-100/90">{{ __('upload.center.dashboard_note') }}</p>
+                    @endif
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
                     <span class="fc-hero-pill {{ $isLocal ? 'is-amber' : 'is-green' }}" title="{{ $isLocal ? __('upload.storage.local_note') : __('upload.storage.cloud_note') }}">

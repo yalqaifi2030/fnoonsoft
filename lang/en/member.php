@@ -52,6 +52,7 @@ return [
     ],
 
     'welcome' => 'Welcome, :name',
+    'hero_note' => 'Upload, manage and share your files — all in one place.',
 
     'errors' => [
         'quota' => 'You have exceeded your storage quota (:used of :quota GB used). Delete some files or contact the admin to raise it.',
