@@ -250,13 +250,18 @@
             ];
         @endphp
         <div class="rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 shadow-sm overflow-hidden" wire:poll.10s>
-            <div class="px-6 py-4 border-b border-gray-100 dark:border-white/10 flex items-center justify-between">
-                <h3 class="text-base font-semibold text-gray-900 dark:text-white">{{ __('upload.center.recent') }}</h3>
+            <div class="flex items-center justify-between border-b border-gray-100 px-6 py-4 dark:border-white/10">
+                <h3 class="flex items-center gap-2 text-base font-semibold text-gray-900 dark:text-white">
+                    <i class="fa-solid fa-clock-rotate-left text-primary-600"></i> {{ __('upload.center.recent') }}
+                </h3>
                 @if (\Illuminate\Support\Facades\Route::has('filament.'.\Filament\Facades\Filament::getCurrentPanel()->getId().'.resources.assets.index'))
                     <a href="{{ route('filament.'.\Filament\Facades\Filament::getCurrentPanel()->getId().'.resources.assets.index') }}"
-                       class="text-xs font-semibold text-primary-600 hover:underline">{{ __('asset_admin.nav') }} ({{ number_format($stats['total']) }})</a>
+                       class="inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-3 py-1 text-xs font-bold text-primary-600 transition hover:bg-primary-100 dark:bg-primary-500/10">
+                        {{ __('asset_admin.nav') }}
+                        <span class="rounded-full bg-primary-600 px-1.5 py-0.5 text-[10px] leading-none text-white" dir="ltr">{{ number_format($stats['total']) }}</span>
+                    </a>
                 @else
-                    <span class="text-xs font-semibold text-gray-400">{{ number_format($stats['total']) }}</span>
+                    <span class="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-bold text-gray-500 dark:bg-white/10" dir="ltr">{{ number_format($stats['total']) }}</span>
                 @endif
             </div>
 
