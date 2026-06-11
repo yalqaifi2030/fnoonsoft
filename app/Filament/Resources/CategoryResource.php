@@ -78,18 +78,9 @@ class CategoryResource extends Resource
                     ->icon('heroicon-o-sparkles')
                     ->description(__('category.icon_hint'))
                     ->schema([
-                        Forms\Components\TextInput::make('icon')
-                            ->label(__('category.icon'))
-                            ->placeholder('fa-solid fa-globe')
-                            ->live(onBlur: true)
-                            ->columnSpan(2),
-
-                        Forms\Components\Placeholder::make('icon_preview')
-                            ->label(__('category.preview'))
-                            ->content(fn (Forms\Get $get) => $get('icon')
-                                ? new HtmlString('<i class="'.e($get('icon')).' fa-2x" style="color:#006C35"></i>')
-                                : '—'),
-                    ])->columns(3),
+                        \App\Filament\Forms\Components\IconPicker::make('icon')
+                            ->label(__('category.icon')),
+                    ]),
             ])->columnSpan(['lg' => 2]),
 
             Forms\Components\Group::make()->schema([
