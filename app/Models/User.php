@@ -25,7 +25,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
 
     protected $fillable = [
         'name', 'username', 'email', 'password', 'avatar', 'cover', 'bio', 'website',
-        'twitter', 'github', 'country', 'locale', 'is_active', 'quota_gb',
+        'twitter', 'github', 'country', 'locale', 'is_active', 'quota_gb', 'tier',
     ];
 
     protected $hidden = [
@@ -39,6 +39,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'tier' => \App\Enums\MemberTier::class,
         ];
     }
 
@@ -94,18 +95,38 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
     }
 
     /** Storage quota in bytes — staff are unlimited, members get the configured GB. */
+    /** The member's tier (defaults to Free). */
+    public function memberTier(): \App\Enums\MemberTier
+    {
+        return $this->tier instanceof \App\Enums\MemberTier
+            ? $this->tier
+            : (\App\Enums\MemberTier::tryFrom((string) $this->tier) ?? \App\Enums\MemberTier::Free);
+    }
+
     public function storageQuotaBytes(): int
     {
         if ($this->isStaff()) {
             return PHP_INT_MAX;
         }
 
-        // A per-member quota (quota_gb) overrides the global default.
+        // Precedence: explicit per-member quota → tier quota → global default.
         $gb = $this->quota_gb !== null
             ? (float) $this->quota_gb
-            : (float) (Setting::get('member_quota_gb', 10) ?: 10);
+            : ($this->memberTier()->quotaGb() ?? (float) (Setting::get('member_quota_gb', 10) ?: 10));
 
         return (int) round($gb * 1024 * 1024 * 1024);
+    }
+
+    /** Per-file upload ceiling in bytes (tier → global setting → unlimited). */
+    public function maxFileBytes(): int
+    {
+        if ($this->isStaff()) {
+            return PHP_INT_MAX;
+        }
+
+        $gb = $this->memberTier()->maxFileGb() ?? (float) (Setting::get('member_max_file_gb', 0) ?: 0);
+
+        return $gb > 0 ? (int) round($gb * 1024 * 1024 * 1024) : PHP_INT_MAX;
     }
 
     public function storageUsedBytes(): int

@@ -108,6 +108,14 @@ class UserResource extends Resource
                             ->icons([true => 'heroicon-m-check-circle', false => 'heroicon-m-no-symbol'])
                             ->default(true),
 
+                        Forms\Components\Select::make('tier')
+                            ->label(__('user.tier'))
+                            ->options(\App\Enums\MemberTier::options())
+                            ->default('free')
+                            ->required()
+                            ->native(false)
+                            ->helperText(__('user.tier_hint')),
+
                         Forms\Components\TextInput::make('quota_gb')
                             ->label(__('user.quota'))
                             ->helperText(__('user.quota_hint'))
@@ -170,6 +178,13 @@ class UserResource extends Resource
                     ->color('gold')
                     ->formatStateUsing(fn ($state) => __('user.role.'.$state))
                     ->placeholder('—'),
+
+                Tables\Columns\TextColumn::make('tier')
+                    ->label(__('user.tier'))
+                    ->badge()
+                    ->formatStateUsing(fn ($state) => $state instanceof \App\Enums\MemberTier ? $state->label() : __('tier.free'))
+                    ->color(fn ($state) => $state instanceof \App\Enums\MemberTier ? $state->filamentColor() : 'gray')
+                    ->icon(fn ($state) => ($state instanceof \App\Enums\MemberTier && $state->hasBadge()) ? 'heroicon-m-check-badge' : null),
 
                 Tables\Columns\TextColumn::make('is_active')
                     ->label(__('user.status'))

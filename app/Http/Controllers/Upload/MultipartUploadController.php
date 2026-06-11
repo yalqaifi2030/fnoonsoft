@@ -60,10 +60,10 @@ class MultipartUploadController extends Controller
         // are capped by the configured quota + an optional per-file ceiling.
         $user = $request->user();
         if ($user && ! $user->isStaff()) {
-            $maxFileGb = (float) (Setting::get('member_max_file_gb', 0) ?: 0);
-            if ($maxFileGb > 0 && $data['size'] > $maxFileGb * 1024 ** 3) {
+            $maxFileBytes = $user->maxFileBytes(); // tier → global setting → unlimited
+            if ($data['size'] > $maxFileBytes) {
                 return response()->json([
-                    'message' => __('member.errors.too_large', ['max' => $maxFileGb]),
+                    'message' => __('member.errors.too_large', ['max' => round($maxFileBytes / 1024 ** 3, 1)]),
                 ], 422);
             }
 

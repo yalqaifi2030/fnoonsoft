@@ -19,6 +19,8 @@ return [
     'locale' => 'Language',
     'country' => 'Country (ISO-2)',
     'joined' => 'Joined',
+    'tier' => 'Tier',
+    'tier_hint' => 'Grants a coloured verified badge plus a per-tier quota and file limit.',
     'quota' => 'Storage quota',
     'quota_hint' => "This member's quota in GB. Leave empty to use the default.",
     'quota_default' => 'Default (:gb GB)',

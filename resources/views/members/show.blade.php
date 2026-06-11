@@ -49,7 +49,13 @@
                     @endif
                 </div>
                 <div class="min-w-0 flex-1 sm:pb-1">
-                    <h1 class="font-cairo text-2xl font-black text-luxury-black">{{ $user->displayName() }}</h1>
+                    <h1 class="inline-flex items-center gap-2 font-cairo text-2xl font-black text-luxury-black">
+                        {{ $user->displayName() }}
+                        @if ($user->memberTier()->hasBadge())
+                            <i class="{{ $user->memberTier()->icon() }} text-xl" style="color: {{ $user->memberTier()->color() }};"
+                               title="{{ $user->memberTier()->label() }}"></i>
+                        @endif
+                    </h1>
                     <p class="text-sm font-semibold text-saudi-green" dir="ltr">{{ '@'.$user->username }}</p>
                 </div>
             </div>

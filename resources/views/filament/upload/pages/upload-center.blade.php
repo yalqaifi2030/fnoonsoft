@@ -23,7 +23,12 @@
                 </span>
                 <div class="min-w-0 flex-1">
                     @if ($isMember)
-                        <h1 class="text-2xl font-extrabold leading-tight text-white">{{ __('member.welcome', ['name' => $me?->name ?: __('member.brand')]) }} 👋</h1>
+                        <h1 class="inline-flex items-center gap-2 text-2xl font-extrabold leading-tight text-white">
+                            {{ __('member.welcome', ['name' => $me?->name ?: __('member.brand')]) }} 👋
+                            @if ($me && $me->memberTier()->hasBadge())
+                                <i class="{{ $me->memberTier()->icon() }} text-lg" style="color: {{ $me->memberTier()->color() }};" title="{{ $me->memberTier()->label() }}"></i>
+                            @endif
+                        </h1>
                         <p class="mt-1 text-sm text-green-100/90">{{ __('member.hero_note') }}</p>
                         <div class="mt-3 flex flex-wrap gap-2">
                             <a href="/dashboard/assets" class="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-white/25">
