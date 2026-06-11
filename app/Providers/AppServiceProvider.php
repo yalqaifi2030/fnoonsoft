@@ -32,6 +32,11 @@ class AppServiceProvider extends ServiceProvider
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
 
+        // Raise Livewire's temporary-upload ceiling (default 12 MB) so large
+        // media — e.g. tutorial videos — aren't rejected before a field's own
+        // maxSize applies. PHP's post_max_size still bounds the real maximum.
+        config(['livewire.temporary_file_upload.rules' => ['file', 'max:524288']]); // 512 MB
+
         // Apply storage (S3/iDrive) + mail settings saved from the admin panel,
         // overriding .env so they take effect immediately without a redeploy.
         $this->applyDynamicConfig();
