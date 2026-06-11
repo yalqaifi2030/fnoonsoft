@@ -80,7 +80,7 @@ class SoftwareResource extends Resource
                             ->live(onBlur: true)
                             ->afterStateUpdated(function (Forms\Set $set, ?string $state, string $operation) {
                                 if ($operation === 'create') {
-                                    $set('slug', Str::slug($state ?? ''));
+                                    $set('slug', \App\Support\Slug::make($state));
                                 }
                             }),
 

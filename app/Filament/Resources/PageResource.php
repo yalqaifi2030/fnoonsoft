@@ -57,7 +57,7 @@ class PageResource extends Resource
                             ->maxLength(180)
                             ->afterStateUpdated(function (Forms\Set $set, ?string $state, string $operation) {
                                 if ($operation === 'create') {
-                                    $set('slug', Str::slug($state ?? ''));
+                                    $set('slug', \App\Support\Slug::make($state));
                                 }
                             }),
 
