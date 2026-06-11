@@ -75,39 +75,39 @@
                 $qColor = $qPct >= 90 ? '#ef4444' : ($qPct >= 70 ? '#f59e0b' : '#006C35');
                 $qColor2 = $qPct >= 90 ? '#f87171' : ($qPct >= 70 ? '#fbbf24' : '#00a050');
             @endphp
-            <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-white/10 dark:bg-gray-900">
+            <div class="border border-gray-200 bg-white shadow-sm dark:border-white/10 dark:bg-gray-900" style="border-radius:1rem; overflow:hidden;">
                 {{-- Header: icon + title + big percentage --}}
-                <div class="flex items-center gap-4 p-5 pb-4">
-                    <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-white shadow-md" style="background: linear-gradient(135deg, #006C35, #00a050);">
-                        <i class="fa-solid fa-database text-lg"></i>
+                <div style="display:flex; align-items:center; gap:1rem; padding:1.25rem 1.25rem 1rem;">
+                    <span style="display:flex; height:3rem; width:3rem; flex:0 0 auto; align-items:center; justify-content:center; border-radius:1rem; color:#fff; background:linear-gradient(135deg,#006C35,#00a050); box-shadow:0 6px 14px -4px rgba(0,108,53,.5);">
+                        <i class="fa-solid fa-database" style="font-size:1.1rem;"></i>
                     </span>
-                    <div class="min-w-0 flex-1">
-                        <div class="text-sm font-bold text-gray-900 dark:text-white">{{ __('member.quota.title') }}</div>
-                        <div class="mt-0.5 text-xs text-gray-400" dir="ltr">{{ $fmt($qUsed) }} {{ __('member.quota.of') }} {{ $fmt($stats['quota']) }}</div>
+                    <div style="min-width:0; flex:1 1 auto;">
+                        <div class="text-gray-900 dark:text-white" style="font-weight:700; font-size:.9rem;">{{ __('member.quota.title') }}</div>
+                        <div class="text-gray-400" style="font-size:.75rem; margin-top:.15rem;" dir="ltr">{{ $fmt($qUsed) }} {{ __('member.quota.of') }} {{ $fmt($stats['quota']) }}</div>
                     </div>
-                    <div class="text-2xl font-black leading-none" style="color: {{ $qColor }};" dir="ltr">{{ $qPct }}%</div>
+                    <div style="font-size:1.65rem; font-weight:800; line-height:1; color:{{ $qColor }};" dir="ltr">{{ $qPct }}%</div>
                 </div>
 
                 {{-- Gradient progress bar --}}
-                <div class="px-5">
-                    <div class="h-3 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-white/10">
-                        <div class="h-full rounded-full transition-all duration-700" style="width: {{ max(2, $qPct) }}%; background: linear-gradient(90deg, {{ $qColor }}, {{ $qColor2 }});"></div>
+                <div style="padding:0 1.25rem;">
+                    <div class="bg-gray-100 dark:bg-white/10" style="height:.7rem; width:100%; border-radius:9999px; overflow:hidden;">
+                        <div style="height:100%; border-radius:9999px; width:{{ max(2, $qPct) }}%; background:linear-gradient(90deg,{{ $qColor }},{{ $qColor2 }}); transition:width .7s ease;"></div>
                     </div>
                 </div>
 
                 @if ($qPct >= 100)
-                    <p class="px-5 pt-3 text-xs font-semibold text-red-600">{{ __('member.quota.full') }}</p>
+                    <p class="text-red-600" style="padding:.75rem 1.25rem 0; font-size:.75rem; font-weight:600;">{{ __('member.quota.full') }}</p>
                 @endif
 
-                {{-- Footer: used / remaining --}}
-                <div class="mt-4 grid grid-cols-2 border-t border-gray-100 dark:border-white/5">
-                    <div class="border-e border-gray-100 px-5 py-3 text-center dark:border-white/5">
-                        <div class="text-base font-extrabold text-gray-900 dark:text-white" dir="ltr">{{ $fmt($qUsed) }}</div>
-                        <div class="text-[11px] text-gray-400">{{ __('member.quota.used') }}</div>
+                {{-- Footer: used | remaining (inline flex → always two columns) --}}
+                <div style="display:flex; margin-top:1rem; border-top:1px solid rgba(128,128,128,.18);">
+                    <div style="flex:1; text-align:center; padding:.85rem 1rem; border-inline-end:1px solid rgba(128,128,128,.18);">
+                        <div class="text-gray-900 dark:text-white" style="font-size:1.05rem; font-weight:800;" dir="ltr">{{ $fmt($qUsed) }}</div>
+                        <div class="text-gray-400" style="font-size:.72rem; margin-top:.1rem;">{{ __('member.quota.used') }}</div>
                     </div>
-                    <div class="px-5 py-3 text-center">
-                        <div class="text-base font-extrabold text-gray-900 dark:text-white" dir="ltr">{{ $fmt($stats['remaining']) }}</div>
-                        <div class="text-[11px] text-gray-400">{{ __('member.quota.remaining') }}</div>
+                    <div style="flex:1; text-align:center; padding:.85rem 1rem;">
+                        <div class="text-gray-900 dark:text-white" style="font-size:1.05rem; font-weight:800;" dir="ltr">{{ $fmt($stats['remaining']) }}</div>
+                        <div class="text-gray-400" style="font-size:.72rem; margin-top:.1rem;">{{ __('member.quota.remaining') }}</div>
                     </div>
                 </div>
             </div>
