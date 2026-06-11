@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'all_clear' => 'كل شيء تحت السيطرة — لا مهامّ عاجلة.',
+    'quick' => [
+        'new_content' => 'إضافة محتوى',
+    ],
     'stat' => [
         'content' => 'المحتوى',
         'content_desc' => ':count منشور',

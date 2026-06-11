@@ -7,23 +7,53 @@
         <div class="absolute -top-16 -end-10 h-56 w-56 rounded-full"
              style="background:radial-gradient(circle, rgba(201,169,97,.25), transparent 70%);"></div>
 
-        <div class="relative flex flex-col gap-5 p-6 md:p-8 md:flex-row md:items-center md:justify-between">
-            <div>
-                <p class="text-sm text-green-200">{{ __('admin.welcome.hi') }}</p>
-                <h2 class="mt-1 text-2xl md:text-3xl font-bold">{{ $name }}</h2>
-                <p class="mt-1 text-sm text-green-100/90">{{ __('admin.welcome.text') }}</p>
-                @if ($roles)
-                    <span class="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold ring-1 ring-white/15">
-                        <x-filament::icon icon="heroicon-m-shield-check" class="h-4 w-4" style="color:#C9A961;" />
-                        {{ $roles }}
+        <div class="relative" style="padding:1.5rem 1.75rem;">
+            {{-- Greeting + date --}}
+            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; flex-wrap:wrap;">
+                <div style="display:flex; align-items:center; gap:1rem;">
+                    <span style="display:flex; height:3.5rem; width:3.5rem; flex:0 0 auto; align-items:center; justify-content:center; border-radius:1rem; background:rgba(255,255,255,.1); box-shadow:inset 0 0 0 1px rgba(255,255,255,.15);">
+                        <i class="fa-solid fa-gauge-high" style="font-size:1.4rem; color:#C9A961;"></i>
                     </span>
-                @endif
+                    <div>
+                        <p style="font-size:.8rem; color:#bbf7d0;">{{ __('admin.welcome.hi') }}</p>
+                        <h2 style="margin-top:.1rem; font-size:1.6rem; font-weight:800; line-height:1.1;">{{ $name }}</h2>
+                        @if ($roles)
+                            <span style="margin-top:.4rem; display:inline-flex; align-items:center; gap:.4rem; border-radius:9999px; background:rgba(255,255,255,.1); padding:.2rem .65rem; font-size:.7rem; font-weight:600; box-shadow:inset 0 0 0 1px rgba(255,255,255,.15);">
+                                <i class="fa-solid fa-shield-halved" style="color:#C9A961;"></i> {{ $roles }}
+                            </span>
+                        @endif
+                    </div>
+                </div>
+                <div style="display:inline-flex; align-items:center; gap:.45rem; border-radius:9999px; background:rgba(255,255,255,.08); padding:.4rem .85rem; font-size:.72rem; color:#d1fae5;">
+                    <i class="fa-regular fa-calendar"></i> {{ $date }}
+                </div>
             </div>
 
-            <div class="flex items-center gap-2 shrink-0">
-                <span class="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/15">
-                    <x-filament::icon icon="heroicon-o-squares-2x2" class="h-8 w-8" style="color:#C9A961;" />
-                </span>
+            {{-- Attention + quick actions --}}
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-top:1.4rem; flex-wrap:wrap;">
+                <div style="display:flex; align-items:center; gap:.5rem; flex-wrap:wrap;">
+                    @forelse ($attention as $a)
+                        <a href="{{ $a['url'] }}"
+                           style="display:inline-flex; align-items:center; gap:.5rem; border-radius:.7rem; background:rgba(255,255,255,.1); padding:.45rem .8rem; font-size:.78rem; font-weight:600; color:#fff; text-decoration:none; box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);">
+                            <i class="fa-solid {{ $a['icon'] }}" style="color:#fcd34d;"></i>
+                            <span>{{ $a['label'] }}</span>
+                            <span style="display:inline-flex; min-width:1.3rem; justify-content:center; border-radius:9999px; background:#C9A961; color:#1a1205; padding:.05rem .4rem; font-size:.72rem; font-weight:800;" dir="ltr">{{ $a['count'] }}</span>
+                        </a>
+                    @empty
+                        <span style="display:inline-flex; align-items:center; gap:.45rem; font-size:.78rem; color:#bbf7d0;">
+                            <i class="fa-solid fa-circle-check" style="color:#86efac;"></i> {{ __('dashboard.all_clear') }}
+                        </span>
+                    @endforelse
+                </div>
+
+                <div style="display:flex; align-items:center; gap:.5rem; flex-wrap:wrap;">
+                    @foreach ($actions as $ac)
+                        <a href="{{ $ac['url'] }}"
+                           style="display:inline-flex; align-items:center; gap:.45rem; border-radius:.7rem; background:#C9A961; color:#1a1205; padding:.5rem .9rem; font-size:.78rem; font-weight:700; text-decoration:none;">
+                            <i class="fa-solid {{ $ac['icon'] }}"></i> {{ $ac['label'] }}
+                        </a>
+                    @endforeach
+                </div>
             </div>
         </div>
     </div>

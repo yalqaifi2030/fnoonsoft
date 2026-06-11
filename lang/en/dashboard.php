@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'all_clear' => 'All clear — nothing needs your attention.',
+    'quick' => [
+        'new_content' => 'New content',
+    ],
     'stat' => [
         'content' => 'Content',
         'content_desc' => ':count published',
