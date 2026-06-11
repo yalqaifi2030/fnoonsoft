@@ -30,5 +30,18 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        // Any invalid public URL (a 404) sends the visitor to the home page
+        // instead of an error page. APIs/JSON, Livewire and the Filament panels
+        // keep their own 404 handling so they aren't disrupted.
+        $exceptions->render(function (
+            \Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e,
+            \Illuminate\Http\Request $request
+        ) {
+            if ($request->expectsJson()
+                || $request->is('api/*', 'livewire/*', 'admin', 'admin/*', 'upload', 'upload/*', 'dashboard', 'dashboard/*')) {
+                return null;
+            }
+
+            return redirect()->route('home');
+        });
     })->create();
