@@ -33,7 +33,7 @@ class UploadPanelProvider extends PanelProvider
             ->id('upload')
             ->path('upload')
             ->login()
-            ->profile(\App\Filament\Pages\Auth\EditProfile::class)
+            ->profile(\App\Filament\Pages\Auth\EditProfile::class, isSimple: false)
             ->brandName(fn () => \App\Support\Branding::name('upload', 'Fnoon Upload'))
             ->brandLogo(fn () => \App\Support\Branding::logo('upload'))
             ->brandLogoHeight(fn () => \App\Support\Branding::logoHeight())
