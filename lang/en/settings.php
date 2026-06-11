@@ -79,6 +79,24 @@ return [
         'max_file_hint' => 'Set 0 for no per-file size limit.',
     ],
 
+    'watermark' => [
+        'nav' => 'Watermark',
+        'title' => 'Image watermark',
+        'section' => 'Protect images with a watermark',
+        'hint' => 'Stamps a semi-transparent text over uploaded images to protect the site against copying.',
+        'enabled' => 'Enable watermark',
+        'enabled_hint' => 'Applied automatically to every image uploaded once enabled.',
+        'text' => 'Watermark text',
+        'text_hint' => 'Leave empty to use the domain name. (Latin text recommended.)',
+        'position' => 'Style',
+        'tiled' => 'Tiled diagonal (covers the image — strongest)',
+        'corner' => 'Single corner (lighter)',
+        'opacity' => 'Opacity',
+        'opacity_hint' => 'Higher = more visible (3–80%).',
+        'size' => 'Text size',
+        'size_hint' => 'Percent of the image width (2–12%).',
+    ],
+
     'ads' => [
         'nav' => 'Ads (AdSense)',
         'title' => 'Google AdSense',

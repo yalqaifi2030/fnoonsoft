@@ -43,6 +43,9 @@ class MediaUploadController extends Controller
         if ($isPdf) {
             $pages = $this->assets->pdfPageCount(Storage::disk('public')->path($path));
         } else {
+            // Stamp the watermark first so every derived variant is protected too.
+            app(\App\Services\WatermarkService::class)->apply(Storage::disk('public')->path($path));
+
             $img = $this->assets->processImage($path);
             $width = $img['width'];
             $height = $img['height'];
