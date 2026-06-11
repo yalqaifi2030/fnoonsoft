@@ -50,7 +50,7 @@ class WatermarkSettings extends Page implements HasForms
             'watermark_enabled' => (bool) Setting::get('watermark_enabled', false),
             'watermark_text' => Setting::get('watermark_text'),
             'watermark_position' => Setting::get('watermark_position', 'tiled') ?: 'tiled',
-            'watermark_opacity' => (int) (Setting::get('watermark_opacity', 18) ?: 18),
+            'watermark_opacity' => (int) (Setting::get('watermark_opacity', 25) ?: 25),
             'watermark_size' => (float) (Setting::get('watermark_size', 4) ?: 4),
         ]);
     }
@@ -108,7 +108,7 @@ class WatermarkSettings extends Page implements HasForms
         Setting::put('watermark_enabled', (bool) ($d['watermark_enabled'] ?? false), 'boolean', 'watermark');
         Setting::put('watermark_text', (string) ($d['watermark_text'] ?? ''), 'string', 'watermark');
         Setting::put('watermark_position', (string) ($d['watermark_position'] ?? 'tiled'), 'string', 'watermark');
-        Setting::put('watermark_opacity', (string) ($d['watermark_opacity'] ?? 18), 'string', 'watermark');
+        Setting::put('watermark_opacity', (string) ($d['watermark_opacity'] ?? 25), 'string', 'watermark');
         Setting::put('watermark_size', (string) ($d['watermark_size'] ?? 4), 'string', 'watermark');
 
         Notification::make()->success()->title(__('settings.saved'))->send();

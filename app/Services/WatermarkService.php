@@ -46,11 +46,22 @@ class WatermarkService
             $sizePct = max(2.0, min(12.0, (float) (Setting::get('watermark_size', 4) ?: 4)));
             $fontSize = max(11, (int) round($w * $sizePct / 100));
 
-            $opacity = max(3, min(80, (int) (Setting::get('watermark_opacity', 18) ?: 18)));
+            $opacity = max(3, min(80, (int) (Setting::get('watermark_opacity', 25) ?: 25)));
             $alpha = (int) round(127 - ($opacity / 100 * 127));
+            $haloAlpha = (int) round(127 - (min(85, $opacity + 15) / 100 * 127));
 
             $white = imagecolorallocatealpha($img, 255, 255, 255, $alpha);
-            $shadow = imagecolorallocatealpha($img, 0, 0, 0, min(127, $alpha + 25));
+            $dark = imagecolorallocatealpha($img, 0, 0, 0, $haloAlpha);
+            $off = max(1, (int) round($fontSize / 16));
+
+            // Draw the text with a dark halo so it stays visible on light, dark AND
+            // transparent images (a plain white stamp vanishes on a white photo).
+            $stamp = function (int $x, int $y, int $angle) use ($img, $fontSize, $font, $text, $white, $dark, $off) {
+                foreach ([[-$off, 0], [$off, 0], [0, -$off], [0, $off], [-$off, -$off], [$off, $off], [-$off, $off], [$off, -$off]] as [$dx, $dy]) {
+                    imagettftext($img, $fontSize, $angle, $x + $dx, $y + $dy, $dark, $font, $text);
+                }
+                imagettftext($img, $fontSize, $angle, $x, $y, $white, $font, $text);
+            };
 
             $angle = 30;
             $box = imagettfbbox($fontSize, $angle, $font, $text);
@@ -64,16 +75,11 @@ class WatermarkService
             if ($tiled) {
                 for ($y = (int) $stepY; $y < $h + $stepY; $y += (int) $stepY) {
                     for ($x = -(int) $stepX; $x < $w; $x += (int) $stepX) {
-                        imagettftext($img, $fontSize, $angle, $x + 1, $y + 1, $shadow, $font, $text);
-                        imagettftext($img, $fontSize, $angle, $x, $y, $white, $font, $text);
+                        $stamp($x, $y, $angle);
                     }
                 }
             } else {
-                // Single watermark, bottom-right corner.
-                $x = (int) ($w - $textW - $fontSize);
-                $y = (int) ($h - $fontSize);
-                imagettftext($img, $fontSize, 0, $x + 1, $y + 1, $shadow, $font, $text);
-                imagettftext($img, $fontSize, 0, $x, $y, $white, $font, $text);
+                $stamp((int) ($w - $textW - $fontSize), (int) ($h - $fontSize), 0);
             }
 
             $this->save($img, $absolutePath);
