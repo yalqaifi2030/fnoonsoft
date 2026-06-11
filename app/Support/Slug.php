@@ -23,17 +23,19 @@ class Slug
             return '';
         }
 
-        // Non-Latin (e.g. Arabic) names keep their own script so the slug stays
-        // readable: "برامج التصميم" → "برامج-التصميم" (valid in URLs, percent-
-        // encoded). Pure-Latin names use the normal ASCII slug.
-        if (preg_match('/[^\x00-\x7F]/', $value)) {
-            // Drop combining marks (Arabic tashkeel) so "محرّر" → "محرر".
-            $value = preg_replace('/\p{M}+/u', '', $value) ?? $value;
-            $slug = preg_replace('/[^\p{L}\p{N}]+/u', '-', $value) ?? '';
+        // Transliterate to a clean ASCII slug: "برامج التصميم" → "bramg-altsmym",
+        // "Design Apps" → "design-apps".
+        $latin = Str::slug($value);
 
-            return trim(mb_strtolower($slug), '-');
+        if ($latin !== '') {
+            return $latin;
         }
 
-        return Str::slug($value);
+        // Fallback only when transliteration yields nothing (no transliterator):
+        // keep the original letters/numbers, tashkeel stripped, so it's not empty.
+        $value = preg_replace('/\p{M}+/u', '', $value) ?? $value;
+        $slug = preg_replace('/[^\p{L}\p{N}]+/u', '-', $value) ?? '';
+
+        return trim(mb_strtolower($slug), '-');
     }
 }
