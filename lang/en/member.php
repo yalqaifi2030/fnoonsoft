@@ -21,6 +21,10 @@ return [
         'rank_active' => 'Active',
         'rank_pro' => 'Pro',
         'rank_star' => 'Star',
+        'next' => 'Next',
+        'total' => 'Total',
+        'peak' => 'Peak',
+        'max_level' => 'Top rank reached!',
     ],
 
     'nav' => [

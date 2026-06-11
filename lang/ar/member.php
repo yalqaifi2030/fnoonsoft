@@ -21,6 +21,10 @@ return [
         'rank_active' => 'نشِط',
         'rank_pro' => 'محترف',
         'rank_star' => 'نجم',
+        'next' => 'التالي',
+        'total' => 'الإجمالي',
+        'peak' => 'الأعلى',
+        'max_level' => 'وصلت أعلى رتبة!',
     ],
 
     'nav' => [
