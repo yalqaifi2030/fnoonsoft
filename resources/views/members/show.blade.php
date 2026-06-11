@@ -31,77 +31,88 @@
 
     {{-- ===== Profile header ===== --}}
     <div class="card-luxury overflow-hidden p-0">
+        {{-- Cover --}}
         @if ($user->coverUrl())
-            <div class="h-40 bg-cover bg-center sm:h-48" style="background-image: url('{{ $user->coverUrl() }}');"></div>
+            <div class="h-40 bg-cover bg-center sm:h-52" style="background-image: url('{{ $user->coverUrl() }}');"></div>
         @else
-            <div class="h-32" style="background: linear-gradient(120deg, #006C35, #00472a);"></div>
+            <div class="h-36 sm:h-44" style="background: radial-gradient(circle at 25% 15%, rgba(201,169,97,.30), transparent 55%), linear-gradient(120deg, #006C35, #00472a);"></div>
         @endif
-        <div class="px-6 pb-6 -mt-12">
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-end">
-                <div class="shrink-0">
-                    @if ($user->avatarUrl())
-                        <img src="{{ $user->avatarUrl() }}" alt="{{ $user->displayName() }}"
-                             class="h-24 w-24 rounded-2xl object-cover ring-4 ring-white shadow-lg">
-                    @else
-                        <span class="flex h-24 w-24 items-center justify-center rounded-2xl bg-saudi-green text-white text-3xl font-black ring-4 ring-white shadow-lg">
-                            {{ mb_substr($user->displayName(), 0, 1) }}
-                        </span>
-                    @endif
-                </div>
-                <div class="min-w-0 flex-1 sm:pb-1">
-                    <h1 class="inline-flex items-center gap-2 font-cairo text-2xl font-black text-luxury-black">
-                        {{ $user->displayName() }}
-                        @if ($user->memberTier()->hasBadge())
-                            <i class="{{ $user->memberTier()->icon() }} text-xl" style="color: {{ $user->memberTier()->color() }};"
-                               title="{{ $user->memberTier()->label() }}"></i>
-                        @endif
-                    </h1>
-                    <p class="text-sm font-semibold text-saudi-green" dir="ltr">{{ '@'.$user->username }}</p>
-                </div>
+
+        {{-- Identity (centred) --}}
+        <div class="px-6 pb-7 text-center">
+            <div class="-mt-16 flex justify-center">
+                @if ($user->avatarUrl())
+                    <img src="{{ $user->avatarUrl() }}" alt="{{ $user->displayName() }}"
+                         class="h-28 w-28 rounded-2xl object-cover ring-4 ring-white shadow-xl">
+                @else
+                    <span class="flex h-28 w-28 items-center justify-center rounded-2xl bg-saudi-green text-white text-4xl font-black ring-4 ring-white shadow-xl">
+                        {{ mb_substr($user->displayName(), 0, 1) }}
+                    </span>
+                @endif
             </div>
 
+            <h1 class="mt-4 inline-flex items-center justify-center gap-2 font-cairo text-2xl font-black text-luxury-black">
+                {{ $user->displayName() }}
+                @if ($user->memberTier()->hasBadge())
+                    <i class="{{ $user->memberTier()->icon() }} text-xl" style="color: {{ $user->memberTier()->color() }};"
+                       title="{{ $user->memberTier()->label() }}"></i>
+                @endif
+            </h1>
+            <p class="mt-0.5 text-sm font-semibold text-saudi-green">{{ '@'.$user->username }}</p>
+
             @if ($user->bio)
-                <p class="mt-4 max-w-2xl text-sm leading-relaxed text-gray-600">{{ $user->bio }}</p>
+                <p class="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-gray-600">{{ $user->bio }}</p>
             @endif
 
             @if ($user->website || $user->twitter || $user->github)
-                <div class="mt-3 flex flex-wrap items-center gap-4 text-sm" dir="ltr">
+                <div class="mt-4 flex flex-wrap items-center justify-center gap-2">
                     @if ($user->website)
-                        <a href="{{ $user->website }}" target="_blank" rel="noopener nofollow" class="inline-flex items-center gap-1.5 text-gray-500 hover:text-saudi-green">
-                            <i class="fa-solid fa-globe"></i> {{ preg_replace('#^https?://#', '', rtrim($user->website, '/')) }}
+                        <a href="{{ $user->website }}" target="_blank" rel="noopener nofollow" class="inline-flex items-center gap-1.5 rounded-full bg-gray-50 px-3 py-1.5 text-xs font-semibold text-gray-600 ring-1 ring-gray-100 transition hover:text-saudi-green hover:ring-saudi-green/30">
+                            <i class="fa-solid fa-globe"></i> <span dir="ltr">{{ preg_replace('#^https?://#', '', rtrim($user->website, '/')) }}</span>
                         </a>
                     @endif
                     @if ($user->twitter)
-                        <a href="https://x.com/{{ $user->twitter }}" target="_blank" rel="noopener nofollow" class="inline-flex items-center gap-1.5 text-gray-500 hover:text-saudi-green">
-                            <i class="fa-brands fa-x-twitter"></i> {{ $user->twitter }}
+                        <a href="https://x.com/{{ $user->twitter }}" target="_blank" rel="noopener nofollow" class="inline-flex items-center gap-1.5 rounded-full bg-gray-50 px-3 py-1.5 text-xs font-semibold text-gray-600 ring-1 ring-gray-100 transition hover:text-saudi-green hover:ring-saudi-green/30">
+                            <i class="fa-brands fa-x-twitter"></i> <span dir="ltr">{{ $user->twitter }}</span>
                         </a>
                     @endif
                     @if ($user->github)
-                        <a href="https://github.com/{{ $user->github }}" target="_blank" rel="noopener nofollow" class="inline-flex items-center gap-1.5 text-gray-500 hover:text-saudi-green">
-                            <i class="fa-brands fa-github"></i> {{ $user->github }}
+                        <a href="https://github.com/{{ $user->github }}" target="_blank" rel="noopener nofollow" class="inline-flex items-center gap-1.5 rounded-full bg-gray-50 px-3 py-1.5 text-xs font-semibold text-gray-600 ring-1 ring-gray-100 transition hover:text-saudi-green hover:ring-saudi-green/30">
+                            <i class="fa-brands fa-github"></i> <span dir="ltr">{{ $user->github }}</span>
                         </a>
                     @endif
                 </div>
             @endif
 
-            <div class="mt-5 flex flex-wrap gap-6 border-t border-gray-100 pt-4">
-                <div><span class="text-xl font-black text-luxury-black" dir="ltr">{{ number_format($stats['files']) }}</span> <span class="text-xs text-gray-400">{{ __('profile.public.files') }}</span></div>
-                <div><span class="text-xl font-black text-luxury-black" dir="ltr">{{ number_format($stats['downloads']) }}</span> <span class="text-xs text-gray-400">{{ __('profile.public.downloads') }}</span></div>
-                <div><span class="text-xl font-black text-luxury-black" dir="ltr">{{ number_format($stats['views']) }}</span> <span class="text-xs text-gray-400">{{ __('profile.public.views') }}</span></div>
+            {{-- Stats --}}
+            <div class="mx-auto mt-6 grid max-w-md grid-cols-3 gap-3">
+                @foreach ([
+                    ['v' => $stats['files'],     'l' => __('profile.public.files'),     'i' => 'fa-folder',     'c' => '#006C35'],
+                    ['v' => $stats['downloads'], 'l' => __('profile.public.downloads'), 'i' => 'fa-arrow-down', 'c' => '#3b82f6'],
+                    ['v' => $stats['views'],     'l' => __('profile.public.views'),     'i' => 'fa-eye',        'c' => '#8b5cf6'],
+                ] as $s)
+                    <div class="rounded-2xl bg-gray-50 py-3.5 ring-1 ring-gray-100">
+                        <div class="flex items-center justify-center gap-1.5">
+                            <i class="fa-solid {{ $s['i'] }} text-xs" style="color: {{ $s['c'] }};"></i>
+                            <span class="text-xl font-black text-luxury-black" dir="ltr">{{ number_format($s['v']) }}</span>
+                        </div>
+                        <div class="mt-0.5 text-xs text-gray-400">{{ $s['l'] }}</div>
+                    </div>
+                @endforeach
             </div>
 
             {{-- Share --}}
             @php $shareUrl = url()->current(); @endphp
-            <div class="mt-4 flex flex-wrap items-center gap-2 border-t border-gray-100 pt-4">
+            <div class="mt-6 flex flex-wrap items-center justify-center gap-2 border-t border-gray-100 pt-5">
                 <span class="text-xs font-semibold text-gray-400">{{ __('profile.public.share') }}</span>
                 <button type="button"
                         onclick="navigator.clipboard.writeText('{{ $shareUrl }}').then(() => { const s = this.querySelector('span'); const o = s.textContent; s.textContent = '{{ __('profile.public.copied') }}'; setTimeout(() => s.textContent = o, 1500); })"
-                        class="inline-flex items-center gap-1.5 rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-bold text-gray-600 transition hover:bg-gray-200">
+                        class="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1.5 text-xs font-bold text-gray-600 transition hover:bg-gray-200">
                     <i class="fa-solid fa-link"></i> <span>{{ __('profile.public.copy') }}</span>
                 </button>
-                <a href="https://wa.me/?text={{ urlencode($shareUrl) }}" target="_blank" rel="noopener" title="WhatsApp" class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-white transition hover:opacity-90" style="background:#25D366;"><i class="fa-brands fa-whatsapp"></i></a>
-                <a href="https://t.me/share/url?url={{ urlencode($shareUrl) }}" target="_blank" rel="noopener" title="Telegram" class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-white transition hover:opacity-90" style="background:#229ED9;"><i class="fa-brands fa-telegram"></i></a>
-                <a href="https://x.com/intent/tweet?url={{ urlencode($shareUrl) }}" target="_blank" rel="noopener" title="X" class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-black text-white transition hover:opacity-90"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="https://wa.me/?text={{ urlencode($shareUrl) }}" target="_blank" rel="noopener" title="WhatsApp" class="inline-flex h-8 w-8 items-center justify-center rounded-full text-white transition hover:opacity-90" style="background:#25D366;"><i class="fa-brands fa-whatsapp"></i></a>
+                <a href="https://t.me/share/url?url={{ urlencode($shareUrl) }}" target="_blank" rel="noopener" title="Telegram" class="inline-flex h-8 w-8 items-center justify-center rounded-full text-white transition hover:opacity-90" style="background:#229ED9;"><i class="fa-brands fa-telegram"></i></a>
+                <a href="https://x.com/intent/tweet?url={{ urlencode($shareUrl) }}" target="_blank" rel="noopener" title="X" class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-black text-white transition hover:opacity-90"><i class="fa-brands fa-x-twitter"></i></a>
             </div>
         </div>
     </div>
