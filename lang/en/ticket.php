@@ -21,6 +21,7 @@ return [
     'new_ticket' => 'New ticket',
     'reply' => 'Send reply',
     'reply_hint' => 'Write your reply here…',
+    'reply_required' => 'Write your reply first.',
     'close' => 'Close ticket',
     'reopen' => 'Reopen',
     'internal_note' => 'Internal note (hidden from the member)',

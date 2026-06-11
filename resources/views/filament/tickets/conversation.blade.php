@@ -92,5 +92,40 @@
         </div>
     @endif
 
+    {{-- Inline reply box --}}
+    <div class="bg-white dark:bg-gray-900" style="margin-top:1.5rem; border:1px solid rgba(128,128,128,.16); border-radius:1.1rem; padding:1rem 1.1rem; box-shadow:0 8px 22px -16px rgba(0,0,0,.35);">
+        <textarea wire:model="replyBody" rows="3" placeholder="{{ __('ticket.reply_hint') }}"
+                  class="text-gray-900 dark:text-white"
+                  style="width:100%; resize:vertical; border:1px solid rgba(128,128,128,.22); border-radius:.7rem; padding:.7rem .85rem; font-size:.88rem; background:transparent; outline:none;"></textarea>
+        @error('replyBody') <p style="color:#ef4444; font-size:.72rem; margin-top:.35rem;">{{ $message }}</p> @enderror
+        @error('replyFile') <p style="color:#ef4444; font-size:.72rem; margin-top:.35rem;">{{ $message }}</p> @enderror
+
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:.75rem; margin-top:.8rem; flex-wrap:wrap;">
+            <div style="display:flex; align-items:center; gap:1.1rem; flex-wrap:wrap;">
+                <label style="display:inline-flex; align-items:center; gap:.4rem; cursor:pointer; font-size:.78rem; color:#6b7280;">
+                    <i class="fa-solid fa-paperclip"></i>
+                    <span>{{ __('ticket.attachment') }}</span>
+                    <input type="file" wire:model="replyFile" style="display:none;">
+                </label>
+                <span wire:loading wire:target="replyFile" style="font-size:.7rem; color:#9ca3af;">…</span>
+                @if ($replyFile)
+                    <span style="font-size:.72rem; color:#006C35;"><i class="fa-solid fa-circle-check"></i></span>
+                @endif
+
+                @if ($isStaff)
+                    <label style="display:inline-flex; align-items:center; gap:.4rem; cursor:pointer; font-size:.78rem; color:#b45309;">
+                        <input type="checkbox" wire:model="replyInternal"> {{ __('ticket.internal_note') }}
+                    </label>
+                @endif
+            </div>
+
+            <button type="button" wire:click="submitReply" wire:target="submitReply" wire:loading.attr="disabled"
+                    style="display:inline-flex; align-items:center; gap:.45rem; border-radius:.7rem; background:#006C35; color:#fff; padding:.6rem 1.2rem; font-size:.82rem; font-weight:700; border:0; cursor:pointer;">
+                <span wire:loading.remove wire:target="submitReply"><i class="fa-solid fa-paper-plane"></i> {{ __('ticket.reply') }}</span>
+                <span wire:loading wire:target="submitReply">…</span>
+            </button>
+        </div>
+    </div>
+
 </div>
 </x-filament-panels::page>
