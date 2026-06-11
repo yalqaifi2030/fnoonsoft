@@ -30,15 +30,41 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        // Any invalid public URL (a 404) sends the visitor to the home page
-        // instead of an error page. APIs/JSON, Livewire and the Filament panels
-        // keep their own 404 handling so they aren't disrupted.
+        // Friendly handling for 403/404 on normal (HTML) requests:
+        //  - 403: an authenticated user hit a panel they can't access → send
+        //    them to the panel they CAN use, with a notice (no raw "Forbidden").
+        //  - 404: an invalid public URL → home page.
+        // API/JSON and Livewire keep their default handling.
         $exceptions->render(function (
-            \Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e,
+            \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface $e,
             \Illuminate\Http\Request $request
         ) {
+            $status = $e->getStatusCode();
+
             if ($request->expectsJson()
-                || $request->is('api/*', 'livewire/*', 'admin', 'admin/*', 'upload', 'upload/*', 'dashboard', 'dashboard/*')) {
+                || $request->is('api/*', 'livewire/*')
+                || ! in_array($status, [403, 404], true)) {
+                return null;
+            }
+
+            if ($status === 403) {
+                $user = $request->user();
+                $target = $user ? ($user->isStaff() ? '/admin' : '/dashboard') : route('home');
+
+                try {
+                    \Filament\Notifications\Notification::make()
+                        ->title(__('site.forbidden'))
+                        ->danger()
+                        ->send();
+                } catch (\Throwable $ex) {
+                    // notification is best-effort; never block the redirect
+                }
+
+                return redirect($target);
+            }
+
+            // 404 — panels keep their own 404 page; the public site goes home.
+            if ($request->is('admin', 'admin/*', 'upload', 'upload/*', 'dashboard', 'dashboard/*')) {
                 return null;
             }
 

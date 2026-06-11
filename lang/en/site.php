@@ -3,6 +3,7 @@
 return [
     'name' => 'Fnoon',
     'tagline' => 'Download software, apps, scripts & website templates',
+    'forbidden' => "You're not authorized to access that panel — we've sent you back.",
     'nav' => [
         'home' => 'Home',
         'browse' => 'Browse',
