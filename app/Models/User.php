@@ -103,18 +103,24 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
             : (\App\Enums\MemberTier::tryFrom((string) $this->tier) ?? \App\Enums\MemberTier::Free);
     }
 
-    public function storageQuotaBytes(): int
+    /**
+     * The member's configured allowance in bytes (what the dashboard shows):
+     * explicit per-member quota → tier quota → global default. Ignores staff
+     * status so an admin-set value always reflects on the member's dashboard.
+     */
+    public function displayQuotaBytes(): int
     {
-        if ($this->isStaff()) {
-            return PHP_INT_MAX;
-        }
-
-        // Precedence: explicit per-member quota → tier quota → global default.
         $gb = $this->quota_gb !== null
             ? (float) $this->quota_gb
             : ($this->memberTier()->quotaGb() ?? (float) (Setting::get('member_quota_gb', 10) ?: 10));
 
         return (int) round($gb * 1024 * 1024 * 1024);
+    }
+
+    public function storageQuotaBytes(): int
+    {
+        // Staff are unlimited at upload time; members use their configured quota.
+        return $this->isStaff() ? PHP_INT_MAX : $this->displayQuotaBytes();
     }
 
     /** Per-file upload ceiling in bytes (tier → global setting → unlimited). */

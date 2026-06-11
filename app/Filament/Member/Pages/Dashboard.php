@@ -32,10 +32,9 @@ class Dashboard extends UploadCenter
         $stats = parent::getStatsProperty();
         $user = auth()->user();
 
-        // Always show the member storage allowance as a bar (even for staff
-        // previewing the panel) — staff aren't actually capped at upload time.
-        $gb = (float) (\App\Models\Setting::get('member_quota_gb', 10) ?: 10);
-        $quota = (int) round($gb * 1024 ** 3);
+        // Show the member's ACTUAL allowance (manual quota → tier → default), so
+        // raising a member's space in the admin reflects on their dashboard.
+        $quota = $user ? $user->displayQuotaBytes() : 0;
         $used = $user ? $user->storageUsedBytes() : 0;
 
         $stats['quota'] = $quota;
