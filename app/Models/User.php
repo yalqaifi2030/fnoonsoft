@@ -25,7 +25,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
 
     protected $fillable = [
         'name', 'username', 'email', 'password', 'avatar', 'cover', 'bio', 'website',
-        'twitter', 'github', 'country', 'locale', 'is_active',
+        'twitter', 'github', 'country', 'locale', 'is_active', 'quota_gb',
     ];
 
     protected $hidden = [
@@ -100,7 +100,10 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
             return PHP_INT_MAX;
         }
 
-        $gb = (float) (Setting::get('member_quota_gb', 10) ?: 10);
+        // A per-member quota (quota_gb) overrides the global default.
+        $gb = $this->quota_gb !== null
+            ? (float) $this->quota_gb
+            : (float) (Setting::get('member_quota_gb', 10) ?: 10);
 
         return (int) round($gb * 1024 * 1024 * 1024);
     }

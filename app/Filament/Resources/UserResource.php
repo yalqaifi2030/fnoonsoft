@@ -107,6 +107,16 @@ class UserResource extends Resource
                             ->colors([true => 'success', false => 'danger'])
                             ->icons([true => 'heroicon-m-check-circle', false => 'heroicon-m-no-symbol'])
                             ->default(true),
+
+                        Forms\Components\TextInput::make('quota_gb')
+                            ->label(__('user.quota'))
+                            ->helperText(__('user.quota_hint'))
+                            ->numeric()
+                            ->minValue(0)
+                            ->step(0.5)
+                            ->suffix('GB')
+                            ->prefixIcon('heroicon-m-circle-stack')
+                            ->placeholder(__('user.quota_default', ['gb' => (string) (\App\Models\Setting::get('member_quota_gb', 10) ?: 10)])),
                     ]),
 
                 Forms\Components\Section::make(__('user.section.preferences'))
@@ -125,6 +135,17 @@ class UserResource extends Resource
                     ]),
             ])->columnSpan(['lg' => 1]),
         ])->columns(3);
+    }
+
+    private static function humanBytes(int $b): string
+    {
+        if ($b <= 0) {
+            return '0 B';
+        }
+        $u = ['B', 'KB', 'MB', 'GB', 'TB'];
+        $i = (int) floor(log($b, 1024));
+
+        return round($b / (1024 ** $i), 1).' '.$u[min($i, 4)];
     }
 
     public static function table(Table $table): Table
@@ -155,6 +176,15 @@ class UserResource extends Resource
                     ->badge()
                     ->formatStateUsing(fn ($state) => $state ? __('user.active') : __('user.inactive'))
                     ->color(fn ($state) => $state ? 'success' : 'danger'),
+
+                Tables\Columns\TextColumn::make('storage')
+                    ->label(__('user.storage'))
+                    ->badge()
+                    ->state(fn (User $r) => $r->isStaff()
+                        ? '∞'
+                        : static::humanBytes($r->storageUsedBytes()).' / '.static::humanBytes($r->storageQuotaBytes()))
+                    ->color(fn (User $r) => $r->isStaff() ? 'gray' : 'primary')
+                    ->icon('heroicon-m-circle-stack'),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('user.joined'))
