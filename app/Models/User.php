@@ -74,8 +74,11 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
             return (bool) Setting::get('member_uploads_enabled', false);
         }
 
-        // Admin & upload panels: any active user (unchanged).
-        return true;
+        // Admin & upload panels are STAFF ONLY (users with an assigned role).
+        // Members have no role, so they are denied here — they belong strictly
+        // in the member dashboard (/dashboard). This closes the privilege-
+        // escalation hole where any registered member could open /admin.
+        return $this->isStaff();
     }
 
     // --- Member storage quota -------------------------------------------

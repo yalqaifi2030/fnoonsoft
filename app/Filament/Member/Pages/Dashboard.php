@@ -11,6 +11,14 @@ use App\Filament\Upload\Pages\UploadCenter;
  */
 class Dashboard extends UploadCenter
 {
+    /** Live at the panel root: /dashboard (not /dashboard/dashboard). */
+    protected static string $routePath = '/';
+
+    public static function getRoutePath(): string
+    {
+        return static::$routePath;
+    }
+
     protected static ?int $navigationSort = 1;
 
     public static function getNavigationLabel(): string
