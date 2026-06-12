@@ -5,7 +5,7 @@
     x-data="fnoonAdminUploader({
         target: 'fnoon-admin-uploader',
         maxBytes: {{ (int) env('UPLOAD_MAX_BYTES', 32212254720) }},
-        partSize: {{ (int) env('UPLOAD_PART_SIZE', 16777216) }},
+        partSize: {{ (int) env('UPLOAD_PART_SIZE', 33554432) }},
         createUrl: @js(route('upload.multipart.create')),
         signUrl: @js(route('upload.multipart.sign')),
         completeUrl: @js(route('upload.multipart.complete')),
@@ -77,7 +77,8 @@
                             new Uppy.Uppy(coreOpts)
                                 .use(Uppy.Dashboard, { inline: true, target: '#' + opts.target, height: 300, proudlyDisplayPoweredByUppy: false })
                                 .use(Uppy.AwsS3Multipart, {
-                                    limit: 6,
+                                    limit: 4,
+                                    retryDelays: [0, 3000, 6000, 12000, 24000, 30000],
                                     getChunkSize: () => opts.partSize,
                                     createMultipartUpload: async (file) => {
                                         const d = await post(opts.createUrl, { filename: file.name, type: file.type, size: file.size });
@@ -95,6 +96,9 @@
                                     abortMultipartUpload: async (file, { uploadId, key }) => {
                                         await post(opts.abortUrl, { sessionUuid: file.meta.sessionUuid, key, uploadId });
                                     },
+                                })
+                                .on('upload-error', (file, error, response) => {
+                                    console.error('[fnoon upload] part failed:', error?.message || error, 'status:', response?.status, response);
                                 })
                                 .on('complete', (result) => {
                                     (result.successful || []).forEach((file) => {
