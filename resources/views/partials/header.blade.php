@@ -31,11 +31,13 @@
 
             {{-- Actions --}}
             <div class="flex items-center gap-2">
-                {{-- Language switch --}}
-                <a href="{{ route('locale.switch', $locale === 'ar' ? 'en' : 'ar') }}"
-                   class="hidden sm:inline-flex text-sm px-2 py-1 rounded-lg border border-royal-gold/30 hover:bg-royal-gold/10">
-                    {{ $locale === 'ar' ? 'EN' : 'ع' }}
-                </a>
+                {{-- Language switch (hidden while the site is locked to Arabic) --}}
+                @unless (config('app.locale_locked'))
+                    <a href="{{ route('locale.switch', $locale === 'ar' ? 'en' : 'ar') }}"
+                       class="hidden sm:inline-flex text-sm px-2 py-1 rounded-lg border border-royal-gold/30 hover:bg-royal-gold/10">
+                        {{ $locale === 'ar' ? 'EN' : 'ع' }}
+                    </a>
+                @endunless
                 @if (\App\Models\Setting::get('member_uploads_enabled'))
                     @auth
                         <a href="/dashboard" class="hidden sm:inline-flex btn-primary text-sm">
@@ -73,7 +75,9 @@
                     <a href="/dashboard/register" class="font-bold text-saudi-green">{{ __('site.nav.register') }}</a>
                 @endauth
             @endif
-            <a href="{{ route('locale.switch', $locale === 'ar' ? 'en' : 'ar') }}">{{ $locale === 'ar' ? 'English' : 'العربية' }}</a>
+            @unless (config('app.locale_locked'))
+                <a href="{{ route('locale.switch', $locale === 'ar' ? 'en' : 'ar') }}">{{ $locale === 'ar' ? 'English' : 'العربية' }}</a>
+            @endunless
         </nav>
     </div>
 </header>

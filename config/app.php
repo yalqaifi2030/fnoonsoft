@@ -78,14 +78,19 @@ return [
     |
     */
 
-    'locale' => env('APP_LOCALE', 'en'),
+    'locale' => env('APP_LOCALE', 'ar'),
 
-    'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
+    'fallback_locale' => env('APP_FALLBACK_LOCALE', 'ar'),
 
     'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
 
     // Locales the public site can switch between. 'ar' renders RTL.
     'supported_locales' => ['en', 'ar'],
+
+    // Temporarily force the public site to Arabic only and hide the language
+    // switcher. Set APP_LOCALE_LOCKED=false (or change this default) to bring
+    // the English toggle back.
+    'locale_locked' => (bool) env('APP_LOCALE_LOCKED', true),
 
     /*
     |--------------------------------------------------------------------------

@@ -14,6 +14,13 @@ class SetLocale
 {
     public function handle(Request $request, Closure $next): Response
     {
+        // Temporarily locked to Arabic only (see config/app.php → locale_locked).
+        if (config('app.locale_locked')) {
+            app()->setLocale('ar');
+
+            return $next($request);
+        }
+
         $supported = config('app.supported_locales', ['en', 'ar']);
 
         $locale = session('locale')
