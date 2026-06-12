@@ -6,6 +6,7 @@
         target: 'fnoon-admin-uploader',
         maxBytes: {{ (int) env('UPLOAD_MAX_BYTES', 32212254720) }},
         partSize: {{ (int) env('UPLOAD_PART_SIZE', 33554432) }},
+        concurrency: {{ max(1, (int) env('UPLOAD_CONCURRENCY', 6)) }},
         createUrl: @js(route('upload.multipart.create')),
         signUrl: @js(route('upload.multipart.sign')),
         completeUrl: @js(route('upload.multipart.complete')),
@@ -77,7 +78,7 @@
                             new Uppy.Uppy(coreOpts)
                                 .use(Uppy.Dashboard, { inline: true, target: '#' + opts.target, height: 300, proudlyDisplayPoweredByUppy: false })
                                 .use(Uppy.AwsS3Multipart, {
-                                    limit: 4,
+                                    limit: opts.concurrency,
                                     retryDelays: [0, 3000, 6000, 12000, 24000, 30000],
                                     getChunkSize: () => opts.partSize,
                                     createMultipartUpload: async (file) => {

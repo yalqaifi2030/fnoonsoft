@@ -64,6 +64,7 @@ class UploadCenter extends Page
         return [
             'maxBytes' => (int) env('UPLOAD_MAX_BYTES', 32212254720),
             'partSize' => (int) env('UPLOAD_PART_SIZE', 33554432),
+            'concurrency' => max(1, (int) env('UPLOAD_CONCURRENCY', 6)),
             'assets' => $this->recentAssets,
             'stats' => $this->stats,
             'storage' => $configured ? 'cloud' : 'local',

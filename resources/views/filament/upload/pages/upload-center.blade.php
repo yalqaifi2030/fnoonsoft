@@ -509,7 +509,7 @@
                         new Uppy.Uppy(uppyOptions({ autoProceed: false, restrictions: { maxNumberOfFiles: 5, maxFileSize: {{ $maxBytes }} } }))
                             .use(Uppy.Dashboard, { inline: true, target: '#fnoon-files', height: 320, proudlyDisplayPoweredByUppy: false, note: '{{ __('upload.center.zone_hint') }}' })
                             .use(Uppy.AwsS3Multipart, {
-                                limit: 4,
+                                limit: {{ $concurrency }},
                                 retryDelays: [0, 3000, 6000, 12000, 24000, 30000],
                                 getChunkSize: () => {{ $partSize }},
                                 createMultipartUpload: async (file) => {
