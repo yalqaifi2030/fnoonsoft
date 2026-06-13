@@ -66,7 +66,7 @@ class AssetController extends Controller
         // R2: hand off to a short-lived presigned URL.
         if ($asset->disk === 'r2') {
             return redirect()->away(
-                app(R2UploadService::class)->temporaryDownloadUrl($asset->path, $asset->original_name)
+                app(R2UploadService::class)->temporaryDownloadUrl($asset->path, $asset->downloadName())
             );
         }
 
@@ -74,7 +74,7 @@ class AssetController extends Controller
         $absolute = \Illuminate\Support\Facades\Storage::disk($asset->disk)->path($asset->path);
         abort_unless(is_file($absolute), 404);
 
-        return response()->download($absolute, $asset->original_name);
+        return response()->download($absolute, $asset->downloadName());
     }
 
     /** Congratulate the owner when their file crosses a download milestone. */

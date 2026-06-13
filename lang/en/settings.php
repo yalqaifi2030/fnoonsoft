@@ -191,6 +191,8 @@ return [
         'path_style_hint' => 'Required for R2 & iDrive e2. Off for AWS S3.',
         'proxy' => 'Upload through the server (no CORS needed)',
         'proxy_hint' => 'Relays upload chunks through your server to the bucket. Turn on when the provider blocks browser CORS (e.g. iDrive e2 keys without bucket-config rights).',
+        'brand' => 'Prefix downloaded files with the site name',
+        'brand_hint' => 'Adds the domain to the downloaded filename (e.g. finunsoft.com-filename.rar). The stored name stays clean; applies to all files.',
         'test' => 'Test connection',
         'test_ok' => 'Connection successful — the bucket is reachable.',
         'test_fail' => 'Connection failed',

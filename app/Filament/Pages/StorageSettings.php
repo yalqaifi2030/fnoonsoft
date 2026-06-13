@@ -64,6 +64,7 @@ class StorageSettings extends Page implements HasForms
             'path_style' => (bool) Setting::get('storage_path_style', true),
             'public_url' => Setting::get('storage_public_url'),
             'proxy' => (bool) Setting::get('storage_proxy', false),
+            'brand_downloads' => (bool) Setting::get('brand_downloads', true),
         ]);
     }
 
@@ -133,6 +134,10 @@ class StorageSettings extends Page implements HasForms
 
                         Toggle::make('proxy')->label(__('settings.storage.proxy'))
                             ->helperText(__('settings.storage.proxy_hint'))
+                            ->columnSpanFull(),
+
+                        Toggle::make('brand_downloads')->label(__('settings.storage.brand'))
+                            ->helperText(__('settings.storage.brand_hint'))
                             ->columnSpanFull(),
                     ])->columns(2),
             ])
@@ -237,6 +242,7 @@ class StorageSettings extends Page implements HasForms
         Setting::put('storage_path_style', $s['path_style'] ? '1' : '0', 'boolean', 'storage');
         Setting::put('storage_public_url', $s['public_url'] ?? '', 'string', 'storage');
         Setting::put('storage_proxy', ! empty($s['proxy']) ? '1' : '0', 'boolean', 'storage');
+        Setting::put('brand_downloads', ! empty($s['brand_downloads']) ? '1' : '0', 'boolean', 'storage');
 
         Notification::make()->success()->title(__('settings.saved'))->send();
     }

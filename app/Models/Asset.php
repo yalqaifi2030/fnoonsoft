@@ -138,6 +138,24 @@ class Asset extends Model
         return route('assets.download', $this);
     }
 
+    /** Filename served on download — optionally branded with the site domain. */
+    public function downloadName(): string
+    {
+        $name = (string) $this->original_name;
+
+        if (! Setting::get('brand_downloads', true)) {
+            return $name;
+        }
+
+        $host = parse_url((string) config('app.url'), PHP_URL_HOST) ?: '';
+
+        if ($host === '' || str_starts_with($name, $host.'-')) {
+            return $name; // no host, or already branded
+        }
+
+        return $host.'-'.$name;
+    }
+
     /** A directly embeddable/hotlinkable URL (images & PDF on the public disk). */
     public function directUrl(): ?string
     {
