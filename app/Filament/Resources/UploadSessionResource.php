@@ -167,13 +167,21 @@ class UploadSessionResource extends Resource
                     ->label(__('monitor.status'))
                     ->badge()
                     ->formatStateUsing(fn ($state) => $state instanceof UploadStatus ? $state->label() : $state)
-                    ->color(fn ($state) => $state instanceof UploadStatus ? $state->color() : 'gray'),
+                    ->color(fn ($state) => $state instanceof UploadStatus ? $state->color() : 'gray')
+                    ->icon(fn ($state) => match ($state) {
+                        UploadStatus::Failed => 'heroicon-m-x-circle',
+                        UploadStatus::Published => 'heroicon-m-check-circle',
+                        default => null,
+                    })
+                    ->tooltip(fn (UploadSession $r) => $r->status === UploadStatus::Failed ? $r->error_message : null),
 
                 Tables\Columns\TextColumn::make('parts_completed')
                     ->label(__('monitor.progress'))
                     ->formatStateUsing(fn ($state, UploadSession $r) => $r->progressPercent().'%')
                     ->badge()
-                    ->color(fn (UploadSession $r) => $r->progressPercent() >= 100 ? 'success' : 'gray'),
+                    ->color(fn (UploadSession $r) => $r->status === UploadStatus::Failed
+                        ? 'danger'
+                        : ($r->progressPercent() >= 100 ? 'success' : 'gray')),
 
                 Tables\Columns\TextColumn::make('scan_result')
                     ->label(__('monitor.scan'))

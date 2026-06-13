@@ -12,7 +12,7 @@ enum UploadStatus: string
 
     public function label(): string
     {
-        return ucfirst($this->value);
+        return __('monitor.status_'.$this->value);
     }
 
     public function color(): string
