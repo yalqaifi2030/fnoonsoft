@@ -353,8 +353,8 @@
         </div>
 
         {{-- Sidebar: download --}}
-        <aside class="space-y-6">
-            <div class="card-luxury overflow-hidden sticky top-20">
+        <aside class="space-y-6" id="fnoon-sidebar">
+            <div class="card-luxury overflow-hidden">
                 @php($primary = $software->downloadLinks->first())
                 @php($osIcons = ['windows' => 'fa-brands fa-windows', 'macos' => 'fa-brands fa-apple', 'linux' => 'fa-brands fa-linux', 'android' => 'fa-brands fa-android', 'ios' => 'fa-brands fa-apple', 'web' => 'fa-solid fa-globe'])
                 @if ($primary)
@@ -509,7 +509,34 @@
 @endsection
 
 @push('styles')
-    <style>html { scroll-behavior: smooth; }</style>
+    <style>
+        html { scroll-behavior: smooth; }
+        @media (min-width: 1024px) {
+            #fnoon-sidebar { position: sticky; align-self: start; top: 5rem; }
+        }
+    </style>
+@endpush
+
+@push('scripts')
+    <script>
+        // Smart sticky sidebar: sticks to the top normally, but when the sidebar
+        // is taller than the viewport it sticks to the BOTTOM instead — so the
+        // tags at the end stay reachable rather than hiding behind the download box.
+        (function () {
+            const el = document.getElementById('fnoon-sidebar');
+            if (! el) return;
+            const TOP = 80, BOTTOM = 24;
+            const apply = () => {
+                if (window.innerWidth < 1024) { el.style.top = ''; return; }
+                const vh = window.innerHeight, h = el.offsetHeight;
+                el.style.top = Math.min(TOP, vh - h - BOTTOM) + 'px';
+            };
+            apply();
+            window.addEventListener('resize', apply, { passive: true });
+            if (window.ResizeObserver) new ResizeObserver(apply).observe(el);
+            setTimeout(apply, 600);
+        })();
+    </script>
 @endpush
 
 @if ($software->hasCode())
