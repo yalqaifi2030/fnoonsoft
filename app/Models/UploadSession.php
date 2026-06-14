@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Storage;
 
 class UploadSession extends Model
 {
@@ -67,5 +68,22 @@ class UploadSession extends Model
         }
 
         return (int) floor(($this->parts_completed / $this->parts_total) * 100);
+    }
+
+    /** Remove the stored object (and the minted asset) when a session is deleted. */
+    protected static function booted(): void
+    {
+        static::deleting(function (UploadSession $session) {
+            // The asset shares the same object — its own hook cleans it + variants.
+            $session->asset?->delete();
+
+            if ($session->r2_key) {
+                try {
+                    Storage::disk($session->storage_disk ?: 'r2')->delete($session->r2_key);
+                } catch (\Throwable $e) {
+                    // disk offline — never block the record delete
+                }
+            }
+        });
     }
 }

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class DownloadLink extends Model
 {
@@ -52,5 +53,29 @@ class DownloadLink extends Model
         $i = min($i, count($units) - 1);
 
         return round($bytes / (1024 ** $i), 2).' '.$units[$i];
+    }
+
+    /** Delete the iDrive object when a link is removed — unless still referenced. */
+    protected static function booted(): void
+    {
+        static::deleting(function (DownloadLink $link) {
+            if (! $link->r2_key) {
+                return;
+            }
+
+            // Keep the object if another link or an upload session still points to it.
+            $stillUsed = static::where('id', '!=', $link->id)->where('r2_key', $link->r2_key)->exists()
+                || UploadSession::where('r2_key', $link->r2_key)->exists();
+
+            if ($stillUsed) {
+                return;
+            }
+
+            try {
+                Storage::disk('r2')->delete($link->r2_key);
+            } catch (\Throwable $e) {
+                // disk offline — never block the record delete
+            }
+        });
     }
 }

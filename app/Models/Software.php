@@ -55,6 +55,31 @@ class Software extends Model
         ];
     }
 
+    /**
+     * On delete, remove every stored file so nothing is orphaned on iDrive:
+     * download-link files, upload sessions, screenshots, icon and video. Children
+     * are deleted via Eloquent so each cleans its own object (soft-delete means
+     * DB cascade won't fire here).
+     */
+    protected static function booted(): void
+    {
+        static::deleting(function (Software $software) {
+            $software->uploadSessions()->get()->each->delete();
+            DownloadLink::where('software_id', $software->id)->get()->each->delete();
+            $software->screenshots()->get()->each->delete();
+
+            foreach ([$software->icon, $software->video_path] as $path) {
+                if ($path) {
+                    try {
+                        Storage::disk('public')->delete($path);
+                    } catch (\Throwable $e) {
+                        // never block the delete
+                    }
+                }
+            }
+        });
+    }
+
     // --- Relationships ---------------------------------------------------
 
     public function category(): BelongsTo
