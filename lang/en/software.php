@@ -61,6 +61,7 @@ return [
     'developer' => 'Developer',
     'tags' => 'Tags',
     'icon' => 'Icon',
+    'icon_hint' => 'For a sharp icon, upload a square image at 256×256px or larger (transparent PNG preferred). Small images look blurry.',
     'downloads' => 'Downloads',
     'rating' => 'Rating',
     'meta_title' => 'Meta title',

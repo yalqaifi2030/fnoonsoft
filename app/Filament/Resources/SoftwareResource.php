@@ -362,7 +362,9 @@ class SoftwareResource extends Resource
                     ->schema([
                         Forms\Components\FileUpload::make('icon')
                             ->label(__('software.icon'))
-                            ->image()->imageEditor()->directory('icons')->disk('public'),
+                            ->helperText(__('software.icon_hint'))
+                            ->image()->imageEditor()->imageEditorAspectRatios([null, '1:1'])
+                            ->directory('icons')->disk('public'),
                     ]),
             ])->columnSpan(['lg' => 1]),
         ])->columns(3);

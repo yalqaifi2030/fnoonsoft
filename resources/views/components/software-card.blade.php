@@ -11,8 +11,8 @@
     <div class="flex items-start gap-3">
         @if ($software->icon)
             <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($software->icon) }}"
-                 alt="{{ $software->name }}" width="56" height="56"
-                 class="h-14 w-14 rounded-xl object-cover shrink-0 ring-1 ring-royal-gold/15">
+                 alt="{{ $software->name }}" width="56" height="56" loading="lazy" decoding="async"
+                 class="h-14 w-14 rounded-xl bg-white object-contain shrink-0 ring-1 ring-royal-gold/15">
         @else
             <span class="h-14 w-14 rounded-xl bg-gradient-to-br from-saudi-green/10 to-royal-gold/10 text-saudi-green inline-flex items-center justify-center shrink-0">
                 <i class="{{ $software->content_type->icon() }} text-xl"></i>
