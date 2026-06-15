@@ -67,7 +67,9 @@
                             <span class="rounded-full bg-green-500/25 px-2.5 py-0.5 text-xs font-bold backdrop-blur-sm" title="VirusTotal"><i class="fa-solid fa-shield-virus"></i> {{ __('site.card.scanned') }}</span>
                         @endif
                     </div>
-                    <h1 class="mt-3 font-cairo text-3xl font-black md:text-4xl">{{ $software->name }}</h1>
+                    @php($titleLen = mb_strlen((string) $software->name))
+                    @php($titleSize = $titleLen > 60 ? 'clamp(1.15rem, 3.6vw, 1.7rem)' : ($titleLen > 35 ? 'clamp(1.4rem, 4.2vw, 2rem)' : 'clamp(1.7rem, 5vw, 2.25rem)'))
+                    <h1 class="mt-3 font-cairo font-black" style="font-size: {{ $titleSize }}; line-height: 1.25; word-break: break-word;">{{ $software->name }}</h1>
                     <p class="mt-1 text-sm text-white/70">
                         {{ $software->developer?->name }}
                         @if ($software->current_version) · <span dir="ltr">v{{ $software->current_version }}</span> @endif
