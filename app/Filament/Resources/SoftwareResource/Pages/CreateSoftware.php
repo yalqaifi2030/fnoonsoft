@@ -14,6 +14,7 @@ class CreateSoftware extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['user_id'] ??= auth()->id();
+        $data['published_at'] = now(); // publish date = save time
 
         return $data;
     }

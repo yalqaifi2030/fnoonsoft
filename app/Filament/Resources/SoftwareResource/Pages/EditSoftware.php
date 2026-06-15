@@ -13,6 +13,13 @@ class EditSoftware extends EditRecord
 
     protected static string $resource = SoftwareResource::class;
 
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $data['published_at'] = now(); // refresh publish date to the save time
+
+        return $data;
+    }
+
     protected function getHeaderActions(): array
     {
         return [

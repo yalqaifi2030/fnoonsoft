@@ -54,6 +54,7 @@ return [
     'platform' => 'Platform (e.g. WordPress)',
     'status' => 'Status',
     'published_at' => 'Publish date',
+    'published_at_hint' => 'Set automatically to the save time on every add or edit.',
     'featured' => 'Featured',
     'editor_choice' => "Editor's choice",
     'malware_free' => 'Malware-free',

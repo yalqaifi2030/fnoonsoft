@@ -331,7 +331,9 @@ class SoftwareResource extends Resource
                             ->required(),
 
                         Forms\Components\DateTimePicker::make('published_at')
-                            ->label(__('software.published_at'))->native(false)->seconds(false),
+                            ->label(__('software.published_at'))->native(false)->seconds(false)
+                            ->disabled()->dehydrated(false)
+                            ->helperText(__('software.published_at_hint')),
 
                         Forms\Components\Toggle::make('is_featured')->label(__('software.featured'))->inline(false),
                         Forms\Components\Toggle::make('is_editor_choice')->label(__('software.editor_choice'))->inline(false),
