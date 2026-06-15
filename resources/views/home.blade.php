@@ -32,15 +32,15 @@
         <div class="absolute -top-24 -end-24 w-96 h-96 rounded-full bg-royal-gold/10 blur-3xl float-anim"></div>
         <div class="absolute -bottom-32 -start-24 w-[28rem] h-[28rem] rounded-full bg-saudi-green/20 blur-3xl"></div>
 
-        <div class="relative max-w-7xl mx-auto px-4 py-24 md:py-28 text-center fade-up">
-            <span class="chip mx-auto mb-6">
+        <div class="relative max-w-7xl mx-auto px-4 text-center fade-up" style="padding-top: clamp(2.25rem, 5.5vw, 3.75rem); padding-bottom: clamp(2.25rem, 5.5vw, 3.75rem);">
+            <span class="chip mx-auto mb-4">
                 <i class="fa-solid fa-globe text-royal-gold"></i> {{ __('site.hero.badge') }}
             </span>
 
-            <h1 class="font-cairo font-black text-4xl md:text-6xl leading-[1.15] max-w-4xl mx-auto">
+            <h1 class="font-cairo font-black text-4xl md:text-5xl leading-[1.15] max-w-4xl mx-auto">
                 {{ \App\Models\Setting::text('hero_title', __('site.hero.title')) }}
             </h1>
-            <p class="mt-5 text-gray-300 text-lg max-w-2xl mx-auto">{{ \App\Models\Setting::text('hero_subtitle', __('site.hero.subtitle')) }}</p>
+            <p class="mt-3 text-gray-300 max-w-2xl mx-auto" style="font-size: 1rem;">{{ \App\Models\Setting::text('hero_subtitle', __('site.hero.subtitle')) }}</p>
 
             {{-- Search --}}
             <div x-data="heroSearch()" class="mt-9 max-w-2xl mx-auto relative">
@@ -65,7 +65,7 @@
             </div>
 
             {{-- Trust chips --}}
-            <div class="mt-10 flex items-center justify-center gap-3 flex-wrap">
+            <div class="mt-6 flex items-center justify-center gap-3 flex-wrap">
                 <span class="chip"><i class="fa-solid fa-circle-check text-green-400"></i> {{ __('site.hero.trust.verified') }}</span>
                 <span class="chip"><i class="fa-solid fa-shield-halved text-green-400"></i> {{ __('site.hero.trust.malware') }}</span>
                 <span class="chip"><i class="fa-solid fa-database text-royal-gold"></i> {{ __('site.hero.trust.large') }}</span>
@@ -73,7 +73,7 @@
             </div>
 
             {{-- Stats --}}
-            <div class="mt-12 grid grid-cols-3 max-w-xl mx-auto divide-x divide-white/10 rtl:divide-x-reverse">
+            <div class="mt-8 grid grid-cols-3 max-w-xl mx-auto divide-x divide-white/10 rtl:divide-x-reverse">
                 <div>
                     <div class="text-3xl md:text-4xl font-black text-royal-gold stat-num" dir="ltr">{{ number_format($stats['software']) }}+</div>
                     <div class="text-sm text-gray-400 mt-1">{{ __('site.stats.software') }}</div>
