@@ -1,6 +1,13 @@
 <?php
 
 return [
+    'tab' => [
+        'basics' => 'Basics',
+        'download' => 'Download',
+        'media' => 'Media',
+        'advanced' => 'Advanced',
+    ],
+
     'section' => [
         'basics' => 'Basics',
         'details' => 'Details',

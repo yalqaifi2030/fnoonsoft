@@ -64,6 +64,9 @@ class SoftwareResource extends Resource
     {
         return $form->schema([
             Forms\Components\Group::make()->schema([
+                Forms\Components\Tabs::make()->persistTabInQueryString()->columnSpanFull()->schema([
+                Forms\Components\Tabs\Tab::make(__('software.tab.basics'))->icon('heroicon-o-cube')->schema([
+
                 Forms\Components\Section::make(__('software.section.basics'))
                     ->icon('heroicon-o-cube')
                     ->schema([
@@ -149,7 +152,9 @@ class SoftwareResource extends Resource
                             ->label(__('software.platform'))
                             ->visible(fn (Forms\Get $get) => $get('content_type') === 'plugin'),
                     ])->columns(2),
+                ]),
 
+                Forms\Components\Tabs\Tab::make(__('software.tab.download'))->icon('heroicon-o-arrow-down-tray')->schema([
                 Forms\Components\Section::make(__('software.section.downloads'))
                     ->icon('heroicon-o-arrow-down-tray')
                     ->schema([
@@ -179,7 +184,9 @@ class SoftwareResource extends Resource
                             ->addActionLabel(__('software.section.downloads'))
                             ->defaultItems(0),
                     ]),
+                ]),
 
+                Forms\Components\Tabs\Tab::make(__('software.tab.media'))->icon('heroicon-o-photo')->schema([
                 Forms\Components\Section::make(__('software.section.screenshots'))
                     ->icon('heroicon-o-photo')
                     ->description(__('software.screenshots_hint'))
@@ -262,7 +269,9 @@ class SoftwareResource extends Resource
                             ->visible(fn (Forms\Get $get) => ($get('video_source') ?? 'youtube') === 'upload')
                             ->columnSpanFull(),
                     ]),
+                ]),
 
+                Forms\Components\Tabs\Tab::make(__('software.tab.advanced'))->icon('heroicon-o-adjustments-horizontal')->schema([
                 Forms\Components\Section::make(__('software.section.code'))
                     ->icon('heroicon-o-code-bracket')
                     ->description(__('software.code_hint'))
@@ -311,6 +320,8 @@ class SoftwareResource extends Resource
                         Forms\Components\TextInput::make('meta_title')->label(__('software.meta_title'))->maxLength(180),
                         Forms\Components\Textarea::make('meta_description')->label(__('software.meta_description'))->rows(2)->maxLength(300),
                     ]),
+                ]),
+                ]),
             ])->columnSpan(['lg' => 2]),
 
             Forms\Components\Group::make()->schema([

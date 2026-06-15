@@ -1,6 +1,13 @@
 <?php
 
 return [
+    'tab' => [
+        'basics' => 'الأساسيات',
+        'download' => 'التحميل',
+        'media' => 'الوسائط',
+        'advanced' => 'متقدّم',
+    ],
+
     'section' => [
         'basics' => 'الأساسيات',
         'details' => 'التفاصيل',
