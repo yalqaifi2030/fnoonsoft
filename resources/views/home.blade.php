@@ -63,12 +63,13 @@
                     <button class="btn-gold px-7 shrink-0">{{ __('site.hero.search_button') }}</button>
                 </form>
 
-                {{-- Popular categories quick links --}}
-                <div class="mt-4 flex items-center justify-center gap-2 flex-wrap text-sm text-gray-400">
-                    <span>{{ __('site.hero.popular') }}</span>
+                {{-- Popular categories quick links (compact, refined) --}}
+                <div class="mt-5 flex items-center justify-center gap-2 flex-wrap text-gray-400" style="font-size: 0.72rem;">
+                    <span class="text-gray-500">{{ __('site.hero.popular') }}</span>
                     @foreach ($categories->take(4) as $cat)
                         <a href="{{ route('browse', ['category' => $cat->slug]) }}"
-                           class="px-3 py-1 rounded-full border border-white/15 hover:border-royal-gold/60 hover:text-white transition">{{ $cat->name }}</a>
+                           class="rounded-full border border-white/15 hover:border-royal-gold/60 hover:text-white transition"
+                           style="padding: 0.22rem 0.7rem;">{{ $cat->name }}</a>
                     @endforeach
                 </div>
             </div>
