@@ -26,11 +26,11 @@ class SearchController extends Controller
     public function live(Request $request): JsonResponse
     {
         $term = trim($request->string('q')->toString());
-        if (mb_strlen($term) < 2) {
+        if (mb_strlen($term) < 1) {
             return response()->json(['results' => []]);
         }
 
-        $results = $this->query($term)->limit(8)->get()->map(fn (Software $s) => [
+        $results = $this->query($term)->limit(10)->get()->map(fn (Software $s) => [
             'name' => $s->name,
             'slug' => $s->slug,
             'icon' => $s->icon,
@@ -43,16 +43,26 @@ class SearchController extends Controller
 
     private function query(string $term)
     {
-        $like = '%'.$term.'%';
+        // Match each word separately (AND across words, OR across fields) so
+        // "autodesk cad" finds "Autodesk AutoCAD …" — and a single letter works too.
+        $words = preg_split('/\s+/u', $term, -1, PREG_SPLIT_NO_EMPTY) ?: [$term];
+        $full = '%'.$term.'%';
 
         return Software::query()
             ->published()
             ->with(['developer'])
-            ->where(function ($q) use ($like) {
-                $q->where('name', 'like', $like)
-                    ->orWhere('short_description', 'like', $like)
-                    ->orWhere('slug', 'like', $like);
+            ->where(function ($outer) use ($words) {
+                foreach ($words as $w) {
+                    $like = '%'.$w.'%';
+                    $outer->where(function ($inner) use ($like) {
+                        $inner->where('name', 'like', $like)
+                            ->orWhere('short_description', 'like', $like)
+                            ->orWhere('slug', 'like', $like);
+                    });
+                }
             })
+            // Relevance: whole phrase in the name first, then in the description.
+            ->orderByRaw('CASE WHEN name LIKE ? THEN 0 WHEN short_description LIKE ? THEN 1 ELSE 2 END', [$full, $full])
             ->orderByDesc('downloads_count');
     }
 

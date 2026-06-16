@@ -34,7 +34,7 @@
             <div class="absolute -bottom-32 -start-24 w-[28rem] h-[28rem] rounded-full bg-saudi-green/20 blur-3xl"></div>
         </div>
 
-        <div class="relative max-w-7xl mx-auto px-4 text-center fade-up" style="padding-top: clamp(2.25rem, 5.5vw, 3.75rem); padding-bottom: clamp(2.25rem, 5.5vw, 3.75rem);">
+        <div class="relative max-w-7xl mx-auto px-4 text-center" style="padding-top: clamp(2.25rem, 5.5vw, 3.75rem); padding-bottom: clamp(2.25rem, 5.5vw, 3.75rem);">
             <span class="chip mx-auto mb-4">
                 <i class="fa-solid fa-globe text-royal-gold"></i> {{ __('site.hero.badge') }}
             </span>
@@ -287,8 +287,9 @@
             q: '',
             results: [],
             async fetchResults() {
-                if (this.q.length < 2) { this.results = []; return; }
-                const res = await fetch('{{ route('search.live') }}?q=' + encodeURIComponent(this.q));
+                const term = this.q.trim();
+                if (term.length < 1) { this.results = []; return; }
+                const res = await fetch('{{ route('search.live') }}?q=' + encodeURIComponent(term));
                 const data = await res.json();
                 this.results = data.results || [];
             },
