@@ -52,18 +52,20 @@
                         <input name="q" x-model="q" @input.debounce.300ms="fetchResults()" autocomplete="off"
                                placeholder="{{ __('site.hero.search_placeholder') }}"
                                class="w-full bg-transparent border-0 ps-11 pe-4 py-3.5 text-white placeholder-gray-400 focus:outline-none focus:ring-0">
-                        <div x-show="results.length" x-cloak @click.outside="results = []"
-                             class="absolute mt-3 w-full bg-white rounded-xl shadow-2xl overflow-hidden text-start" style="z-index: 50;">
-                            <template x-for="r in results" :key="r.slug">
-                                <a :href="r.url" class="flex items-center gap-3 px-4 py-3 hover:bg-royal-gold/10 text-luxury-black border-b border-gray-50 last:border-0">
-                                    <i class="fa-solid fa-cube text-saudi-green"></i>
-                                    <span x-text="r.name" class="font-medium"></span>
-                                </a>
-                            </template>
-                        </div>
                     </div>
                     <button class="btn-gold px-7 shrink-0">{{ __('site.hero.search_button') }}</button>
                 </form>
+
+                {{-- Live results: kept OUTSIDE the backdrop-filter form so it never clips at the hero edge --}}
+                <div x-show="results.length" x-cloak @click.outside="results = []"
+                     class="absolute mt-3 w-full bg-white rounded-xl shadow-2xl text-start" style="z-index: 50; max-height: 24rem; overflow-y: auto;">
+                    <template x-for="r in results" :key="r.slug">
+                        <a :href="r.url" class="flex items-center gap-3 px-4 py-3 hover:bg-royal-gold/10 text-luxury-black border-b border-gray-50 last:border-0">
+                            <i class="fa-solid fa-cube text-saudi-green"></i>
+                            <span x-text="r.name" class="font-medium"></span>
+                        </a>
+                    </template>
+                </div>
             </div>
 
             {{-- Trust chips --}}
