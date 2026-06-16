@@ -183,11 +183,6 @@
 
     @include('partials.footer')
 
-    {{-- AI Assistant ("المساعد الذكي") — floating chat widget, only when enabled & configured --}}
-    @if (\App\Services\AssistantService::isLive())
-        @include('partials.assistant')
-    @endif
-
     {{-- Global custom <x-select> behaviour (defined before deferred Alpine runs) --}}
     <script>
         function fnoonSelect(config) {

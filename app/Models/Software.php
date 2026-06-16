@@ -63,10 +63,6 @@ class Software extends Model
      */
     protected static function booted(): void
     {
-        // Keep the AI Assistant's catalog snapshot fresh as content changes.
-        static::saved(fn () => \App\Services\AssistantService::forgetCatalog());
-        static::deleted(fn () => \App\Services\AssistantService::forgetCatalog());
-
         static::deleting(function (Software $software) {
             $software->uploadSessions()->get()->each->delete();
             DownloadLink::where('software_id', $software->id)->get()->each->delete();
