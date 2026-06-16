@@ -55,6 +55,10 @@ Route::get('/search', [SearchController::class, 'index'])->name('search');
 Route::get('/api/search/live', [SearchController::class, 'live'])
     ->middleware('throttle:60,1')->name('search.live');
 
+// AI Assistant ("المساعد الذكي") — public chat that recommends from the catalog.
+Route::post('/api/assistant/chat', [\App\Http\Controllers\AssistantController::class, 'chat'])
+    ->middleware('throttle:20,1')->name('assistant.chat');
+
 // Blog / articles
 Route::get('/blog', [ArticleController::class, 'index'])->name('blog.index');
 Route::get('/blog/{article}', [ArticleController::class, 'show'])->name('blog.show');
