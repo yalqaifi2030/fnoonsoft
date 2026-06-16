@@ -27,10 +27,12 @@
 
 @section('content')
     {{-- ===== HERO ===== --}}
-    <section class="relative hero-pattern text-white overflow-hidden">
-        <div class="absolute inset-0 hero-grid opacity-60"></div>
-        <div class="absolute -top-24 -end-24 w-96 h-96 rounded-full bg-royal-gold/10 blur-3xl float-anim"></div>
-        <div class="absolute -bottom-32 -start-24 w-[28rem] h-[28rem] rounded-full bg-saudi-green/20 blur-3xl"></div>
+    <section class="relative hero-pattern text-white" style="z-index: 20;">
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute inset-0 hero-grid opacity-60"></div>
+            <div class="absolute -top-24 -end-24 w-96 h-96 rounded-full bg-royal-gold/10 blur-3xl float-anim"></div>
+            <div class="absolute -bottom-32 -start-24 w-[28rem] h-[28rem] rounded-full bg-saudi-green/20 blur-3xl"></div>
+        </div>
 
         <div class="relative max-w-7xl mx-auto px-4 text-center fade-up" style="padding-top: clamp(2.25rem, 5.5vw, 3.75rem); padding-bottom: clamp(2.25rem, 5.5vw, 3.75rem);">
             <span class="chip mx-auto mb-4">
@@ -51,7 +53,7 @@
                                placeholder="{{ __('site.hero.search_placeholder') }}"
                                class="w-full bg-transparent border-0 ps-11 pe-4 py-3.5 text-white placeholder-gray-400 focus:outline-none focus:ring-0">
                         <div x-show="results.length" x-cloak @click.outside="results = []"
-                             class="absolute z-30 mt-3 w-full bg-white rounded-xl shadow-2xl overflow-hidden text-start">
+                             class="absolute mt-3 w-full bg-white rounded-xl shadow-2xl overflow-hidden text-start" style="z-index: 50;">
                             <template x-for="r in results" :key="r.slug">
                                 <a :href="r.url" class="flex items-center gap-3 px-4 py-3 hover:bg-royal-gold/10 text-luxury-black border-b border-gray-50 last:border-0">
                                     <i class="fa-solid fa-cube text-saudi-green"></i>
