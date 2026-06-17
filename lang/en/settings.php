@@ -96,6 +96,14 @@ return [
         'opacity_hint' => 'Higher = more visible (3–80%).',
         'size' => 'Text size',
         'size_hint' => 'Percent of the image width (2–12%).',
+        'scope' => 'Where it applies',
+        'scope_hint' => 'Choose exactly where the watermark is stamped.',
+        'on_screenshots' => 'Content screenshots',
+        'on_screenshots_hint' => 'The preview images in the program gallery.',
+        'on_media' => 'Media & share uploads',
+        'on_media_hint' => 'Images uploaded via the upload/share panel.',
+        'on_icon' => 'Content icon',
+        'on_icon_hint' => 'Usually a logo — best left off.',
     ],
 
     'ads' => [

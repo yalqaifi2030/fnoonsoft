@@ -16,6 +16,32 @@ class WatermarkService
         return (bool) Setting::get('watermark_enabled', false);
     }
 
+    /**
+     * Is the watermark enabled for a given surface? Surfaces:
+     *  - 'media'       — share/media uploads (default on; the original behaviour)
+     *  - 'screenshots' — content gallery screenshots (default on)
+     *  - 'icon'        — the content icon/logo (default off — usually a brand mark)
+     */
+    public function appliesTo(string $surface): bool
+    {
+        if (! $this->enabled()) {
+            return false;
+        }
+
+        return match ($surface) {
+            'media' => (bool) Setting::get('watermark_media', true),
+            'screenshots' => (bool) Setting::get('watermark_screenshots', true),
+            'icon' => (bool) Setting::get('watermark_icon', false),
+            default => true,
+        };
+    }
+
+    /** Apply the watermark only when the given surface is enabled. */
+    public function applyTo(string $surface, string $absolutePath): bool
+    {
+        return $this->appliesTo($surface) && $this->apply($absolutePath);
+    }
+
     /** Watermark the image at $absolutePath in place. Returns true if applied. */
     public function apply(string $absolutePath): bool
     {

@@ -63,6 +63,19 @@ class Software extends Model
      */
     protected static function booted(): void
     {
+        // Optionally watermark the content icon when it's set/replaced (off by
+        // default — the service skips it unless the 'icon' surface is enabled).
+        static::saved(function (Software $software) {
+            if ($software->wasChanged('icon') && $software->icon) {
+                try {
+                    app(\App\Services\WatermarkService::class)
+                        ->applyTo('icon', Storage::disk('public')->path($software->icon));
+                } catch (\Throwable $e) {
+                    // never break a save over a watermark
+                }
+            }
+        });
+
         static::deleting(function (Software $software) {
             $software->uploadSessions()->get()->each->delete();
             DownloadLink::where('software_id', $software->id)->get()->each->delete();

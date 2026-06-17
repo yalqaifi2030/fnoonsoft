@@ -52,6 +52,9 @@ class WatermarkSettings extends Page implements HasForms
             'watermark_position' => Setting::get('watermark_position', 'tiled') ?: 'tiled',
             'watermark_opacity' => (int) (Setting::get('watermark_opacity', 25) ?: 25),
             'watermark_size' => (float) (Setting::get('watermark_size', 4) ?: 4),
+            'watermark_screenshots' => (bool) Setting::get('watermark_screenshots', true),
+            'watermark_media' => (bool) Setting::get('watermark_media', true),
+            'watermark_icon' => (bool) Setting::get('watermark_icon', false),
         ]);
     }
 
@@ -97,6 +100,22 @@ class WatermarkSettings extends Page implements HasForms
                             ->numeric()->minValue(2)->maxValue(12)->step(0.5)->suffix('%')
                             ->visible(fn ($get) => $get('watermark_enabled')),
                     ])->columns(2),
+
+                Section::make(__('settings.watermark.scope'))
+                    ->description(__('settings.watermark.scope_hint'))
+                    ->icon('heroicon-o-rectangle-stack')
+                    ->visible(fn ($get) => $get('watermark_enabled'))
+                    ->schema([
+                        Toggle::make('watermark_screenshots')
+                            ->label(__('settings.watermark.on_screenshots'))
+                            ->helperText(__('settings.watermark.on_screenshots_hint')),
+                        Toggle::make('watermark_media')
+                            ->label(__('settings.watermark.on_media'))
+                            ->helperText(__('settings.watermark.on_media_hint')),
+                        Toggle::make('watermark_icon')
+                            ->label(__('settings.watermark.on_icon'))
+                            ->helperText(__('settings.watermark.on_icon_hint')),
+                    ])->columns(3),
             ])
             ->statePath('data');
     }
@@ -110,6 +129,9 @@ class WatermarkSettings extends Page implements HasForms
         Setting::put('watermark_position', (string) ($d['watermark_position'] ?? 'tiled'), 'string', 'watermark');
         Setting::put('watermark_opacity', (string) ($d['watermark_opacity'] ?? 25), 'string', 'watermark');
         Setting::put('watermark_size', (string) ($d['watermark_size'] ?? 4), 'string', 'watermark');
+        Setting::put('watermark_screenshots', ! empty($d['watermark_screenshots']) ? '1' : '0', 'boolean', 'watermark');
+        Setting::put('watermark_media', ! empty($d['watermark_media']) ? '1' : '0', 'boolean', 'watermark');
+        Setting::put('watermark_icon', ! empty($d['watermark_icon']) ? '1' : '0', 'boolean', 'watermark');
 
         Notification::make()->success()->title(__('settings.saved'))->send();
     }
