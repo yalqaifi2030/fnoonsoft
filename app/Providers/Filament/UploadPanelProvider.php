@@ -39,10 +39,7 @@ class UploadPanelProvider extends PanelProvider
             ->brandLogoHeight(fn () => \App\Support\Branding::logoHeight())
             ->favicon(fn () => \App\Support\Branding::favicon())
             ->defaultThemeMode(\App\Support\Branding::themeMode())
-            ->colors([
-                'primary' => Color::hex('#006C35'),
-                'gold' => Color::hex('#C9A961'),
-            ])
+            ->colors(\App\Support\Theme::panelColors())
             ->font('Tajawal')
             ->sidebarCollapsibleOnDesktop()
             ->renderHook(

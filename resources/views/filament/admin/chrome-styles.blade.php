@@ -138,4 +138,25 @@
     .dark .fc-side-footer a:hover { color: #fff; background: rgba(201, 169, 97, .16); }
 </style>
 
+{{-- Brand colours from Admin → Theme: inject the CSS variables + override the
+     hard-coded brand rules above so the panel chrome follows the chosen palette. --}}
+<style>
+    {!! \App\Support\Theme::cssRoot() !!}
+    .fi-sidebar { border-inline-end-color: rgb(var(--c-secondary) / .22); }
+    .fi-sidebar-header { box-shadow: 0 6px 18px -14px rgb(var(--c-primary) / .45); }
+    .fi-sidebar-item-button:hover { background: rgb(var(--c-primary) / .08); color: var(--color-primary); }
+    .dark .fi-sidebar-item-button:hover { background: rgb(var(--c-primary) / .20); }
+    .fi-sidebar-item.fi-active .fi-sidebar-item-button {
+        background: linear-gradient(120deg, var(--color-primary), var(--color-primary-dark));
+        box-shadow: 0 10px 22px -12px rgb(var(--c-primary) / .65);
+    }
+    .fi-sidebar-item.fi-active .fi-sidebar-item-button .fi-sidebar-item-icon,
+    .fi-sidebar-item.fi-active .fi-sidebar-item-button svg { color: var(--color-secondary) !important; }
+    .fi-sidebar-item.fi-active .fi-sidebar-item-button::before { background: var(--color-secondary); }
+    .fi-sidebar-collapse-button .fi-icon-btn,
+    .fi-sidebar-open-button .fi-icon-btn { color: var(--color-primary); }
+    .fi-topbar::before { background: linear-gradient(90deg, var(--color-primary), var(--color-secondary), var(--color-primary)); }
+    .fc-side-footer a:hover { color: var(--color-primary); }
+</style>
+
 @include('filament.partials.share-kit-styles')

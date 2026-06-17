@@ -39,10 +39,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogoHeight(fn () => \App\Support\Branding::logoHeight())
             ->favicon(fn () => \App\Support\Branding::favicon())
             ->defaultThemeMode(\App\Support\Branding::themeMode())
-            ->colors([
-                'primary' => Color::hex('#006C35'), // Saudi green
-                'gold' => Color::hex('#C9A961'),    // royal gold
-            ])
+            ->colors(\App\Support\Theme::panelColors())
             ->font('Tajawal')
             ->sidebarCollapsibleOnDesktop()
             ->databaseNotifications()

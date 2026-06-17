@@ -62,6 +62,7 @@ return [
         'admins' => 'Admins', 'admins_desc' => 'Manage users and their roles.',
         'maintenance' => 'Maintenance', 'maintenance_desc' => 'Close the public site with a maintenance page.',
         'branding' => 'Branding', 'branding_desc' => 'Panel name, logo, favicon and theme.',
+        'theme' => 'Brand colors', 'theme_desc' => 'Three colors that drive the site and panel, with live preview.',
         'scan' => 'Malware scan', 'scan_desc' => 'Scan uploaded files (VirusTotal).',
         'ads' => 'Ads (AdSense)', 'ads_desc' => 'Google AdSense ads & placements.',
         'members' => 'Member dashboard', 'members_desc' => 'Member self-uploads + storage quota.',

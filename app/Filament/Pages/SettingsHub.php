@@ -63,6 +63,11 @@ class SettingsHub extends Page
                 'url' => BrandingSettings::getUrl(),
             ],
             [
+                'icon' => 'fa-solid fa-swatchbook', 'color' => '#db2777',
+                'title' => __('settings.hub.theme'), 'desc' => __('settings.hub.theme_desc'),
+                'url' => ThemeSettings::getUrl(),
+            ],
+            [
                 'icon' => 'fa-solid fa-shield-virus', 'color' => '#16a34a',
                 'title' => __('settings.hub.scan'), 'desc' => __('settings.hub.scan_desc'),
                 'url' => ScanSettings::getUrl(),
