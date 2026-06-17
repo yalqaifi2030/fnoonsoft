@@ -22,6 +22,12 @@
     </section>
 
     <div class="max-w-7xl mx-auto px-4 py-10">
-        @includeIf('partials.labs.'.$lab->key)
+        {{-- Custom hand-built labs use their own partial; anything else (admin-created)
+             falls back to the generic, data-driven block renderer. --}}
+        @if (view()->exists('partials.labs.'.$lab->key))
+            @include('partials.labs.'.$lab->key)
+        @else
+            @include('partials.labs._blocks')
+        @endif
     </div>
 @endsection

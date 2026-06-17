@@ -1,0 +1,20 @@
+feat(learn): admin-creatable interactive labs via a content-block engine
+
+Interactive Labs were seeded-only (canCreate=false) because each lab mapped
+to a hand-built Blade partial keyed by `key`. Now the admin can also create
+labs from the panel, built out of reusable content blocks — no code.
+
+- Generic, data-driven renderer (partials/labs/_blocks.blade.php): the lab
+  page falls back to it for any lab without a hand-built partial. Blocks:
+  text, embed (iframe), code (highlight.js + copy), image, numbered steps,
+  link button — each an item with its data in the existing `data` JSON.
+- ItemsRelationManager: the previously-empty `default` case now offers a
+  block-type picker with conditional fields; table badges/summaries reflect
+  the block kind.
+- InteractiveLabResource: create enabled; CreateInteractiveLab page added
+  (auto-derives a unique slug + key, redirects to edit to add blocks);
+  `key` field hidden on create.
+- The 5 seeded rich labs keep their custom partials (they win by `key`).
+- ar/en lang keys for blocks + an empty-lab string.
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>

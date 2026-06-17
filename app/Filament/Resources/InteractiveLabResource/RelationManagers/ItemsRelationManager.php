@@ -90,7 +90,67 @@ class ItemsRelationManager extends RelationManager
                 Forms\Components\TextInput::make('data.lang')->label(__('lab_item.lang'))->placeholder('python, cpp, javascript, bash')->required(),
                 Forms\Components\Textarea::make('data.code')->label(__('lab_item.code'))->rows(8)->extraInputAttributes(['dir' => 'ltr', 'class' => 'font-mono'])->columnSpanFull(),
             ],
-            default => [],
+            // Admin-built labs (no hand-coded partial): a flexible content block.
+            default => [
+                Forms\Components\Select::make('data.block')
+                    ->label(__('lab_item.block'))
+                    ->helperText(__('lab_item.block_hint'))
+                    ->options([
+                        'text' => __('lab_item.block_text'),
+                        'embed' => __('lab_item.block_embed'),
+                        'code' => __('lab_item.block_code'),
+                        'image' => __('lab_item.block_image'),
+                        'steps' => __('lab_item.block_steps'),
+                        'link' => __('lab_item.block_link'),
+                    ])
+                    ->default('text')->required()->live()->native(false)
+                    ->columnSpanFull(),
+
+                // text
+                Forms\Components\Textarea::make('data.body')->label(__('lab_item.body'))
+                    ->rows(5)->columnSpanFull()
+                    ->visible(fn (Forms\Get $get) => ($get('data.block') ?? 'text') === 'text'),
+
+                // embed
+                Forms\Components\TextInput::make('data.url')->label(__('lab_item.embed_url'))
+                    ->url()->extraInputAttributes(['dir' => 'ltr'])->helperText(__('lab_item.embed_hint'))
+                    ->columnSpanFull()
+                    ->visible(fn (Forms\Get $get) => ($get('data.block') ?? '') === 'embed'),
+                Forms\Components\TextInput::make('data.height')->label(__('lab_item.height'))
+                    ->numeric()->default(480)
+                    ->visible(fn (Forms\Get $get) => ($get('data.block') ?? '') === 'embed'),
+
+                // code
+                Forms\Components\TextInput::make('data.lang')->label(__('lab_item.lang'))
+                    ->placeholder('javascript, python, php, bash')->extraInputAttributes(['dir' => 'ltr'])
+                    ->visible(fn (Forms\Get $get) => ($get('data.block') ?? '') === 'code'),
+                Forms\Components\Textarea::make('data.code')->label(__('lab_item.code'))
+                    ->rows(8)->extraInputAttributes(['dir' => 'ltr', 'class' => 'font-mono'])->columnSpanFull()
+                    ->visible(fn (Forms\Get $get) => ($get('data.block') ?? '') === 'code'),
+
+                // image
+                Forms\Components\FileUpload::make('data.image')->label(__('lab_item.image'))
+                    ->image()->imageEditor()->disk('public')->directory('lab-blocks')->columnSpanFull()
+                    ->visible(fn (Forms\Get $get) => ($get('data.block') ?? '') === 'image'),
+                Forms\Components\TextInput::make('data.caption')->label(__('lab_item.caption'))->columnSpanFull()
+                    ->visible(fn (Forms\Get $get) => ($get('data.block') ?? '') === 'image'),
+
+                // steps
+                Forms\Components\Repeater::make('data.steps')->label(__('lab_item.steps'))
+                    ->schema([
+                        Forms\Components\TextInput::make('label')->label(__('lab_item.step_label'))->required(),
+                        Forms\Components\Textarea::make('text')->label(__('lab_item.step_text'))->rows(2),
+                    ])
+                    ->defaultItems(1)->reorderable()->collapsible()->cloneable()->columnSpanFull()
+                    ->visible(fn (Forms\Get $get) => ($get('data.block') ?? '') === 'steps'),
+
+                // link
+                Forms\Components\TextInput::make('data.label')->label(__('lab_item.link_label'))
+                    ->visible(fn (Forms\Get $get) => ($get('data.block') ?? '') === 'link'),
+                Forms\Components\TextInput::make('data.href')->label(__('lab_item.link_url'))
+                    ->url()->extraInputAttributes(['dir' => 'ltr'])
+                    ->visible(fn (Forms\Get $get) => ($get('data.block') ?? '') === 'link'),
+            ],
         };
 
         $settings = [
@@ -214,7 +274,14 @@ class ItemsRelationManager extends RelationManager
                 default => ['Caesar', 'success', 'heroicon-m-arrows-right-left'],
             },
             'snippets' => [strtoupper($d['lang'] ?? 'code'), 'gray', 'heroicon-m-document-text'],
-            default => ['—', 'gray', 'heroicon-m-cube'],
+            default => match ($d['block'] ?? 'text') {
+                'embed' => ['Embed', 'info', 'heroicon-m-play-circle'],
+                'code' => ['Code', 'gray', 'heroicon-m-code-bracket'],
+                'image' => ['Image', 'success', 'heroicon-m-photo'],
+                'steps' => ['Steps', 'warning', 'heroicon-m-list-bullet'],
+                'link' => ['Link', 'primary', 'heroicon-m-link'],
+                default => ['Text', 'gray', 'heroicon-m-document-text'],
+            },
         };
     }
 
@@ -228,7 +295,7 @@ class ItemsRelationManager extends RelationManager
             'ai' => 'degree '.($d['degree'] ?? 1),
             'security' => $d['type'] ?? '—',
             'playground' => 'HTML · CSS · JS',
-            default => '',
+            default => __('lab_item.block_'.($d['block'] ?? 'text')),
         };
     }
 
@@ -243,7 +310,7 @@ class ItemsRelationManager extends RelationManager
                 ? Str::limit(strip_tags($d['html'] ?? ''), 50)
                 : 'sample: '.($d['sample'] ?? '—'),
             'playground' => Str::limit(strip_tags($d['html'] ?? ''), 50),
-            default => '',
+            default => Str::limit(strip_tags($d['body'] ?? $d['url'] ?? $d['label'] ?? ($d['code'] ?? '')), 50),
         };
     }
 }

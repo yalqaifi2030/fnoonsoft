@@ -40,11 +40,11 @@ class InteractiveLabResource extends Resource
         return __('nav.labs');
     }
 
-    /** Labs map to fixed front-end components; they are seeded, not created by hand. */
-    public static function canCreate(): bool
-    {
-        return false;
-    }
+    /**
+     * Admin-created labs are rendered by the generic, data-driven block engine
+     * (see resources/views/partials/labs/_blocks.blade.php). The 5 seeded labs
+     * keep their hand-built partials, which take priority by matching `key`.
+     */
 
     public static function form(Form $form): Form
     {
@@ -54,7 +54,7 @@ class InteractiveLabResource extends Resource
                     ->icon('heroicon-o-beaker')
                     ->schema([
                         Forms\Components\TextInput::make('key')
-                            ->label('Key')->disabled()->dehydrated(false),
+                            ->label('Key')->disabled()->dehydrated(false)->hiddenOn('create'),
                         Forms\Components\TextInput::make('title')
                             ->label(__('learn_admin.name'))->required(),
                         Forms\Components\Textarea::make('description')
@@ -155,6 +155,7 @@ class InteractiveLabResource extends Resource
     {
         return [
             'index' => Pages\ListInteractiveLabs::route('/'),
+            'create' => Pages\CreateInteractiveLab::route('/create'),
             'edit' => Pages\EditInteractiveLab::route('/{record}/edit'),
         ];
     }

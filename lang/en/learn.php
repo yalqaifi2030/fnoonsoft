@@ -13,6 +13,9 @@ return [
         'subtitle' => 'Hands-on tools — each opens in its own workspace.',
         'open' => 'Open lab',
     ],
+    'lab' => [
+        'empty' => 'This lab has no content yet.',
+    ],
     'tracks' => [
         'title' => 'Choose your track',
         'subtitle' => 'Four hands-on domains, each with live tools.',
