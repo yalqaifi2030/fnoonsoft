@@ -14,6 +14,7 @@ return [
     'rejected' => 'Rejected',
     'empty' => 'No comments yet.',
     'posted' => 'Thanks! Your comment was posted.',
+    'submitted_pending' => 'Thanks! Your comment is awaiting moderation and will appear once approved.',
     'action' => [
         'approve' => 'Approve',
         'reject' => 'Reject',

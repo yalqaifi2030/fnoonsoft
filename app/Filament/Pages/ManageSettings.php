@@ -84,6 +84,9 @@ class ManageSettings extends Page implements HasForms
         $data['spotlight_overlay'] = Setting::get('spotlight_overlay', 'medium');
         $data['spotlight_badge'] = Setting::get('spotlight_badge');
 
+        // Engagement / moderation.
+        $data['comments_auto_approve'] = (bool) Setting::get('comments_auto_approve', false);
+
         $this->form->fill($data);
     }
 
@@ -197,6 +200,19 @@ class ManageSettings extends Page implements HasForms
                             $this->bilingual('footer_about', __('settings.footer_about'), textarea: true),
                         ]),
 
+                    Tabs\Tab::make(__('settings.tab.comments'))
+                        ->icon('heroicon-o-chat-bubble-left-right')
+                        ->schema([
+                            Section::make(__('settings.comments.section'))
+                                ->description(__('settings.comments.hint'))
+                                ->icon('heroicon-o-shield-check')
+                                ->schema([
+                                    Toggle::make('comments_auto_approve')
+                                        ->label(__('settings.comments.auto_approve'))
+                                        ->helperText(__('settings.comments.auto_approve_hint')),
+                                ]),
+                        ]),
+
                     Tabs\Tab::make(__('settings.tab.social'))
                         ->icon('heroicon-o-share')
                         ->schema([
@@ -253,6 +269,8 @@ class ManageSettings extends Page implements HasForms
         Setting::put('spotlight_bg', $data['spotlight_bg'] ?? '', 'string', 'spotlight');
         Setting::put('spotlight_overlay', $data['spotlight_overlay'] ?? 'medium', 'string', 'spotlight');
         Setting::put('spotlight_badge', $data['spotlight_badge'] ?? '', 'string', 'spotlight');
+
+        Setting::put('comments_auto_approve', (bool) ($data['comments_auto_approve'] ?? false), 'boolean', 'engagement');
 
         Notification::make()->success()->title(__('settings.saved'))->send();
     }

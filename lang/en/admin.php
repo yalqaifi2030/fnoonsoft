@@ -10,6 +10,7 @@ return [
     'cache_confirm' => 'Clear all application caches now?',
     'notify' => [
         'new_comment_title' => 'New comment',
+        'comment_pending_title' => 'New comment awaiting approval',
         'new_comment_body' => 'New comment on :item by :name',
     ],
 ];
