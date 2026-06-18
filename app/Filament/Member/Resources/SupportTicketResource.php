@@ -67,6 +67,8 @@ class SupportTicketResource extends Resource
                     Forms\Components\FileUpload::make('attachment')
                         ->label(__('ticket.attachment'))
                         ->disk('public')->directory('ticket-attachments')
+                        // Restrict to safe types — no HTML/SVG (same-origin stored XSS).
+                        ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf'])
                         ->maxSize(5120)->columnSpanFull(),
                 ])->columns(2),
         ]);

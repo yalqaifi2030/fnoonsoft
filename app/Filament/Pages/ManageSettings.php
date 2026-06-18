@@ -120,7 +120,8 @@ class ManageSettings extends Page implements HasForms
                                         ->label(__('settings.site_favicon'))
                                         ->helperText(__('settings.site_favicon_hint'))
                                         ->acceptedFileTypes([
-                                            'image/png', 'image/x-icon', 'image/vnd.microsoft.icon', 'image/svg+xml',
+                                            // SVG excluded — a same-origin SVG can carry <script> (stored XSS).
+                                            'image/png', 'image/x-icon', 'image/vnd.microsoft.icon',
                                         ])
                                         ->disk('public')->directory('site')
                                         ->maxSize(512)

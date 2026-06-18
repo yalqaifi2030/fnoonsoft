@@ -94,6 +94,25 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
         }
     }
 
+    /**
+     * May this user upload via the engine (multipart + media)? Staff always (if
+     * active); members only when the feature is on AND their email is verified.
+     * Enforced server-side on the routes — NOT just by the panel's access gate,
+     * so a direct POST by an unverified / disabled member is rejected.
+     */
+    public function canUpload(): bool
+    {
+        if (! $this->is_active) {
+            return false;
+        }
+
+        if ($this->isStaff()) {
+            return true;
+        }
+
+        return (bool) Setting::get('member_uploads_enabled', false) && $this->hasVerifiedEmail();
+    }
+
     /** Storage quota in bytes — staff are unlimited, members get the configured GB. */
     /** The member's tier (defaults to Free). */
     public function memberTier(): \App\Enums\MemberTier

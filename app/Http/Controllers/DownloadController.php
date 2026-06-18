@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ContentStatus;
 use App\Models\DownloadLink;
 use App\Models\DownloadLog;
 use App\Models\Software;
@@ -21,7 +22,8 @@ class DownloadController extends Controller
     /** Intermediate gateway page with a short countdown before the download. */
     public function gateway(Software $software, DownloadLink $link): View
     {
-        abort_unless($link->software_id === $software->id && $link->is_active, 404);
+        abort_unless($software->status === ContentStatus::Published
+            && $link->software_id === $software->id && $link->is_active, 404);
 
         return view('download.gateway', compact('software', 'link'));
     }
@@ -32,7 +34,8 @@ class DownloadController extends Controller
      */
     public function start(Request $request, Software $software, DownloadLink $link): RedirectResponse|BinaryFileResponse
     {
-        abort_unless($link->software_id === $software->id && $link->is_active, 404);
+        abort_unless($software->status === ContentStatus::Published
+            && $link->software_id === $software->id && $link->is_active, 404);
 
         $this->log($request, $software, $link);
 

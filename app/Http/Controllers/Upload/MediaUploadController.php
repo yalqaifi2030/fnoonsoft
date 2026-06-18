@@ -22,15 +22,37 @@ class MediaUploadController extends Controller
 
     public function store(Request $request): JsonResponse
     {
+        // Staff always; members only when uploads are enabled AND email-verified.
+        abort_unless($request->user()?->canUpload(), 403);
+
         $request->validate([
             'file' => [
                 'required', 'file',
-                'mimes:jpg,jpeg,png,gif,webp,svg,pdf',
+                // SVG deliberately excluded — same-origin SVG can carry <script> (stored XSS).
+                'mimes:jpg,jpeg,png,gif,webp,pdf',
                 'max:'.(int) env('MEDIA_MAX_KB', 51200), // 50 MB
             ],
         ]);
 
         $file = $request->file('file');
+
+        // Enforce the member storage quota + per-file ceiling (staff are unlimited).
+        $user = $request->user();
+        if ($user && ! $user->isStaff()) {
+            if ($file->getSize() > $user->maxFileBytes()) {
+                return response()->json([
+                    'message' => __('member.errors.too_large', ['max' => round($user->maxFileBytes() / 1024 ** 3, 1)]),
+                ], 422);
+            }
+            if ($file->getSize() > $user->storageRemainingBytes()) {
+                return response()->json([
+                    'message' => __('member.errors.quota', [
+                        'used' => round($user->storageUsedBytes() / 1024 ** 3, 2),
+                        'quota' => round($user->storageQuotaBytes() / 1024 ** 3, 2),
+                    ]),
+                ], 422);
+            }
+        }
         $ext = strtolower($file->getClientOriginalExtension() ?: $file->extension());
         $isPdf = $ext === 'pdf';
 

@@ -111,6 +111,7 @@ Route::get('/u/{user:username}', [\App\Http\Controllers\MemberProfileController:
 
 // Clear application caches from the admin topbar (staff only).
 Route::post('/system/clear-cache', function () {
+    abort_unless(auth()->user()?->isStaff(), 403);
     \Illuminate\Support\Facades\Artisan::call('optimize:clear');
     \Filament\Notifications\Notification::make()->success()->title(__('admin.cache_cleared'))->send();
 

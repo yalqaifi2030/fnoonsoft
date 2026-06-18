@@ -43,6 +43,9 @@ class MultipartUploadController extends Controller
     /** Begin a multipart upload; create the tracking session. */
     public function create(Request $request): JsonResponse
     {
+        // Staff always; members only when uploads are enabled AND email-verified.
+        abort_unless($request->user()?->canUpload(), 403);
+
         $data = $request->validate([
             'filename' => ['required', 'string', 'max:255'],
             'type' => ['nullable', 'string', 'max:150'],
@@ -151,15 +154,16 @@ class MultipartUploadController extends Controller
             ]);
         }
 
-        // R2: genuine presigned PUT URLs straight to Cloudflare.
+        // R2: genuine presigned PUT URLs straight to Cloudflare. Always use the
+        // session's own key/uploadId — never the client-supplied values.
         if (! empty($data['partNumbers'])) {
             return response()->json([
-                'urls' => $this->r2->presignParts($data['key'], $data['uploadId'], $data['partNumbers']),
+                'urls' => $this->r2->presignParts($session->r2_key, $session->r2_upload_id, $data['partNumbers']),
             ]);
         }
 
         return response()->json([
-            'url' => $this->r2->presignPart($data['key'], $data['uploadId'], (int) $data['partNumber']),
+            'url' => $this->r2->presignPart($session->r2_key, $session->r2_upload_id, (int) $data['partNumber']),
         ]);
     }
 
@@ -176,6 +180,7 @@ class MultipartUploadController extends Controller
     public function putPart(Request $request, string $session): Response
     {
         $model = UploadSession::where('uuid', $session)->firstOrFail();
+        abort_unless($this->owns($request, $model), 403);
         abort_unless($model->storage_disk === 'local' || $model->proxied, 404);
 
         $partNumber = (int) $request->query('partNumber');
@@ -218,7 +223,7 @@ class MultipartUploadController extends Controller
                 $this->local->completeMultipart($session, $data['parts']);
                 $assetDisk = 'local';
             } else {
-                $this->r2->completeMultipartUpload($data['key'], $data['uploadId'], $data['parts']);
+                $this->r2->completeMultipartUpload($session->r2_key, $session->r2_upload_id, $data['parts']);
                 $assetDisk = 'r2';
             }
         } catch (\Throwable $e) {
@@ -256,7 +261,7 @@ class MultipartUploadController extends Controller
         ProcessUploadedFile::dispatch($session->id);
 
         return response()->json([
-            'location' => $data['key'],
+            'location' => $session->r2_key,
             'sessionUuid' => $session->uuid,
             'asset' => [
                 'slug' => $asset->slug,
@@ -288,7 +293,7 @@ class MultipartUploadController extends Controller
         if ($session->storage_disk === 'local' || $session->proxied) {
             $this->local->abort($session);
         } else {
-            $this->r2->abortMultipartUpload($data['key'], $data['uploadId']);
+            $this->r2->abortMultipartUpload($session->r2_key, $session->r2_upload_id);
         }
 
         $session->update(['status' => UploadStatus::Failed, 'error_message' => 'Aborted by user']);
