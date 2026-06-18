@@ -251,6 +251,16 @@ class Software extends Model
         return $this->license_type === 'paid';
     }
 
+    /** Recompute the cached star average + count from APPROVED reviews only. */
+    public function recomputeRating(): void
+    {
+        $approved = $this->reviews()->where('status', 'approved');
+        $count = (clone $approved)->count();
+        $avg = $count ? round((float) (clone $approved)->avg('rating'), 2) : 0;
+
+        $this->forceFill(['reviews_count' => $count, 'rating_avg' => $avg])->saveQuietly();
+    }
+
     // --- Code viewer -----------------------------------------------------
 
     public function hasCode(): bool

@@ -86,6 +86,7 @@ class ManageSettings extends Page implements HasForms
 
         // Engagement / moderation.
         $data['comments_auto_approve'] = (bool) Setting::get('comments_auto_approve', false);
+        $data['reviews_auto_approve'] = (bool) Setting::get('reviews_auto_approve', false);
 
         $this->form->fill($data);
     }
@@ -210,6 +211,9 @@ class ManageSettings extends Page implements HasForms
                                     Toggle::make('comments_auto_approve')
                                         ->label(__('settings.comments.auto_approve'))
                                         ->helperText(__('settings.comments.auto_approve_hint')),
+                                    Toggle::make('reviews_auto_approve')
+                                        ->label(__('settings.comments.reviews_auto_approve'))
+                                        ->helperText(__('settings.comments.reviews_auto_approve_hint')),
                                 ]),
                         ]),
 
@@ -271,6 +275,7 @@ class ManageSettings extends Page implements HasForms
         Setting::put('spotlight_badge', $data['spotlight_badge'] ?? '', 'string', 'spotlight');
 
         Setting::put('comments_auto_approve', (bool) ($data['comments_auto_approve'] ?? false), 'boolean', 'engagement');
+        Setting::put('reviews_auto_approve', (bool) ($data['reviews_auto_approve'] ?? false), 'boolean', 'engagement');
 
         Notification::make()->success()->title(__('settings.saved'))->send();
     }

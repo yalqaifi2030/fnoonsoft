@@ -126,6 +126,10 @@ Route::get('/preview/maintenance', fn () => view('maintenance', \App\Support\Mai
 Route::post('/software/{software}/comments', [\App\Http\Controllers\CommentController::class, 'store'])
     ->middleware('throttle:5,1')->name('comments.store');
 
+// Public star reviews/ratings on a product (moderated)
+Route::post('/software/{software}/reviews', [\App\Http\Controllers\ReviewController::class, 'store'])
+    ->middleware('throttle:5,1')->name('reviews.store');
+
 // Product page — slug catch-all, registered last so it can't shadow the above.
 Route::get('/software/{software}', [SoftwareController::class, 'show'])->name('software.show');
 

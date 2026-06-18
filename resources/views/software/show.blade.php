@@ -260,11 +260,20 @@
 
             {{-- Reviews --}}
             <div id="reviews" data-spy class="card-luxury p-6 scroll-mt-32">
-                <h2 class="font-cairo font-bold text-xl mb-4">{{ __('site.reviews.title') }}</h2>
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="font-cairo font-bold text-xl">{{ __('site.reviews.title') }}</h2>
+                    @if ((int) $software->reviews_count > 0)
+                        <span class="inline-flex items-center gap-1.5 text-sm font-bold text-bronze" dir="ltr">
+                            <i class="fa-solid fa-star text-royal-gold"></i>
+                            {{ number_format((float) $software->rating_avg, 1) }}
+                            <span class="text-gray-400 font-normal">({{ $software->reviews_count }})</span>
+                        </span>
+                    @endif
+                </div>
                 @forelse ($software->approvedReviews as $review)
                     <div class="border-b border-gray-100 py-3">
                         <div class="flex items-center justify-between">
-                            <span class="font-semibold">{{ $review->user?->name }}</span>
+                            <span class="font-semibold">{{ $review->authorName() }}</span>
                             <span class="text-royal-gold text-sm" dir="ltr">
                                 @for ($i = 1; $i <= 5; $i++)<i class="fa-{{ $i <= $review->rating ? 'solid' : 'regular' }} fa-star"></i>@endfor
                             </span>
@@ -275,6 +284,14 @@
                 @empty
                     <p class="text-gray-400 text-sm">{{ __('site.reviews.none') }}</p>
                 @endforelse
+
+                {{-- Add a review --}}
+                <div class="mt-5 pt-5 border-t border-gray-100">
+                    <h3 class="font-bold mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-star text-royal-gold"></i> {{ __('review.add_title') }}
+                    </h3>
+                    @include('partials.review-form', ['software' => $software])
+                </div>
             </div>
 
             {{-- Comments --}}

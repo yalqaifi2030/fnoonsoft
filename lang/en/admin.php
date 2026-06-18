@@ -12,5 +12,8 @@ return [
         'new_comment_title' => 'New comment',
         'comment_pending_title' => 'New comment awaiting approval',
         'new_comment_body' => 'New comment on :item by :name',
+        'review_title' => 'New review',
+        'review_pending_title' => 'New review awaiting approval',
+        'review_body' => 'New review on :item by :name',
     ],
 ];

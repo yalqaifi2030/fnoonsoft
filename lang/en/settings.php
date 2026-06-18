@@ -21,6 +21,8 @@ return [
         'hint' => 'By default every comment is held for review before it appears (strongest anti-spam). Enable auto-publish only if you trust your audience.',
         'auto_approve' => 'Auto-publish comments',
         'auto_approve_hint' => 'When off (recommended) no comment shows until you approve it under “Comments”. Link-heavy comments are always held for review.',
+        'reviews_auto_approve' => 'Auto-publish reviews',
+        'reviews_auto_approve_hint' => 'When off (recommended) every rating waits for your approval under “Reviews”.',
     ],
     'site_name' => 'Site name',
     'tagline' => 'Tagline',

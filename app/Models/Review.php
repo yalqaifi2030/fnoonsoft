@@ -11,12 +11,19 @@ class Review extends Model
     use HasFactory;
 
     protected $fillable = [
-        'software_id', 'user_id', 'rating', 'title', 'body', 'status',
+        'software_id', 'user_id', 'author_name', 'rating', 'title', 'body', 'status',
     ];
 
     protected function casts(): array
     {
         return ['rating' => 'integer'];
+    }
+
+    /** Keep the parent software's star average + count in sync on any change. */
+    protected static function booted(): void
+    {
+        static::saved(fn (Review $r) => $r->software?->recomputeRating());
+        static::deleted(fn (Review $r) => $r->software?->recomputeRating());
     }
 
     public function software(): BelongsTo
@@ -32,5 +39,12 @@ class Review extends Model
     public function scopeApproved($q)
     {
         return $q->where('status', 'approved');
+    }
+
+    /** Display name: the linked user, else the guest-entered name, else a fallback. */
+    public function authorName(): string
+    {
+        return $this->user?->displayName()
+            ?: ($this->author_name ?: __('review.guest'));
     }
 }

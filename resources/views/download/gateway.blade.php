@@ -39,6 +39,15 @@
         @endif
     </div>
 
+    {{-- Rate the program (after the download starts) --}}
+    <div class="card-luxury p-6 mt-6 text-start">
+        <h2 class="font-cairo font-bold text-lg flex items-center gap-2">
+            <i class="fa-solid fa-star text-royal-gold"></i> {{ __('review.gateway_title') }}
+        </h2>
+        <p class="text-sm text-gray-500 mt-1 mb-4">{{ __('review.gateway_hint') }}</p>
+        @include('partials.review-form', ['software' => $software, 'compact' => true])
+    </div>
+
     <x-ad placement="gateway" class="mt-6" />
 </div>
 @endsection

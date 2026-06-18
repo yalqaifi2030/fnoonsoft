@@ -12,5 +12,8 @@ return [
         'new_comment_title' => 'تعليق جديد',
         'comment_pending_title' => 'تعليق جديد بانتظار الاعتماد',
         'new_comment_body' => 'تعليق جديد على :item من :name',
+        'review_title' => 'تقييم جديد',
+        'review_pending_title' => 'تقييم جديد بانتظار الاعتماد',
+        'review_body' => 'تقييم جديد على :item من :name',
     ],
 ];

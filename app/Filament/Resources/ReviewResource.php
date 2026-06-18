@@ -79,7 +79,13 @@ class ReviewResource extends Resource
                         Forms\Components\Select::make('user_id')
                             ->label(__('review.user'))
                             ->relationship('user', 'name')
-                            ->searchable()->preload()->required(),
+                            ->placeholder(__('review.guest'))
+                            ->searchable()->preload(),
+
+                        Forms\Components\TextInput::make('author_name')
+                            ->label(__('review.author_name'))
+                            ->helperText(__('review.author_name_hint'))
+                            ->maxLength(80),
 
                         Forms\Components\ToggleButtons::make('rating')
                             ->label(__('review.rating'))
@@ -131,10 +137,10 @@ class ReviewResource extends Resource
                     ->limit(28)
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('user.name')
+                Tables\Columns\TextColumn::make('author')
                     ->label(__('review.user'))
-                    ->icon('heroicon-m-user')
-                    ->searchable(),
+                    ->state(fn (Review $r) => $r->authorName())
+                    ->icon('heroicon-m-user'),
 
                 Tables\Columns\TextColumn::make('rating')
                     ->label(__('review.rating'))
