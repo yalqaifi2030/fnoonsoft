@@ -165,6 +165,10 @@ class SoftwareResource extends Resource
                             ->hiddenLabel()
                             ->schema([
                                 Forms\Components\TextInput::make('label')->label(__('software.link.label')),
+                                Forms\Components\TextInput::make('note')
+                                    ->label(__('software.link.note'))
+                                    ->helperText(__('software.link.note_hint'))
+                                    ->maxLength(60),
                                 Forms\Components\Select::make('type')
                                     ->label(__('software.link.type'))
                                     ->options(['r2' => __('software.link.r2'), 'external' => __('software.link.external')])

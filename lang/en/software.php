@@ -78,6 +78,8 @@ return [
     'empty' => 'No content yet. Add your first item.',
     'link' => [
         'label' => 'Label',
+        'note' => 'Extra info',
+        'note_hint' => 'Shows as a badge next to the part name — e.g. “2021 edition” or “64-bit”. Optional.',
         'type' => 'Type',
         'r2' => 'R2 (uploaded file)',
         'external' => 'External mirror',

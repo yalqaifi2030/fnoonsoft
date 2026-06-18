@@ -410,7 +410,12 @@
                                        class="group flex items-center gap-3 rounded-xl border border-gray-100 px-3 py-2.5 transition hover:border-saudi-green/40 hover:bg-saudi-green/5">
                                         <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-saudi-green/10 text-base font-black text-saudi-green" dir="ltr">{{ $i + 1 }}</span>
                                         <span class="min-w-0 flex-1">
-                                            <span class="block text-sm font-bold text-gray-800">{{ __('site.download.part', ['n' => $i + 1]) }}</span>
+                                            <span class="flex items-center gap-1.5">
+                                                <span class="text-sm font-bold text-gray-800">{{ __('site.download.part', ['n' => $i + 1]) }}</span>
+                                                @if (filled($link->note))
+                                                    <span class="shrink-0 rounded-md bg-royal-gold/20 px-1.5 py-0.5 text-[10px] font-bold text-saudi-green">{{ $link->note }}</span>
+                                                @endif
+                                            </span>
                                             <span class="block text-[11px] text-gray-400" dir="ltr">{{ $link->humanSize() }}</span>
                                         </span>
                                         <span class="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-saudi-green px-4 py-1.5 text-sm font-bold text-white shadow-sm transition group-hover:bg-saudi-green-dark">

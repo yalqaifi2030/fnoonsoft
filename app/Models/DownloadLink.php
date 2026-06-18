@@ -12,7 +12,7 @@ class DownloadLink extends Model
     use HasFactory;
 
     protected $fillable = [
-        'software_id', 'software_version_id', 'label', 'type', 'os',
+        'software_id', 'software_version_id', 'label', 'note', 'type', 'os',
         'architecture', 'is_portable', 'r2_key', 'external_url',
         'original_filename', 'size_bytes', 'checksum_sha256', 'checksum_md5',
         'downloads_count', 'is_active', 'sort_order',
