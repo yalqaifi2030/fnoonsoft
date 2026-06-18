@@ -143,6 +143,7 @@ return [
         'subscribe' => 'Subscribe',
         'rights' => 'All rights reserved.',
     ],
+    'feedback' => 'User feedback',
     'reviews' => [
         'title' => 'Reviews',
         'none' => 'No reviews yet.',

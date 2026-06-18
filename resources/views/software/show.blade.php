@@ -21,8 +21,7 @@
         $software->screenshots->isNotEmpty() ? ['id' => 'screenshots', 'label' => __('site.screenshots')] : null,
         $software->hasCode() ? ['id' => 'code', 'label' => __('software.section.code')] : null,
         $software->requirements->isNotEmpty() ? ['id' => 'requirements', 'label' => __('site.requirements')] : null,
-        ['id' => 'reviews', 'label' => __('site.reviews.title')],
-        ['id' => 'comments', 'label' => __('comment.title')],
+        ['id' => 'reviews', 'label' => __('site.feedback')],
     ])))
 
     {{-- Breadcrumb --}}
@@ -258,18 +257,33 @@
                 </div>
             @endif
 
-            {{-- Reviews --}}
-            <div id="reviews" data-spy class="card-luxury p-6 scroll-mt-32">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="font-cairo font-bold text-xl">{{ __('site.reviews.title') }}</h2>
+            {{-- User feedback: reviews + comments as tabs in one card --}}
+            <div id="reviews" data-spy class="card-luxury p-6 scroll-mt-32"
+                 x-data="{ tab: 'reviews' }" x-init="if (location.hash === '#comments') tab = 'comments'">
+
+                {{-- Tab headers --}}
+                <div class="mb-5 flex items-center gap-1 border-b border-gray-100">
+                    <button type="button" @click="tab='reviews'"
+                            :class="tab==='reviews' ? 'border-saudi-green text-saudi-green' : 'border-transparent text-gray-400 hover:text-gray-600'"
+                            class="-mb-px flex items-center gap-2 border-b-2 px-3 pb-3 font-cairo font-bold transition">
+                        <i class="fa-solid fa-star text-royal-gold"></i> {{ __('site.reviews.title') }}
+                        @if ((int) $software->reviews_count > 0)<span class="text-xs font-normal text-gray-400">({{ $software->reviews_count }})</span>@endif
+                    </button>
+                    <button type="button" @click="tab='comments'"
+                            :class="tab==='comments' ? 'border-saudi-green text-saudi-green' : 'border-transparent text-gray-400 hover:text-gray-600'"
+                            class="-mb-px flex items-center gap-2 border-b-2 px-3 pb-3 font-cairo font-bold transition">
+                        <i class="fa-solid fa-comments text-saudi-green"></i> {{ __('comment.title') }}
+                        <span class="text-xs font-normal text-gray-400">({{ $software->approvedComments->count() }})</span>
+                    </button>
                     @if ((int) $software->reviews_count > 0)
-                        <span class="inline-flex items-center gap-1.5 text-sm font-bold text-bronze" dir="ltr">
-                            <i class="fa-solid fa-star text-royal-gold"></i>
-                            {{ number_format((float) $software->rating_avg, 1) }}
-                            <span class="text-gray-400 font-normal">({{ $software->reviews_count }})</span>
+                        <span x-show="tab==='reviews'" class="ms-auto inline-flex items-center gap-1.5 text-sm font-bold text-bronze" dir="ltr">
+                            <i class="fa-solid fa-star text-royal-gold"></i> {{ number_format((float) $software->rating_avg, 1) }}
                         </span>
                     @endif
                 </div>
+
+                {{-- ===== Reviews tab ===== --}}
+                <div x-show="tab==='reviews'">
                 @forelse ($software->approvedReviews as $review)
                     <div class="border-b border-gray-100 py-3">
                         <div class="flex items-center justify-between">
@@ -292,16 +306,10 @@
                     </h3>
                     @include('partials.review-form', ['software' => $software])
                 </div>
-            </div>
+                </div>{{-- /reviews tab --}}
 
-            {{-- Comments --}}
-            <div id="comments" data-spy class="card-luxury p-6 scroll-mt-32">
-                <h2 class="font-cairo font-bold text-xl mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-comments text-saudi-green"></i>
-                    {{ __('comment.title') }}
-                    <span class="text-gray-400 text-base font-normal">({{ $software->approvedComments->count() }})</span>
-                </h2>
-
+                {{-- ===== Comments tab ===== --}}
+                <div id="comments" x-show="tab==='comments'" x-cloak class="scroll-mt-32">
                 @if (session('comment_status'))
                     <div class="mb-5 flex items-center gap-2 rounded-xl bg-green-50 px-4 py-3 text-sm text-green-700">
                         <i class="fa-solid fa-circle-check"></i> {{ session('comment_status') }}
@@ -368,7 +376,8 @@
                         <i class="fa-solid fa-paper-plane"></i> {{ __('comment.submit') }}
                     </button>
                 </form>
-            </div>
+                </div>{{-- /comments tab --}}
+            </div>{{-- /user-feedback card --}}
         </div>
 
         {{-- Sidebar: download --}}
