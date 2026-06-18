@@ -41,18 +41,18 @@
         @else
             <input type="text" name="author_name" required maxlength="80"
                    placeholder="{{ __('review.your_name') }}"
-                   class="w-full rounded-lg border-gray-200 text-sm focus:border-saudi-green focus:ring-saudi-green">
+                   class="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:border-saudi-green focus:ring-2 focus:ring-saudi-green/20 focus:outline-none">
         @endauth
 
         @unless ($compact)
             <input type="text" name="title" maxlength="160"
                    placeholder="{{ __('review.title_ph') }}"
-                   class="w-full rounded-lg border-gray-200 text-sm focus:border-saudi-green focus:ring-saudi-green">
+                   class="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:border-saudi-green focus:ring-2 focus:ring-saudi-green/20 focus:outline-none">
         @endunless
 
         <textarea name="body" maxlength="2000" rows="{{ $compact ? 2 : 3 }}"
                   placeholder="{{ __('review.body_ph') }}"
-                  class="w-full rounded-lg border-gray-200 text-sm focus:border-saudi-green focus:ring-saudi-green"></textarea>
+                  class="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:border-saudi-green focus:ring-2 focus:ring-saudi-green/20 focus:outline-none"></textarea>
 
         {{-- honeypot --}}
         <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true">
