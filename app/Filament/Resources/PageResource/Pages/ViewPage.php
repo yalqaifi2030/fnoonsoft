@@ -4,9 +4,9 @@ namespace App\Filament\Resources\PageResource\Pages;
 
 use App\Filament\Resources\PageResource;
 use Filament\Actions;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\ViewRecord;
 
-class EditPage extends EditRecord
+class ViewPage extends ViewRecord
 {
     use \App\Filament\Concerns\TranslatableFormState;
 
@@ -15,9 +15,7 @@ class EditPage extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ViewAction::make()
-                ->url(fn () => PageResource::getUrl('view', ['record' => $this->record])),
-            Actions\DeleteAction::make(),
+            Actions\EditAction::make(),
         ];
     }
 }

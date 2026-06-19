@@ -4,9 +4,9 @@ namespace App\Filament\Resources\InteractiveLabResource\Pages;
 
 use App\Filament\Resources\InteractiveLabResource;
 use Filament\Actions;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\ViewRecord;
 
-class EditInteractiveLab extends EditRecord
+class ViewInteractiveLab extends ViewRecord
 {
     use \App\Filament\Concerns\TranslatableFormState;
 
@@ -15,8 +15,7 @@ class EditInteractiveLab extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ViewAction::make()
-                ->url(fn () => InteractiveLabResource::getUrl('view', ['record' => $this->record])),
+            Actions\EditAction::make(),
             Actions\Action::make('view_site')
                 ->label(__('learn_admin.action.view_site'))
                 ->icon('heroicon-m-arrow-top-right-on-square')

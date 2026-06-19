@@ -127,6 +127,9 @@ class InteractiveLabResource extends Resource
                     ->url(fn (InteractiveLab $r) => static::getUrl('edit', ['record' => $r])),
 
                 Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make()
+                        ->icon('heroicon-m-eye')
+                        ->url(fn (InteractiveLab $r) => static::getUrl('view', ['record' => $r])),
                     Tables\Actions\Action::make('view_site')
                         ->label(__('learn_admin.action.view_site'))
                         ->icon('heroicon-m-arrow-top-right-on-square')->color('gray')
@@ -156,6 +159,7 @@ class InteractiveLabResource extends Resource
         return [
             'index' => Pages\ListInteractiveLabs::route('/'),
             'create' => Pages\CreateInteractiveLab::route('/create'),
+            'view' => Pages\ViewInteractiveLab::route('/{record}'),
             'edit' => Pages\EditInteractiveLab::route('/{record}/edit'),
         ];
     }

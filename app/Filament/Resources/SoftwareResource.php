@@ -507,6 +507,10 @@ class SoftwareResource extends Resource
                         ->openUrlInNewTab()
                         ->visible(fn (Software $r) => $r->status === ContentStatus::Published),
 
+                    Tables\Actions\ViewAction::make()
+                        ->icon('heroicon-m-eye')
+                        ->url(fn (Software $r) => static::getUrl('view', ['record' => $r])),
+
                     Tables\Actions\EditAction::make()->icon('heroicon-m-pencil-square'),
 
                     Tables\Actions\Action::make('copy_links')
@@ -592,6 +596,7 @@ class SoftwareResource extends Resource
         return [
             'index' => Pages\ListSoftware::route('/'),
             'create' => Pages\CreateSoftware::route('/create'),
+            'view' => Pages\ViewSoftware::route('/{record}'),
             'edit' => Pages\EditSoftware::route('/{record}/edit'),
         ];
     }

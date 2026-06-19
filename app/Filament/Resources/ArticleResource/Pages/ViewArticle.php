@@ -4,9 +4,9 @@ namespace App\Filament\Resources\ArticleResource\Pages;
 
 use App\Filament\Resources\ArticleResource;
 use Filament\Actions;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\ViewRecord;
 
-class EditArticle extends EditRecord
+class ViewArticle extends ViewRecord
 {
     use \App\Filament\Concerns\TranslatableFormState;
 
@@ -15,9 +15,7 @@ class EditArticle extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ViewAction::make()
-                ->url(fn () => ArticleResource::getUrl('view', ['record' => $this->record])),
-            Actions\DeleteAction::make(),
+            Actions\EditAction::make(),
         ];
     }
 }

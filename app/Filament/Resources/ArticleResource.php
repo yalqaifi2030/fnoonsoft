@@ -232,6 +232,10 @@ class ArticleResource extends Resource
                         ->openUrlInNewTab()
                         ->visible(fn (Article $r) => $r->status === 'published'),
 
+                    Tables\Actions\ViewAction::make()
+                        ->icon('heroicon-m-eye')
+                        ->url(fn (Article $r) => static::getUrl('view', ['record' => $r])),
+
                     Tables\Actions\EditAction::make()
                         ->icon('heroicon-m-pencil-square'),
 
@@ -312,6 +316,7 @@ class ArticleResource extends Resource
         return [
             'index' => Pages\ListArticles::route('/'),
             'create' => Pages\CreateArticle::route('/create'),
+            'view' => Pages\ViewArticle::route('/{record}'),
             'edit' => Pages\EditArticle::route('/{record}/edit'),
         ];
     }

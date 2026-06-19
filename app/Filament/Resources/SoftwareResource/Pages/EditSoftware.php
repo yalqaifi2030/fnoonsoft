@@ -23,6 +23,8 @@ class EditSoftware extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\ViewAction::make()
+                ->url(fn () => SoftwareResource::getUrl('view', ['record' => $this->record])),
             Actions\DeleteAction::make(),
         ];
     }

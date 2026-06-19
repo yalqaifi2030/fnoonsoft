@@ -152,6 +152,10 @@ class PageResource extends Resource
                         ->openUrlInNewTab()
                         ->visible(fn (Page $r) => (bool) $r->is_published),
 
+                    Tables\Actions\ViewAction::make()
+                        ->icon('heroicon-m-eye')
+                        ->url(fn (Page $r) => static::getUrl('view', ['record' => $r])),
+
                     Tables\Actions\EditAction::make()->icon('heroicon-m-pencil-square'),
 
                     Tables\Actions\Action::make('toggle_publish')
@@ -214,6 +218,7 @@ class PageResource extends Resource
         return [
             'index' => Pages\ListPages::route('/'),
             'create' => Pages\CreatePage::route('/create'),
+            'view' => Pages\ViewPage::route('/{record}'),
             'edit' => Pages\EditPage::route('/{record}/edit'),
         ];
     }
