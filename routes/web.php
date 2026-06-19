@@ -66,6 +66,10 @@ Route::post('/contact', [ContactController::class, 'store'])
 Route::post('/newsletter', [NewsletterController::class, 'store'])
     ->middleware('throttle:5,1')->name('newsletter.store');
 
+// Report a problem (members + guests) — lands as a support ticket with a screenshot.
+Route::post('/report-problem', [\App\Http\Controllers\ProblemReportController::class, 'store'])
+    ->middleware('throttle:6,1')->name('problem.report');
+
 // Language switch (public site)
 Route::get('/locale/{locale}', [LocaleController::class, 'switch'])->name('locale.switch');
 // Language switch (Filament panels — separate session key)

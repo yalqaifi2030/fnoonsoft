@@ -31,6 +31,13 @@
             {!! __('site.download.manual', ['link' => '<a href="'.route('download.start', [$software, $link]).'" class="text-saudi-green underline">'.__('site.download.click_here').'</a>']) !!}
         </p>
 
+        <p class="mt-3 text-xs text-gray-400">
+            {{ __('report.download_prompt') }}
+            <button type="button"
+                    @click="window.fnoonReport({ source: 'download', software: @js($software->name), softwareSlug: @js($software->slug), error: 'download gateway' })"
+                    class="font-medium text-saudi-green underline">{{ __('report.download_cta') }}</button>
+        </p>
+
         @if ($link->checksum_sha256)
             <div class="mt-6 pt-6 border-t border-royal-gold/10 text-xs text-gray-500">
                 <span class="font-semibold">SHA-256:</span>

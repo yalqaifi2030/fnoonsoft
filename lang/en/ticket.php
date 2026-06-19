@@ -29,8 +29,10 @@ return [
     'support_team' => 'Support team',
     'you' => 'You',
 
+    'guest' => 'Guest',
     'categories' => [
         'technical' => 'Technical issue',
+        'download' => 'Download problem',
         'account' => 'Account',
         'upload' => 'Uploads & files',
         'suggestion' => 'Suggestion',

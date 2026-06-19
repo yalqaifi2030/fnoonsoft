@@ -57,10 +57,12 @@ class SupportTicketResource extends Resource
                     ->label(__('ticket.subject'))
                     ->weight('semibold')->searchable()->limit(45),
 
-                Tables\Columns\TextColumn::make('user.name')
+                Tables\Columns\TextColumn::make('reporter')
                     ->label(__('ticket.owner'))
-                    ->description(fn (SupportTicket $r) => $r->user?->email)
-                    ->searchable()->toggleable(),
+                    ->state(fn (SupportTicket $r) => $r->reporterName())
+                    ->description(fn (SupportTicket $r) => $r->reporterEmail())
+                    ->icon(fn (SupportTicket $r) => $r->user_id ? null : 'heroicon-m-user')
+                    ->toggleable(),
 
                 Tables\Columns\TextColumn::make('category')
                     ->label(__('ticket.category'))

@@ -25,7 +25,7 @@
             <div style="min-width:0; flex:1 1 auto;">
                 <div class="text-gray-900 dark:text-white" style="font-size:1.05rem; font-weight:800; line-height:1.3;">{{ $ticket->subject }}</div>
                 <div class="text-gray-400" style="font-size:.72rem; margin-top:.25rem;" dir="ltr">
-                    {{ $ticket->number() }} · {{ $ticket->created_at->format('Y-m-d') }}@if ($isStaff && $ticket->user) · {{ $ticket->user->name }}@endif
+                    {{ $ticket->number() }} · {{ $ticket->created_at->format('Y-m-d') }}@if ($isStaff && $ticket->user) · {{ $ticket->user->name }}@elseif ($isStaff && ($ticket->guest_email || $ticket->guest_name)) · {{ $ticket->guest_email ?: $ticket->guest_name }} ({{ __('ticket.guest') }})@endif
                 </div>
             </div>
             <div style="display:flex; gap:.4rem; flex-wrap:wrap; align-items:center;">

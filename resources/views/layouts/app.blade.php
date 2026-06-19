@@ -179,6 +179,9 @@
 
     @include('partials.footer')
 
+    {{-- Report-a-problem widget (floating button + screenshot modal) --}}
+    @include('partials.report-problem')
+
     {{-- Global custom <x-select> behaviour (defined before deferred Alpine runs) --}}
     <script>
         function fnoonSelect(config) {

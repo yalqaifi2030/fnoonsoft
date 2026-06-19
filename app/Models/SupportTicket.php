@@ -10,15 +10,29 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class SupportTicket extends Model
 {
     protected $fillable = [
-        'user_id', 'subject', 'category', 'priority', 'status', 'last_reply_at', 'closed_at',
+        'user_id', 'guest_name', 'guest_email', 'subject', 'category', 'priority',
+        'status', 'source', 'meta', 'last_reply_at', 'closed_at',
     ];
 
     protected $casts = [
         'last_reply_at' => 'datetime',
         'closed_at' => 'datetime',
+        'meta' => 'array',
     ];
 
-    public const CATEGORIES = ['technical', 'account', 'upload', 'suggestion', 'other'];
+    public const CATEGORIES = ['technical', 'download', 'account', 'upload', 'suggestion', 'other'];
+
+    /** Best display name for the reporter (member or guest). */
+    public function reporterName(): string
+    {
+        return $this->user?->name
+            ?: ($this->guest_name ?: ($this->guest_email ?: __('ticket.guest')));
+    }
+
+    public function reporterEmail(): ?string
+    {
+        return $this->user?->email ?: $this->guest_email;
+    }
 
     public const PRIORITIES = ['low', 'normal', 'high', 'urgent'];
 

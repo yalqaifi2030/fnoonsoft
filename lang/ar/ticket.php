@@ -29,8 +29,10 @@ return [
     'support_team' => 'فريق الدعم',
     'you' => 'أنت',
 
+    'guest' => 'زائر',
     'categories' => [
         'technical' => 'مشكلة تقنية',
+        'download' => 'مشكلة تحميل',
         'account' => 'الحساب',
         'upload' => 'الرفع والملفات',
         'suggestion' => 'اقتراح',
