@@ -33,7 +33,7 @@ class MemberPanelProvider extends PanelProvider
             ->id('member')
             ->path('dashboard')
             ->login()
-            ->registration()
+            ->registration(\App\Filament\Pages\Auth\Register::class)
             ->emailVerification()
             ->profile(\App\Filament\Pages\Auth\EditProfile::class, isSimple: false)
             ->brandName(fn () => \App\Support\Branding::name('admin', 'Fnoon').' · '.__('member.brand'))

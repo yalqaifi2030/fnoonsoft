@@ -7,6 +7,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Form;
+use App\Rules\ReservedName;
 use Filament\Pages\Auth\EditProfile as BaseEditProfile;
 use Illuminate\Validation\Rule;
 
@@ -44,7 +45,8 @@ class EditProfile extends BaseEditProfile
                         ->directory('avatars')
                         ->maxSize(2048),
 
-                    $this->getNameFormComponent(),
+                    $this->getNameFormComponent()
+                        ->rules($this->reservedRule()),
 
                     TextInput::make('username')
                         ->label(__('profile.username'))
@@ -55,6 +57,7 @@ class EditProfile extends BaseEditProfile
                         ->maxLength(30)
                         ->unique(ignoreRecord: true)
                         ->rule(Rule::notIn(['admin', 'upload', 'dashboard', 'api', 'login', 'register', 'u', 'd']))
+                        ->rules($this->reservedRule())
                         ->dehydrateStateUsing(fn (?string $state) => $state ? strtolower($state) : null),
 
                     Textarea::make('bio')
@@ -86,5 +89,11 @@ class EditProfile extends BaseEditProfile
                     $this->getPasswordConfirmationFormComponent(),
                 ]),
         ]);
+    }
+
+    /** Reserved-name guard — applied to members only; staff keep their names. */
+    private function reservedRule(): array
+    {
+        return auth()->user()?->isStaff() ? [] : [new ReservedName];
     }
 }

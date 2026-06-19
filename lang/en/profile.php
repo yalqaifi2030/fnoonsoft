@@ -12,6 +12,7 @@ return [
 
     'username' => 'Username',
     'username_hint' => 'Forms your public page link. Letters, numbers and dashes only.',
+    'reserved_name' => 'This name is reserved and can’t be used. Please choose another.',
     'bio' => 'About you',
     'website' => 'Website',
     'twitter' => 'X (Twitter) handle',
