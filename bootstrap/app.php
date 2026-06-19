@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\EnsureSiteIsAvailable;
 use App\Http\Middleware\SetLocale;
+use App\Http\Middleware\TrackVisit;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -21,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             SetLocale::class,
             EnsureSiteIsAvailable::class,
+            TrackVisit::class,
         ]);
 
         // Local-disk chunk uploads are authenticated by a signed URL, not a CSRF

@@ -50,6 +50,7 @@ class AdminPanelProvider extends PanelProvider
                 __('nav.group.content'),
                 __('nav.group.publishing'),
                 __('nav.group.engagement'),
+                __('nav.group.analytics'),
                 __('nav.group.users'),
                 __('nav.group.system'),
             ])
@@ -73,9 +74,9 @@ class AdminPanelProvider extends PanelProvider
             )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
-            ->pages([
-                Pages\Dashboard::class,
-            ])
+            // The dashboard home is App\Filament\Pages\Dashboard (auto-discovered),
+            // which curates its widgets; full visitor detail is VisitorAnalytics.
+            ->pages([])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->userMenuItems([
                 MenuItem::make()

@@ -5,6 +5,7 @@ return [
         'content' => 'Content',
         'publishing' => 'Publishing',
         'engagement' => 'Engagement',
+        'analytics' => 'Analytics',
         'learn' => 'Learn & Build',
         'users' => 'Users & Access',
         'system' => 'System',

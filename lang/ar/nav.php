@@ -5,6 +5,7 @@ return [
         'content' => 'المحتوى',
         'publishing' => 'النشر',
         'engagement' => 'التفاعل',
+        'analytics' => 'الإحصائيات',
         'learn' => 'تعلّم وابنِ',
         'users' => 'المستخدمون والصلاحيات',
         'system' => 'النظام',
