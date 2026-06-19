@@ -214,6 +214,49 @@ class SoftwareResource extends Resource
                             ->defaultItems(0),
                     ]),
 
+                Forms\Components\Section::make(__('software.section.before_after'))
+                    ->icon('heroicon-o-arrows-right-left')
+                    ->description(__('software.before_after_hint'))
+                    ->collapsed()
+                    ->schema([
+                        Forms\Components\Repeater::make('beforeAfterSlides')
+                            ->relationship()
+                            ->hiddenLabel()
+                            ->orderColumn('sort_order')
+                            ->schema([
+                                Forms\Components\ToggleButtons::make('media_type')
+                                    ->label(__('software.ba.type'))
+                                    ->inline()
+                                    ->options(['image' => __('software.ba.image'), 'video' => __('software.ba.video')])
+                                    ->icons(['image' => 'heroicon-m-photo', 'video' => 'heroicon-m-film'])
+                                    ->default('image')->live()->columnSpanFull(),
+                                Forms\Components\FileUpload::make('before_path')
+                                    ->label(__('software.ba.before'))
+                                    ->disk('public')->directory('before-after')
+                                    ->acceptedFileTypes(fn (Forms\Get $get) => ($get('media_type') ?? 'image') === 'video'
+                                        ? ['video/mp4', 'video/webm', 'video/ogg']
+                                        : ['image/jpeg', 'image/png', 'image/webp'])
+                                    ->maxSize(fn (Forms\Get $get) => ($get('media_type') ?? 'image') === 'video' ? 1024 * 200 : 1024 * 8)
+                                    ->required(),
+                                Forms\Components\FileUpload::make('after_path')
+                                    ->label(__('software.ba.after'))
+                                    ->disk('public')->directory('before-after')
+                                    ->acceptedFileTypes(fn (Forms\Get $get) => ($get('media_type') ?? 'image') === 'video'
+                                        ? ['video/mp4', 'video/webm', 'video/ogg']
+                                        : ['image/jpeg', 'image/png', 'image/webp'])
+                                    ->maxSize(fn (Forms\Get $get) => ($get('media_type') ?? 'image') === 'video' ? 1024 * 200 : 1024 * 8)
+                                    ->required(),
+                                Forms\Components\TextInput::make('before_label')
+                                    ->label(__('software.ba.before_label'))->placeholder(__('site.before_after.before')),
+                                Forms\Components\TextInput::make('after_label')
+                                    ->label(__('software.ba.after_label'))->placeholder(__('site.before_after.after')),
+                                Forms\Components\TextInput::make('caption')->label(__('software.caption'))->columnSpanFull(),
+                            ])
+                            ->columns(2)
+                            ->addActionLabel(__('software.ba.add'))
+                            ->defaultItems(0),
+                    ]),
+
                 Forms\Components\Section::make(__('software.section.features'))
                     ->icon('heroicon-o-sparkles')
                     ->description(__('software.features_hint'))

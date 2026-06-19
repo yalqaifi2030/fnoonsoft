@@ -13,6 +13,7 @@ class SoftwareController extends Controller
 
         $software->loadMissing([
             'developer', 'category', 'versions', 'screenshots',
+            'activeBeforeAfterSlides',
             'requirements', 'downloadLinks', 'tags',
             'approvedReviews.user', 'approvedComments.user',
         ]);

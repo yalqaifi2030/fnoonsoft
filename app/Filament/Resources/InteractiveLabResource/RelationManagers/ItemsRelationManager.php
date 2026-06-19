@@ -100,6 +100,7 @@ class ItemsRelationManager extends RelationManager
                         'embed' => __('lab_item.block_embed'),
                         'code' => __('lab_item.block_code'),
                         'image' => __('lab_item.block_image'),
+                        'before_after' => __('lab_item.block_before_after'),
                         'steps' => __('lab_item.block_steps'),
                         'link' => __('lab_item.block_link'),
                     ])
@@ -134,6 +135,35 @@ class ItemsRelationManager extends RelationManager
                     ->visible(fn (Forms\Get $get) => ($get('data.block') ?? '') === 'image'),
                 Forms\Components\TextInput::make('data.caption')->label(__('lab_item.caption'))->columnSpanFull()
                     ->visible(fn (Forms\Get $get) => ($get('data.block') ?? '') === 'image'),
+
+                // before / after comparison
+                Forms\Components\ToggleButtons::make('data.ba_type')->label(__('lab_item.ba_type'))
+                    ->inline()->options(['image' => __('lab_item.ba_image'), 'video' => __('lab_item.ba_video')])
+                    ->icons(['image' => 'heroicon-m-photo', 'video' => 'heroicon-m-film'])
+                    ->default('image')->live()->columnSpanFull()
+                    ->visible(fn (Forms\Get $get) => ($get('data.block') ?? '') === 'before_after'),
+                Forms\Components\FileUpload::make('data.before')->label(__('lab_item.ba_before'))
+                    ->disk('public')->directory('before-after')
+                    ->acceptedFileTypes(fn (Forms\Get $get) => ($get('data.ba_type') ?? 'image') === 'video'
+                        ? ['video/mp4', 'video/webm', 'video/ogg']
+                        : ['image/jpeg', 'image/png', 'image/webp'])
+                    ->maxSize(fn (Forms\Get $get) => ($get('data.ba_type') ?? 'image') === 'video' ? 1024 * 200 : 1024 * 8)
+                    ->visible(fn (Forms\Get $get) => ($get('data.block') ?? '') === 'before_after'),
+                Forms\Components\FileUpload::make('data.after')->label(__('lab_item.ba_after'))
+                    ->disk('public')->directory('before-after')
+                    ->acceptedFileTypes(fn (Forms\Get $get) => ($get('data.ba_type') ?? 'image') === 'video'
+                        ? ['video/mp4', 'video/webm', 'video/ogg']
+                        : ['image/jpeg', 'image/png', 'image/webp'])
+                    ->maxSize(fn (Forms\Get $get) => ($get('data.ba_type') ?? 'image') === 'video' ? 1024 * 200 : 1024 * 8)
+                    ->visible(fn (Forms\Get $get) => ($get('data.block') ?? '') === 'before_after'),
+                Forms\Components\TextInput::make('data.before_label')->label(__('lab_item.ba_before_label'))
+                    ->placeholder(__('site.before_after.before'))
+                    ->visible(fn (Forms\Get $get) => ($get('data.block') ?? '') === 'before_after'),
+                Forms\Components\TextInput::make('data.after_label')->label(__('lab_item.ba_after_label'))
+                    ->placeholder(__('site.before_after.after'))
+                    ->visible(fn (Forms\Get $get) => ($get('data.block') ?? '') === 'before_after'),
+                Forms\Components\TextInput::make('data.ba_caption')->label(__('lab_item.caption'))->columnSpanFull()
+                    ->visible(fn (Forms\Get $get) => ($get('data.block') ?? '') === 'before_after'),
 
                 // steps
                 Forms\Components\Repeater::make('data.steps')->label(__('lab_item.steps'))
@@ -278,6 +308,7 @@ class ItemsRelationManager extends RelationManager
                 'embed' => ['Embed', 'info', 'heroicon-m-play-circle'],
                 'code' => ['Code', 'gray', 'heroicon-m-code-bracket'],
                 'image' => ['Image', 'success', 'heroicon-m-photo'],
+                'before_after' => ['Before/After', 'primary', 'heroicon-m-arrows-right-left'],
                 'steps' => ['Steps', 'warning', 'heroicon-m-list-bullet'],
                 'link' => ['Link', 'primary', 'heroicon-m-link'],
                 default => ['Text', 'gray', 'heroicon-m-document-text'],

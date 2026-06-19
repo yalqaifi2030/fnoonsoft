@@ -153,6 +153,11 @@ return [
     ],
     'requirements' => 'System requirements',
     'screenshots' => 'Screenshots',
+    'before_after' => [
+        'title' => 'Before & after',
+        'before' => 'Before',
+        'after' => 'After',
+    ],
     'about' => 'Overview',
     'read_more_hint' => 'Tap to read the full overview.',
     'maintenance' => [

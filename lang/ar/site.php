@@ -153,6 +153,11 @@ return [
     ],
     'requirements' => 'متطلّبات النظام',
     'screenshots' => 'لقطات الشاشة',
+    'before_after' => [
+        'title' => 'قبل وبعد',
+        'before' => 'قبل',
+        'after' => 'بعد',
+    ],
     'about' => 'نبذة عن البرنامج',
     'read_more_hint' => 'اضغط لقراءة النبذة كاملة.',
     'maintenance' => [

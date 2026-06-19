@@ -80,6 +80,7 @@ class Software extends Model
             $software->uploadSessions()->get()->each->delete();
             DownloadLink::where('software_id', $software->id)->get()->each->delete();
             $software->screenshots()->get()->each->delete();
+            $software->beforeAfterSlides()->get()->each->delete();
 
             foreach ([$software->icon, $software->video_path] as $path) {
                 if ($path) {
@@ -123,6 +124,16 @@ class Software extends Model
     public function screenshots(): HasMany
     {
         return $this->hasMany(Screenshot::class)->orderBy('sort_order');
+    }
+
+    public function beforeAfterSlides(): HasMany
+    {
+        return $this->hasMany(BeforeAfterSlide::class)->orderBy('sort_order');
+    }
+
+    public function activeBeforeAfterSlides(): HasMany
+    {
+        return $this->beforeAfterSlides()->where('is_active', true);
     }
 
     public function requirements(): HasMany

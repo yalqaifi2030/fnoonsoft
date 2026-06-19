@@ -54,6 +54,20 @@
                     @endif
                     @break
 
+                @case('before_after')
+                    @php($baBefore = $it->d('before'))
+                    @php($baAfter = $it->d('after'))
+                    @if ($baBefore && $baAfter)
+                        <x-before-after
+                            :before="Str::startsWith($baBefore, ['http://', 'https://']) ? $baBefore : Storage::disk('public')->url($baBefore)"
+                            :after="Str::startsWith($baAfter, ['http://', 'https://']) ? $baAfter : Storage::disk('public')->url($baAfter)"
+                            :type="$it->d('ba_type', 'image')"
+                            :before-label="$it->d('before_label')"
+                            :after-label="$it->d('after_label')"
+                            :caption="$it->d('ba_caption')" />
+                    @endif
+                    @break
+
                 @case('steps')
                     <ol class="space-y-3 list-none p-0 m-0">
                         @foreach (($it->d('steps') ?? []) as $si => $st)

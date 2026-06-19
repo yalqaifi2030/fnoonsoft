@@ -19,6 +19,7 @@
         $software->hasVideo() ? ['id' => 'video', 'label' => __('software.section.video')] : null,
         ! empty($software->features) ? ['id' => 'features', 'label' => __('software.section.features')] : null,
         $software->screenshots->isNotEmpty() ? ['id' => 'screenshots', 'label' => __('site.screenshots')] : null,
+        $software->activeBeforeAfterSlides->isNotEmpty() ? ['id' => 'before_after', 'label' => __('site.before_after.title')] : null,
         $software->hasCode() ? ['id' => 'code', 'label' => __('software.section.code')] : null,
         $software->requirements->isNotEmpty() ? ['id' => 'requirements', 'label' => __('site.requirements')] : null,
         ['id' => 'reviews', 'label' => __('site.feedback')],
@@ -212,6 +213,26 @@
                                     <span class="absolute inset-x-0 bottom-0 truncate bg-gradient-to-t from-black/70 to-transparent px-2 py-1 text-start text-[11px] text-white">{{ $shot->caption }}</span>
                                 @endif
                             </button>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+            {{-- Before / after comparisons --}}
+            @if ($software->activeBeforeAfterSlides->isNotEmpty())
+                <div id="before_after" data-spy class="card-luxury p-6 scroll-mt-32">
+                    <h2 class="font-cairo font-bold text-xl mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-left-right text-saudi-green"></i> {{ __('site.before_after.title') }}
+                    </h2>
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        @foreach ($software->activeBeforeAfterSlides as $slide)
+                            <x-before-after
+                                :before="$slide->beforeUrl()"
+                                :after="$slide->afterUrl()"
+                                :type="$slide->media_type"
+                                :before-label="$slide->before_label"
+                                :after-label="$slide->after_label"
+                                :caption="$slide->caption" />
                         @endforeach
                     </div>
                 </div>
