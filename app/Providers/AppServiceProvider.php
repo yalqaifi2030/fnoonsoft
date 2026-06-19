@@ -41,6 +41,20 @@ class AppServiceProvider extends ServiceProvider
         // overriding .env so they take effect immediately without a redeploy.
         $this->applyDynamicConfig();
 
+        // Send the branded welcome email once a member verifies their address.
+        \Illuminate\Support\Facades\Event::listen(
+            \Illuminate\Auth\Events\Verified::class,
+            function (\Illuminate\Auth\Events\Verified $event): void {
+                if (\App\Support\MailTemplate::enabled('welcome')) {
+                    try {
+                        $event->user->notify(new \App\Notifications\WelcomeMember);
+                    } catch (\Throwable $e) {
+                        // never block verification over a welcome email
+                    }
+                }
+            },
+        );
+
         // Use Filament's polished JS-powered dropdown (themed with the green/gold
         // primary) instead of the plain native <select> across BOTH panels.
         Select::configureUsing(function (Select $select): void {

@@ -62,6 +62,20 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
         return Storage::disk('public')->url($this->avatar);
     }
 
+    // --- Branded transactional emails ----------------------------------
+
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new \App\Notifications\VerifyEmailBranded);
+    }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new \App\Notifications\ResetPasswordBranded($token));
+    }
+
+    // --------------------------------------------------------------------
+
     public function canAccessPanel(Panel $panel): bool
     {
         if (! $this->is_active) {

@@ -33,6 +33,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->passwordReset()
             ->profile(\App\Filament\Pages\Auth\EditProfile::class, isSimple: false)
             ->brandName(fn () => \App\Support\Branding::name('admin', 'Fnoon Admin'))
             ->brandLogo(fn () => \App\Support\Branding::logo('admin'))

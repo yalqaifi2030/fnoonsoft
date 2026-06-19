@@ -53,6 +53,11 @@ class SettingsHub extends Page
                 'url' => EmailSettings::getUrl(),
             ],
             [
+                'icon' => 'fa-solid fa-envelope-open-text', 'color' => '#0d9488',
+                'title' => __('settings.hub.mail_templates'), 'desc' => __('settings.hub.mail_templates_desc'),
+                'url' => EmailTemplates::getUrl(),
+            ],
+            [
                 'icon' => 'fa-solid fa-screwdriver-wrench', 'color' => '#dc2626',
                 'title' => __('settings.hub.maintenance'), 'desc' => __('settings.hub.maintenance_desc'),
                 'url' => MaintenanceSettings::getUrl(),

@@ -66,6 +66,7 @@ return [
         'general' => 'General', 'general_desc' => 'Identity, hero, footer and contact details.',
         'storage' => 'Storage', 'storage_desc' => 'S3 / iDrive e2 object storage for uploads.',
         'mail' => 'Email (SMTP)', 'mail_desc' => 'Outgoing mail account and test sending.',
+        'mail_templates' => 'Email templates', 'mail_templates_desc' => 'Design & content of verify, welcome and reset emails.',
         'pages' => 'Pages', 'pages_desc' => 'Create and edit your website pages.',
         'uploads' => 'Uploads', 'uploads_desc' => 'Monitor every upload session.',
         'admins' => 'Admins', 'admins_desc' => 'Manage users and their roles.',
