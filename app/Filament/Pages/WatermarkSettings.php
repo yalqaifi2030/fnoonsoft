@@ -50,8 +50,8 @@ class WatermarkSettings extends Page implements HasForms
             'watermark_enabled' => (bool) Setting::get('watermark_enabled', false),
             'watermark_text' => Setting::get('watermark_text'),
             'watermark_position' => Setting::get('watermark_position', 'tiled') ?: 'tiled',
-            'watermark_opacity' => (int) (Setting::get('watermark_opacity', 25) ?: 25),
-            'watermark_size' => (float) (Setting::get('watermark_size', 4) ?: 4),
+            'watermark_opacity' => (int) (Setting::get('watermark_opacity', 50) ?: 50),
+            'watermark_size' => (float) (Setting::get('watermark_size', 5) ?: 5),
             'watermark_screenshots' => (bool) Setting::get('watermark_screenshots', true),
             'watermark_media' => (bool) Setting::get('watermark_media', true),
             'watermark_icon' => (bool) Setting::get('watermark_icon', false),
@@ -91,13 +91,13 @@ class WatermarkSettings extends Page implements HasForms
                         TextInput::make('watermark_opacity')
                             ->label(__('settings.watermark.opacity'))
                             ->helperText(__('settings.watermark.opacity_hint'))
-                            ->numeric()->minValue(3)->maxValue(80)->suffix('%')
+                            ->numeric()->minValue(10)->maxValue(95)->suffix('%')
                             ->visible(fn ($get) => $get('watermark_enabled')),
 
                         TextInput::make('watermark_size')
                             ->label(__('settings.watermark.size'))
                             ->helperText(__('settings.watermark.size_hint'))
-                            ->numeric()->minValue(2)->maxValue(12)->step(0.5)->suffix('%')
+                            ->numeric()->minValue(2)->maxValue(14)->step(0.5)->suffix('%')
                             ->visible(fn ($get) => $get('watermark_enabled')),
                     ])->columns(2),
 
@@ -127,8 +127,8 @@ class WatermarkSettings extends Page implements HasForms
         Setting::put('watermark_enabled', (bool) ($d['watermark_enabled'] ?? false), 'boolean', 'watermark');
         Setting::put('watermark_text', (string) ($d['watermark_text'] ?? ''), 'string', 'watermark');
         Setting::put('watermark_position', (string) ($d['watermark_position'] ?? 'tiled'), 'string', 'watermark');
-        Setting::put('watermark_opacity', (string) ($d['watermark_opacity'] ?? 25), 'string', 'watermark');
-        Setting::put('watermark_size', (string) ($d['watermark_size'] ?? 4), 'string', 'watermark');
+        Setting::put('watermark_opacity', (string) ($d['watermark_opacity'] ?? 50), 'string', 'watermark');
+        Setting::put('watermark_size', (string) ($d['watermark_size'] ?? 5), 'string', 'watermark');
         Setting::put('watermark_screenshots', ! empty($d['watermark_screenshots']) ? '1' : '0', 'boolean', 'watermark');
         Setting::put('watermark_media', ! empty($d['watermark_media']) ? '1' : '0', 'boolean', 'watermark');
         Setting::put('watermark_icon', ! empty($d['watermark_icon']) ? '1' : '0', 'boolean', 'watermark');

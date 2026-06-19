@@ -69,43 +69,50 @@ class WatermarkService
             $w = imagesx($img);
             $h = imagesy($img);
 
-            $sizePct = max(2.0, min(12.0, (float) (Setting::get('watermark_size', 4) ?: 4)));
-            $fontSize = max(11, (int) round($w * $sizePct / 100));
+            $sizePct = max(2.0, min(14.0, (float) (Setting::get('watermark_size', 5) ?: 5)));
+            $fontSize = max(12, (int) round($w * $sizePct / 100));
 
-            $opacity = max(3, min(80, (int) (Setting::get('watermark_opacity', 25) ?: 25)));
+            $opacity = max(8, min(95, (int) (Setting::get('watermark_opacity', 50) ?: 50)));
             $alpha = (int) round(127 - ($opacity / 100 * 127));
-            $haloAlpha = (int) round(127 - (min(85, $opacity + 15) / 100 * 127));
+            $haloAlpha = (int) round(127 - (min(92, $opacity + 35) / 100 * 127));
 
             $white = imagecolorallocatealpha($img, 255, 255, 255, $alpha);
             $dark = imagecolorallocatealpha($img, 0, 0, 0, $haloAlpha);
-            $off = max(1, (int) round($fontSize / 16));
+            $off = max(2, (int) round($fontSize / 12));
 
-            // Draw the text with a dark halo so it stays visible on light, dark AND
-            // transparent images (a plain white stamp vanishes on a white photo).
+            // Sharp stamp: a dark outline for contrast on ANY background, then the
+            // white text drawn a few times at 1px offsets (faux-bold). The overlapping
+            // passes also build up opacity, so it stays crisp even at low settings.
             $stamp = function (int $x, int $y, int $angle) use ($img, $fontSize, $font, $text, $white, $dark, $off) {
                 foreach ([[-$off, 0], [$off, 0], [0, -$off], [0, $off], [-$off, -$off], [$off, $off], [-$off, $off], [$off, -$off]] as [$dx, $dy]) {
                     imagettftext($img, $fontSize, $angle, $x + $dx, $y + $dy, $dark, $font, $text);
                 }
-                imagettftext($img, $fontSize, $angle, $x, $y, $white, $font, $text);
+                foreach ([[0, 0], [1, 0], [0, 1], [1, 1]] as [$bx, $by]) {
+                    imagettftext($img, $fontSize, $angle, $x + $bx, $y + $by, $white, $font, $text);
+                }
             };
 
             $angle = 30;
             $box = imagettfbbox($fontSize, $angle, $font, $text);
-            $textW = abs($box[2] - $box[0]);
-            $textH = abs($box[7] - $box[1]);
-            $stepX = max($textW + $fontSize * 3, $fontSize * 8);
-            $stepY = max($textH + $fontSize * 4, $fontSize * 7);
+            $textW = max(1, abs($box[2] - $box[0]));
+            $textH = max(1, abs($box[7] - $box[1]));
+            $stepX = max(140, (int) ($textW + $fontSize * 3));
+            $stepY = max(110, (int) ($textH + $fontSize * 5));
 
             $tiled = (Setting::get('watermark_position', 'tiled') ?: 'tiled') === 'tiled';
 
             if ($tiled) {
-                for ($y = (int) $stepY; $y < $h + $stepY; $y += (int) $stepY) {
-                    for ($x = -(int) $stepX; $x < $w; $x += (int) $stepX) {
-                        $stamp($x, $y, $angle);
+                // Start the grid INSIDE the image so small/short images always get a
+                // visible stamp (the old loop started its first row below the image).
+                for ($y = max($textH, $fontSize); $y < $h + $textH; $y += $stepY) {
+                    for ($x = -$stepX; $x < $w + $stepX; $x += $stepX) {
+                        $stamp((int) $x, (int) $y, $angle);
                     }
                 }
             } else {
-                $stamp((int) ($w - $textW - $fontSize), (int) ($h - $fontSize), 0);
+                $cx = max($fontSize, (int) ($w - $textW - $fontSize));
+                $cy = max($textH + $fontSize, (int) ($h - $fontSize));
+                $stamp($cx, $cy, 0);
             }
 
             $this->save($img, $absolutePath);
@@ -133,6 +140,14 @@ class WatermarkService
     {
         foreach (array_filter([
             Setting::get('watermark_font_path'),
+            base_path('resources/fonts/watermark.ttf'),
+            // Bold variants first — a heavier glyph reads as a sharper stamp.
+            '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',
+            '/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf',
+            '/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf',
+            '/usr/share/fonts/liberation/LiberationSans-Bold.ttf',
+            'C:\\Windows\\Fonts\\arialbd.ttf',
+            // Regular fallbacks.
             '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
             '/usr/share/fonts/dejavu/DejaVuSans.ttf',
             '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf',
