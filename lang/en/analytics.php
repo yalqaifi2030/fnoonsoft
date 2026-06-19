@@ -13,6 +13,11 @@ return [
 
     'empty' => 'No data for this period yet.',
     'home' => 'Home page',
+    'page' => [
+        'learn' => 'Learn & Build',
+        'learn_videos' => 'Learning videos',
+        'search' => 'Search',
+    ],
     'recent' => 'Recent visits',
     'visits_over_time' => 'Visits over time',
     'devices' => 'Devices',

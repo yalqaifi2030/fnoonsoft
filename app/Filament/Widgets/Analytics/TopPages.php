@@ -2,6 +2,8 @@
 
 namespace App\Filament\Widgets\Analytics;
 
+use App\Support\PageTitle;
+
 class TopPages extends BreakdownWidget
 {
     protected static ?int $sort = 13;
@@ -28,8 +30,12 @@ class TopPages extends BreakdownWidget
 
         $total = (clone $this->baseQuery())->whereNotNull('path')->count();
 
+        // Stored paths are already normalised ("/software/slug"), so the title
+        // map keys line up with the grouped paths.
+        $titles = PageTitle::map($counts->keys()->all());
+
         return $this->rank($counts, $total, fn (string $path) => [
-            'label' => $path === '/' ? __('analytics.home') : $path,
+            'label' => $titles[$path] ?? $path,
         ]);
     }
 }

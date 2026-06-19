@@ -1,6 +1,7 @@
 <x-filament-widgets::widget>
     <x-filament::section icon="heroicon-o-clock" :heading="__('analytics.recent')" compact>
         @php($rows = $this->rows())
+        @php($titles = \App\Support\PageTitle::map($rows->pluck('path')->all()))
         @php($deviceIcon = ['desktop' => 'fa-desktop', 'mobile' => 'fa-mobile-screen', 'tablet' => 'fa-tablet-screen-button', 'bot' => 'fa-robot'])
         @if ($rows->isEmpty())
             <p class="text-sm text-gray-400 py-6 text-center">{{ __('analytics.empty') }}</p>
@@ -36,7 +37,7 @@
                                     {{ $v->browser }}{{ $v->browser_version ? ' '.$v->browser_version : '' }}
                                 </td>
                                 <td class="whitespace-nowrap py-2 pe-3">{{ $v->os }}</td>
-                                <td class="max-w-[220px] truncate py-2 pe-3" dir="ltr" title="{{ $v->path }}">{{ $v->path }}</td>
+                                <td class="max-w-[220px] truncate py-2 pe-3" dir="auto" title="{{ $v->path }}">{{ $titles[$v->path] ?? $v->path }}</td>
                             </tr>
                         @endforeach
                     </tbody>
