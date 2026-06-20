@@ -42,6 +42,17 @@ class DownloadController extends Controller
         $software->increment('downloads_count');
         $link->increment('downloads_count');
 
+        // The same physical file is often ALSO a member's shareable asset
+        // (/dashboard/assets). Count the hit there too, so "My files" reflects
+        // real downloads even when they go through the software gateway.
+        if ($link->r2_key) {
+            try {
+                \App\Models\Asset::where('path', $link->r2_key)->increment('downloads_count');
+            } catch (\Throwable $e) {
+                // a counter must never break a download
+            }
+        }
+
         if ($link->isExternal()) {
             return redirect()->away($link->external_url);
         }
