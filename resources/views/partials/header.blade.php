@@ -1,18 +1,18 @@
 @php($locale = app()->getLocale())
 <header x-data="{ open: false }" class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-royal-gold/20">
     <div class="max-w-7xl mx-auto px-4">
-        <div class="flex items-center justify-between h-16 gap-4">
+        <div class="flex items-center justify-between h-16 md:h-20 gap-4">
             {{-- Logo --}}
             @php($siteLogo = \App\Support\SiteBranding::logo())
             <a href="{{ route('home') }}" class="flex items-center gap-2 shrink-0">
                 @if ($siteLogo)
                     <img src="{{ $siteLogo }}" alt="{{ \App\Models\Setting::text('site_name', __('site.name')) }}"
-                         class="h-9 w-auto max-h-9 object-contain">
+                         class="h-12 w-auto max-h-12 object-contain md:h-16 md:max-h-16">
                 @else
-                    <span class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-saudi-green text-white">
+                    <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-saudi-green text-white text-lg md:h-14 md:w-14">
                         <i class="fa-solid fa-cloud-arrow-down"></i>
                     </span>
-                    <span class="font-cairo font-black text-xl text-luxury-black">{{ \App\Models\Setting::text('site_name', __('site.name')) }}</span>
+                    <span class="font-cairo font-black text-xl text-luxury-black md:text-2xl">{{ \App\Models\Setting::text('site_name', __('site.name')) }}</span>
                 @endif
             </a>
 
