@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -123,6 +124,12 @@ class SupportTicket extends Model
             ->body($this->number().' · '.$this->subject)
             ->icon('heroicon-o-lifebuoy')
             ->info()
+            ->actions([
+                Action::make('view')
+                    ->label(__('ticket.notify.open'))
+                    ->url(route('filament.admin.resources.support-tickets.view', ['record' => $this->id]))
+                    ->markAsRead(),
+            ])
             ->sendToDatabase($staff);
     }
 
@@ -138,6 +145,12 @@ class SupportTicket extends Model
             ->body($this->number().' · '.$this->subject)
             ->icon('heroicon-o-lifebuoy')
             ->success()
+            ->actions([
+                Action::make('view')
+                    ->label(__('ticket.notify.open'))
+                    ->url(route('filament.member.resources.support-tickets.view', ['record' => $this->id]))
+                    ->markAsRead(),
+            ])
             ->sendToDatabase($this->user);
     }
 }

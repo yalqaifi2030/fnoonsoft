@@ -62,6 +62,7 @@ return [
         'new' => 'New support ticket',
         'reply_staff' => 'New reply on your ticket',
         'reply_member' => 'New reply from the member',
+        'open' => 'Open ticket',
     ],
 
     'created_ok' => 'Ticket opened — the support team will reply soon.',
