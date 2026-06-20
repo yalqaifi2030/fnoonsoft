@@ -13,7 +13,7 @@
     $contactPhone = Setting::get('contact_phone');
 @endphp
 <footer class="mt-16 bg-luxury-black text-gray-300">
-    <div class="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
+    <div class="max-w-7xl mx-auto px-4 py-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
         <div>
             <div class="flex items-center gap-2 mb-3">
                 @if ($siteLogo)
@@ -60,7 +60,7 @@
             @endif
         </div>
 
-        {{-- Platform + legal --}}
+        {{-- Platform --}}
         <div>
             <h4 class="text-white font-bold mb-3">{{ __('pages.footer.company') }}</h4>
             <ul class="space-y-2 text-sm">
@@ -69,7 +69,11 @@
                 <li><a href="{{ url('/advertise') }}" class="hover:text-royal-gold">{{ __('pages.nav.advertise') }}</a></li>
                 <li><a href="{{ url('/donate') }}" class="hover:text-royal-gold">{{ __('pages.nav.donate') }}</a></li>
             </ul>
-            <h4 class="text-white font-bold mb-3 mt-5">{{ __('pages.footer.legal') }}</h4>
+        </div>
+
+        {{-- Legal (own column) --}}
+        <div>
+            <h4 class="text-white font-bold mb-3">{{ __('pages.footer.legal') }}</h4>
             <ul class="space-y-2 text-sm">
                 <li><a href="{{ url('/privacy') }}" class="hover:text-royal-gold">{{ __('pages.nav.privacy') }}</a></li>
                 <li><a href="{{ url('/terms') }}" class="hover:text-royal-gold">{{ __('pages.nav.terms') }}</a></li>
