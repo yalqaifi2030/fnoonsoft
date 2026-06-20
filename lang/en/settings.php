@@ -38,6 +38,8 @@ return [
     'branding_hint' => 'Shown in the public site header and the browser tab.',
     'site_logo' => 'Site logo',
     'site_logo_hint' => 'Replaces the icon + name in the header. PNG/SVG with a transparent background, ~180×40.',
+    'site_footer_logo' => 'Footer logo',
+    'site_footer_logo_hint' => 'A separate logo for the footer. Leave empty to use the site logo. PNG/SVG, transparent background.',
     'site_favicon' => 'Favicon',
     'site_favicon_hint' => 'Browser tab icon. ICO/PNG/SVG, square (32×32 or 64×64).',
 

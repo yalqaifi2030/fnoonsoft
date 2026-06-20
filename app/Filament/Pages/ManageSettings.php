@@ -45,7 +45,7 @@ class ManageSettings extends Page implements HasForms
 
     /** Single-value settings. */
     protected array $plain = [
-        'site_logo', 'site_favicon',
+        'site_logo', 'site_footer_logo', 'site_favicon',
         'contact_email', 'contact_phone',
         'social_twitter', 'social_facebook', 'social_instagram',
         'social_youtube', 'social_github',
@@ -114,6 +114,15 @@ class ManageSettings extends Page implements HasForms
                                     FileUpload::make('site_logo')
                                         ->label(__('settings.site_logo'))
                                         ->helperText(__('settings.site_logo_hint'))
+                                        ->image()
+                                        ->imageEditor()
+                                        ->disk('public')->directory('site')
+                                        ->maxSize(1024)
+                                        ->panelLayout('compact')
+                                        ->imagePreviewHeight('80'),
+                                    FileUpload::make('site_footer_logo')
+                                        ->label(__('settings.site_footer_logo'))
+                                        ->helperText(__('settings.site_footer_logo_hint'))
                                         ->image()
                                         ->imageEditor()
                                         ->disk('public')->directory('site')

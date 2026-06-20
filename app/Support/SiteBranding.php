@@ -29,6 +29,12 @@ class SiteBranding
         return self::url('site_logo');
     }
 
+    /** Dedicated footer logo URL (falls back to the site logo, then the name mark). */
+    public static function footerLogo(): ?string
+    {
+        return self::url('site_footer_logo') ?: self::url('site_logo');
+    }
+
     /** Favicon URL, or null for the framework default. */
     public static function favicon(): ?string
     {

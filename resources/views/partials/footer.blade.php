@@ -1,7 +1,7 @@
 @php
     use App\Models\Setting;
     $siteName = Setting::text('site_name', __('site.name'));
-    $siteLogo = \App\Support\SiteBranding::logo();
+    $siteLogo = \App\Support\SiteBranding::footerLogo();
     $socials = [
         'social_twitter' => 'fa-brands fa-x-twitter',
         'social_facebook' => 'fa-brands fa-facebook-f',
