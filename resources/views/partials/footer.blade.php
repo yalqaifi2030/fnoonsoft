@@ -96,8 +96,20 @@
     </div>
 
     <div class="border-t border-white/10">
-        <div class="max-w-7xl mx-auto px-4 py-5 text-center text-sm text-gray-500">
-            © {{ now()->year }} {{ $siteName }}. {{ __('site.footer.rights') }}
+        <div class="max-w-7xl mx-auto px-4 py-5 flex flex-col gap-3 text-sm text-gray-500 sm:flex-row sm:items-center sm:justify-between">
+            <span>© {{ now()->year }} {{ $siteName }}. {{ __('site.footer.rights') }}</span>
+
+            {{-- Developer credit --}}
+            <span class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-gray-400">
+                <span>{{ __('site.footer.developed_by') }}
+                    <a href="https://applms.net" target="_blank" rel="noopener" class="font-semibold text-gray-300 transition hover:text-royal-gold">ياسر القيفي</a>
+                </span>
+                <span class="flex items-center gap-3" dir="ltr">
+                    <a href="https://applms.net" target="_blank" rel="noopener" class="transition hover:text-royal-gold" title="applms.net"><i class="fa-solid fa-globe"></i> applms.net</a>
+                    <a href="mailto:Yalqaifi@gmail.com" class="transition hover:text-royal-gold" title="Yalqaifi@gmail.com"><i class="fa-solid fa-envelope"></i></a>
+                    <a href="tel:0555299782" class="transition hover:text-royal-gold" title="0555299782"><i class="fa-solid fa-phone"></i> 0555299782</a>
+                </span>
+            </span>
         </div>
     </div>
 </footer>
