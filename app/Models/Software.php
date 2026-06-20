@@ -76,6 +76,38 @@ class Software extends Model
             }
         });
 
+        // Newsletter: email subscribers ONCE when an item is first published
+        // (new item, or draft → published). Editing a live item never re-sends.
+        static::saved(function (Software $software) {
+            if ($software->status !== ContentStatus::Published) {
+                return;
+            }
+            if (! ($software->wasRecentlyCreated || $software->wasChanged('status'))) {
+                return;
+            }
+
+            $meta = $software->meta ?? [];
+            if (! empty($meta['newsletter_sent']) || ! Setting::get('newsletter_auto_enabled', true)) {
+                return;
+            }
+
+            try {
+                $summary = trim(strip_tags((string) $software->short_description));
+                \App\Jobs\SendNewsletter::dispatch(
+                    __('newsletter.release_subject', ['name' => $software->name]),
+                    __('newsletter.release_heading', ['name' => $software->name]),
+                    nl2br(e(\Illuminate\Support\Str::limit($summary, 300))) ?: e((string) $software->name),
+                    route('software.show', $software),
+                    __('newsletter.release_cta'),
+                );
+
+                $meta['newsletter_sent'] = true;
+                $software->forceFill(['meta' => $meta])->saveQuietly();
+            } catch (\Throwable $e) {
+                // a newsletter must never break publishing
+            }
+        });
+
         static::deleting(function (Software $software) {
             $software->uploadSessions()->get()->each->delete();
             DownloadLink::where('software_id', $software->id)->get()->each->delete();

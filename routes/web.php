@@ -65,6 +65,8 @@ Route::post('/contact', [ContactController::class, 'store'])
     ->middleware('throttle:5,1')->name('contact.store');
 Route::post('/newsletter', [NewsletterController::class, 'store'])
     ->middleware('throttle:5,1')->name('newsletter.store');
+Route::get('/newsletter/unsubscribe/{token}', [NewsletterController::class, 'unsubscribe'])
+    ->name('newsletter.unsubscribe');
 
 // Report a problem (members + guests) — lands as a support ticket with a screenshot.
 Route::post('/report-problem', [\App\Http\Controllers\ProblemReportController::class, 'store'])
