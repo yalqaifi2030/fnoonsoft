@@ -15,7 +15,7 @@
     @elseif ($results->isEmpty())
         <div class="card-luxury p-12 text-center text-gray-400">{{ __('site.empty') }}</div>
     @else
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             @foreach ($results as $item)
                 <x-software-card :software="$item" />
             @endforeach

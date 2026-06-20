@@ -424,6 +424,10 @@ class SoftwareResource extends Resource
                             ->label(__('software.icon'))
                             ->helperText(__('software.icon_hint'))
                             ->image()->imageEditor()->imageEditorAspectRatios([null, '1:1'])
+                            // Standardise new icons to a crisp 256px square (high-res for the card).
+                            ->imageResizeMode('contain')
+                            ->imageResizeTargetWidth('256')
+                            ->imageResizeTargetHeight('256')
                             ->directory('icons')->disk('public'),
                     ]),
             ])->columnSpan(['lg' => 1]),
