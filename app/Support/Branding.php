@@ -44,7 +44,7 @@ class Branding
 
     public static function logoHeight(): string
     {
-        return (string) self::get('brand_logo_height', '2.5rem');
+        return (string) self::get('brand_logo_height', '3.5rem');
     }
 
     public static function favicon(): ?string

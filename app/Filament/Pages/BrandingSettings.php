@@ -55,7 +55,7 @@ class BrandingSettings extends Page implements HasForms
             'brand_upload_name' => Setting::get('brand_upload_name', 'Fnoon Upload'),
             'brand_upload_logo' => Setting::get('brand_upload_logo'),
             'brand_favicon' => Setting::get('brand_favicon'),
-            'brand_logo_height' => Setting::get('brand_logo_height', '2.5rem'),
+            'brand_logo_height' => Setting::get('brand_logo_height', '3.5rem'),
             'brand_theme' => Setting::get('brand_theme', 'system'),
         ]);
     }
@@ -97,7 +97,7 @@ class BrandingSettings extends Page implements HasForms
                             ->image()->disk('public')->directory('branding')->maxSize(512),
                         TextInput::make('brand_logo_height')
                             ->label(__('settings.branding.logo_height'))
-                            ->placeholder('2.5rem')->extraInputAttributes(['dir' => 'ltr']),
+                            ->placeholder('3.5rem')->extraInputAttributes(['dir' => 'ltr']),
                         Select::make('brand_theme')
                             ->label(__('settings.branding.theme'))
                             ->options([
