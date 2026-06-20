@@ -40,24 +40,17 @@
             </div>
         </div>
 
+        {{-- Resources --}}
         <div>
-            <h4 class="text-white font-bold mb-3">{{ __('site.footer.links') }}</h4>
+            <h4 class="text-white font-bold mb-3">{{ __('pages.footer.resources') }}</h4>
             <ul class="space-y-2 text-sm">
                 <li><a href="{{ route('browse') }}" class="hover:text-royal-gold">{{ __('site.nav.browse') }}</a></li>
                 <li><a href="{{ route('blog.index') }}" class="hover:text-royal-gold">{{ __('site.nav.blog') }}</a></li>
                 <li><a href="{{ route('contact') }}" class="hover:text-royal-gold">{{ __('site.nav.contact') }}</a></li>
-                @if (\App\Models\Setting::get('member_uploads_enabled'))
+                <li><a href="{{ route('sitemap.html') }}" class="hover:text-royal-gold">{{ __('pages.nav.sitemap') }}</a></li>
+                @if (Setting::get('member_uploads_enabled'))
                     <li><a href="/dashboard" class="hover:text-royal-gold">{{ __('site.nav.my_files') }}</a></li>
                 @endif
-            </ul>
-        </div>
-
-        <div>
-            <h4 class="text-white font-bold mb-3">{{ __('site.footer.legal') }}</h4>
-            <ul class="space-y-2 text-sm">
-                <li><a href="/about" class="hover:text-royal-gold">About</a></li>
-                <li><a href="/privacy" class="hover:text-royal-gold">Privacy</a></li>
-                <li><a href="/terms" class="hover:text-royal-gold">Terms</a></li>
             </ul>
             @if ($contactEmail || $contactPhone)
                 <div class="mt-4 space-y-1 text-sm text-gray-400" dir="ltr">
@@ -65,6 +58,24 @@
                     @if ($contactPhone)<div><i class="fa-solid fa-phone text-royal-gold"></i> {{ $contactPhone }}</div>@endif
                 </div>
             @endif
+        </div>
+
+        {{-- Platform + legal --}}
+        <div>
+            <h4 class="text-white font-bold mb-3">{{ __('pages.footer.company') }}</h4>
+            <ul class="space-y-2 text-sm">
+                <li><a href="{{ url('/about') }}" class="hover:text-royal-gold">{{ __('pages.nav.about') }}</a></li>
+                <li><a href="{{ url('/mission') }}" class="hover:text-royal-gold">{{ __('pages.nav.mission') }}</a></li>
+                <li><a href="{{ url('/advertise') }}" class="hover:text-royal-gold">{{ __('pages.nav.advertise') }}</a></li>
+                <li><a href="{{ url('/donate') }}" class="hover:text-royal-gold">{{ __('pages.nav.donate') }}</a></li>
+            </ul>
+            <h4 class="text-white font-bold mb-3 mt-5">{{ __('pages.footer.legal') }}</h4>
+            <ul class="space-y-2 text-sm">
+                <li><a href="{{ url('/privacy') }}" class="hover:text-royal-gold">{{ __('pages.nav.privacy') }}</a></li>
+                <li><a href="{{ url('/terms') }}" class="hover:text-royal-gold">{{ __('pages.nav.terms') }}</a></li>
+                <li><a href="{{ route('dmca') }}" class="hover:text-royal-gold">{{ __('pages.nav.dmca') }}</a></li>
+                <li><a href="{{ route('abuse') }}" class="hover:text-royal-gold">{{ __('pages.nav.abuse') }}</a></li>
+            </ul>
         </div>
 
         <div>

@@ -68,6 +68,15 @@ Route::post('/newsletter', [NewsletterController::class, 'store'])
 Route::get('/newsletter/unsubscribe/{token}', [NewsletterController::class, 'unsubscribe'])
     ->name('newsletter.unsubscribe');
 
+// Human-readable sitemap (the XML one for crawlers stays at /sitemap.xml).
+Route::get('/sitemap', [\App\Http\Controllers\SitemapController::class, 'html'])->name('sitemap.html');
+
+// Legal report pages (DMCA + content abuse) — info + a form → support ticket.
+Route::get('/dmca', [\App\Http\Controllers\LegalController::class, 'dmca'])->name('dmca');
+Route::get('/abuse', [\App\Http\Controllers\LegalController::class, 'abuse'])->name('abuse');
+Route::post('/legal/report', [\App\Http\Controllers\LegalController::class, 'store'])
+    ->middleware('throttle:5,1')->name('legal.report');
+
 // Report a problem (members + guests) — lands as a support ticket with a screenshot.
 Route::post('/report-problem', [\App\Http\Controllers\ProblemReportController::class, 'store'])
     ->middleware('throttle:6,1')->name('problem.report');

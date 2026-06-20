@@ -33,6 +33,8 @@ return [
     'categories' => [
         'technical' => 'مشكلة تقنية',
         'download' => 'مشكلة تحميل',
+        'dmca' => 'حقوق نشر (DMCA)',
+        'abuse' => 'بلاغ إساءة',
         'account' => 'الحساب',
         'upload' => 'الرفع والملفات',
         'suggestion' => 'اقتراح',

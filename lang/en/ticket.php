@@ -33,6 +33,8 @@ return [
     'categories' => [
         'technical' => 'Technical issue',
         'download' => 'Download problem',
+        'dmca' => 'Copyright (DMCA)',
+        'abuse' => 'Abuse report',
         'account' => 'Account',
         'upload' => 'Uploads & files',
         'suggestion' => 'Suggestion',

@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use App\Models\Category;
+use App\Models\Page;
 use App\Models\Software;
 use Illuminate\Http\Response;
+use Illuminate\View\View;
 
 /**
  * Dynamic XML sitemap for search engines: static pages + every published
@@ -42,8 +44,24 @@ class SitemapController extends Controller
             $add(route('browse', ['category' => $c->slug]), '0.5', 'weekly');
         });
 
+        // Published CMS pages (about, privacy, …).
+        Page::where('is_published', true)->get(['slug', 'updated_at'])->each(function (Page $p) use ($add): void {
+            $add(url('/'.$p->slug), '0.4', 'monthly', $p->updated_at?->toAtomString());
+        });
+
         return response()
             ->view('seo.sitemap', ['urls' => $urls])
             ->header('Content-Type', 'text/xml; charset=UTF-8');
+    }
+
+    /** Human-readable HTML sitemap at /sitemap. */
+    public function html(): View
+    {
+        return view('sitemap', [
+            'pages' => Page::where('is_published', true)->get(['slug', 'title']),
+            'categories' => Category::where('is_active', true)->orderBy('sort_order')->get(['slug', 'name']),
+            'software' => Software::published()->latest('published_at')->limit(40)->get(['slug', 'name']),
+            'articles' => Article::published()->latest('published_at')->limit(20)->get(['slug', 'title']),
+        ]);
     }
 }

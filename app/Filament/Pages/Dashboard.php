@@ -21,6 +21,7 @@ class Dashboard extends BaseDashboard
             Widgets\NewContentChart::class,
             Widgets\Analytics\TopCountries::class,
             Widgets\Analytics\TopPages::class,
+            Widgets\Analytics\SitePagesViews::class,
             Widgets\ContentByTypeChart::class,
             Widgets\UploadsByStatusChart::class,
         ];

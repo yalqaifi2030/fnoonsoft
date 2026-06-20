@@ -118,7 +118,7 @@ class TrackVisit
         }
 
         $skip = ['admin', 'upload', 'dashboard', 'livewire', 'download', 'go', 'api',
-            'build', 'storage', 'vendor', 'telescope', 'horizon', 'sitemap',
+            'build', 'storage', 'vendor', 'telescope', 'horizon',
             'robots.txt', 'favicon.ico', 'ads.txt', 'up', 'login', 'register'];
 
         foreach ($skip as $p) {

@@ -20,7 +20,7 @@ class SupportTicket extends Model
         'meta' => 'array',
     ];
 
-    public const CATEGORIES = ['technical', 'download', 'account', 'upload', 'suggestion', 'other'];
+    public const CATEGORIES = ['technical', 'download', 'dmca', 'abuse', 'account', 'upload', 'suggestion', 'other'];
 
     /** Best display name for the reporter (member or guest). */
     public function reporterName(): string
