@@ -139,6 +139,14 @@ class SoftwareResource extends Resource
                             ->columnSpanFull()
                             ->visible(fn (Forms\Get $get) => in_array($get('content_type'), ['application', 'plugin'])),
 
+                        Forms\Components\Select::make('fileFormats')
+                            ->label(__('software.file_formats'))
+                            ->helperText(__('software.file_formats_hint'))
+                            ->relationship('fileFormats', 'extension')
+                            ->getOptionLabelFromRecordUsing(fn ($record) => '.'.strtoupper($record->extension).' — '.$record->name)
+                            ->multiple()->searchable()->preload()
+                            ->columnSpanFull(),
+
                         Forms\Components\TextInput::make('meta.programming_language')
                             ->label(__('software.programming_language'))
                             ->visible(fn (Forms\Get $get) => $get('content_type') === 'script'),

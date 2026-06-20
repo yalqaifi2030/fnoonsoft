@@ -71,6 +71,9 @@ Route::get('/newsletter/unsubscribe/{token}', [NewsletterController::class, 'uns
 // Human-readable sitemap (the XML one for crawlers stays at /sitemap.xml).
 Route::get('/sitemap', [\App\Http\Controllers\SitemapController::class, 'html'])->name('sitemap.html');
 
+// File-formats reference guide.
+Route::get('/formats', [\App\Http\Controllers\FormatController::class, 'index'])->name('formats.index');
+
 // Legal report pages (DMCA + content abuse) — info + a form → support ticket.
 Route::get('/dmca', [\App\Http\Controllers\LegalController::class, 'dmca'])->name('dmca');
 Route::get('/abuse', [\App\Http\Controllers\LegalController::class, 'abuse'])->name('abuse');

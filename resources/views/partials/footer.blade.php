@@ -47,6 +47,7 @@
                 <li><a href="{{ route('browse') }}" class="hover:text-royal-gold">{{ __('site.nav.browse') }}</a></li>
                 <li><a href="{{ route('blog.index') }}" class="hover:text-royal-gold">{{ __('site.nav.blog') }}</a></li>
                 <li><a href="{{ route('contact') }}" class="hover:text-royal-gold">{{ __('site.nav.contact') }}</a></li>
+                <li><a href="{{ route('formats.index') }}" class="hover:text-royal-gold">{{ __('formats.title') }}</a></li>
                 <li><a href="{{ route('sitemap.html') }}" class="hover:text-royal-gold">{{ __('pages.nav.sitemap') }}</a></li>
                 @if (Setting::get('member_uploads_enabled'))
                     <li><a href="/dashboard" class="hover:text-royal-gold">{{ __('site.nav.my_files') }}</a></li>

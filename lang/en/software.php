@@ -41,6 +41,8 @@ return [
         'copy' => 'Copy',
         'copied' => 'Copied!',
     ],
+    'file_formats' => 'Supported file formats',
+    'file_formats_hint' => 'Pick the file formats this program opens/produces (from the formats library).',
     'screenshots_hint' => 'Upload preview images shown in the product gallery.',
     'screenshot' => 'Image',
     'caption' => 'Caption',

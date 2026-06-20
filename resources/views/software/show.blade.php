@@ -20,6 +20,7 @@
         ! empty($software->features) ? ['id' => 'features', 'label' => __('software.section.features')] : null,
         $software->screenshots->isNotEmpty() ? ['id' => 'screenshots', 'label' => __('site.screenshots')] : null,
         $software->activeBeforeAfterSlides->isNotEmpty() ? ['id' => 'before_after', 'label' => __('site.before_after.title')] : null,
+        $software->fileFormats->where('is_active', true)->isNotEmpty() ? ['id' => 'formats', 'label' => __('formats.section')] : null,
         $software->hasCode() ? ['id' => 'code', 'label' => __('software.section.code')] : null,
         $software->requirements->isNotEmpty() ? ['id' => 'requirements', 'label' => __('site.requirements')] : null,
         ['id' => 'reviews', 'label' => __('site.feedback')],
@@ -233,6 +234,24 @@
                                 :before-label="$slide->before_label"
                                 :after-label="$slide->after_label"
                                 :caption="$slide->caption" />
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+            {{-- Supported file formats --}}
+            @php($formats = $software->fileFormats->where('is_active', true))
+            @if ($formats->isNotEmpty())
+                <div id="formats" data-spy class="card-luxury p-6 scroll-mt-32">
+                    <h2 class="font-cairo font-bold text-xl mb-1 flex items-center gap-2">
+                        <i class="fa-solid fa-file-lines text-saudi-green"></i> {{ __('formats.section') }}
+                    </h2>
+                    <p class="text-sm text-gray-500 mb-4">{{ __('formats.section_hint') }}</p>
+                    <div class="flex flex-wrap gap-2.5">
+                        @foreach ($formats as $format)
+                            <a href="{{ route('formats.index') }}#{{ $format->extension }}">
+                                <x-format-badge :format="$format" />
+                            </a>
                         @endforeach
                     </div>
                 </div>

@@ -168,6 +168,11 @@ class Software extends Model
         return $this->beforeAfterSlides()->where('is_active', true);
     }
 
+    public function fileFormats(): BelongsToMany
+    {
+        return $this->belongsToMany(FileFormat::class)->orderBy('sort_order');
+    }
+
     public function requirements(): HasMany
     {
         return $this->hasMany(SystemRequirement::class);
