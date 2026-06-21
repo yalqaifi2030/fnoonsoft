@@ -11,7 +11,16 @@
 @endpush
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 py-8" x-data="{ lb:false, lbSrc:'', open(s){ this.lbSrc=s; this.lb=true } }">
+@php($shots = $software->screenshots->map(fn ($s) => ['src' => \Illuminate\Support\Facades\Storage::disk('public')->url($s->path), 'cap' => (string) $s->caption])->values())
+<div class="max-w-7xl mx-auto px-4 py-8"
+     x-data="{
+        lb:false, i:0,
+        imgs: @js($shots),
+        open(idx){ this.i = idx; this.lb = true },
+        next(){ if (this.imgs.length) this.i = (this.i + 1) % this.imgs.length },
+        prev(){ if (this.imgs.length) this.i = (this.i - 1 + this.imgs.length) % this.imgs.length },
+        get cur(){ return this.imgs[this.i] || { src:'', cap:'' } }
+     }">
     @php($primary = $software->downloadLinks->first())
     @php($totalSize = (int) $software->downloadLinks->sum('size_bytes'))
     @php($tabs = array_values(array_filter([
@@ -203,10 +212,10 @@
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                         @foreach ($software->screenshots as $shot)
                             @php($src = \Illuminate\Support\Facades\Storage::disk('public')->url($shot->path))
-                            <button type="button" @click="open('{{ $src }}')"
+                            <button type="button" @click="open({{ $loop->index }})"
                                     class="group relative overflow-hidden rounded-xl border border-royal-gold/10 focus:outline-none focus:ring-2 focus:ring-saudi-green/40">
                                 <img src="{{ $src }}" loading="lazy" alt="{{ $shot->caption }}"
-                                     class="h-32 w-full object-cover transition duration-300 group-hover:scale-105">
+                                     class="h-40 w-full object-cover transition duration-300 group-hover:scale-105">
                                 <span class="absolute inset-0 flex items-center justify-center bg-black/0 text-white opacity-0 transition group-hover:bg-black/30 group-hover:opacity-100">
                                     <i class="fa-solid fa-magnifying-glass-plus text-lg"></i>
                                 </span>
@@ -566,15 +575,44 @@
         </div>
     @endif
 
-    {{-- Screenshot lightbox --}}
+    {{-- Screenshot lightbox (with prev/next + keyboard navigation) --}}
     <div x-show="lb" x-cloak style="display:none"
          x-transition.opacity
          @keydown.escape.window="lb=false"
+         @keydown.arrow-right.window="prev()"
+         @keydown.arrow-left.window="next()"
          @click="lb=false"
-         class="fixed inset-0 z-[80] flex items-center justify-center bg-black/85 p-4">
-        <img :src="lbSrc" @click.stop alt="" class="max-h-[88vh] max-w-full rounded-xl shadow-2xl">
-        <button type="button" @click="lb=false"
-                class="absolute top-5 end-5 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-2xl text-white hover:bg-white/20">
+         class="fixed inset-0 z-[80] flex select-none items-center justify-center bg-black/90 p-4 sm:p-8">
+
+        {{-- Full-resolution image --}}
+        <img :src="cur.src" @click.stop alt=""
+             class="max-h-[90vh] max-w-full rounded-xl object-contain shadow-2xl">
+
+        {{-- Caption + counter --}}
+        <div class="pointer-events-none absolute inset-x-0 bottom-5 flex flex-col items-center gap-1.5 px-4 text-center text-white">
+            <span x-show="cur.cap" x-text="cur.cap" class="max-w-2xl rounded-lg bg-black/55 px-3 py-1 text-sm backdrop-blur"></span>
+            <span x-show="imgs.length > 1" class="rounded-full bg-black/55 px-2.5 py-0.5 text-xs text-white/80" dir="ltr">
+                <span x-text="i + 1"></span> / <span x-text="imgs.length"></span>
+            </span>
+        </div>
+
+        {{-- Prev / next (only when there's more than one) --}}
+        <template x-if="imgs.length > 1">
+            <div>
+                <button type="button" @click.stop="prev()" aria-label="Previous"
+                        class="absolute start-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-xl text-white transition hover:bg-white/25 sm:h-12 sm:w-12">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+                <button type="button" @click.stop="next()" aria-label="Next"
+                        class="absolute end-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-xl text-white transition hover:bg-white/25 sm:h-12 sm:w-12">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+            </div>
+        </template>
+
+        {{-- Close --}}
+        <button type="button" @click="lb=false" aria-label="Close"
+                class="absolute top-5 end-5 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-2xl text-white transition hover:bg-white/25">
             <i class="fa-solid fa-xmark"></i>
         </button>
     </div>
