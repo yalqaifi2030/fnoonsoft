@@ -76,21 +76,7 @@
                 <span class="chip"><i class="fa-solid fa-bolt text-royal-gold"></i> {{ __('site.hero.trust.cdn') }}</span>
             </div>
 
-            {{-- Stats --}}
-            <div class="mt-8 grid grid-cols-3 max-w-xl mx-auto divide-x divide-white/10 rtl:divide-x-reverse">
-                <div>
-                    <div class="text-3xl md:text-4xl font-black text-royal-gold stat-num" dir="ltr">{{ number_format($stats['software']) }}+</div>
-                    <div class="text-sm text-gray-400 mt-1">{{ __('site.stats.software') }}</div>
-                </div>
-                <div>
-                    <div class="text-3xl md:text-4xl font-black text-royal-gold stat-num" dir="ltr">{{ number_format($stats['downloads']) }}+</div>
-                    <div class="text-sm text-gray-400 mt-1">{{ __('site.stats.downloads') }}</div>
-                </div>
-                <div>
-                    <div class="text-3xl md:text-4xl font-black text-royal-gold stat-num" dir="ltr">{{ number_format($stats['developers']) }}+</div>
-                    <div class="text-sm text-gray-400 mt-1">{{ __('site.nav.apps') }}</div>
-                </div>
-            </div>
+            {{-- Stats row hidden per request --}}
         </div>
 
         {{-- bottom wave --}}
