@@ -15,14 +15,14 @@
 <footer class="mt-16 bg-luxury-black text-gray-300">
     <div class="max-w-7xl mx-auto px-4 py-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
         <div>
-            <div class="flex items-center gap-2 mb-3">
+            <div class="flex items-center gap-2 mb-4">
                 @if ($siteLogo)
-                    <img src="{{ $siteLogo }}" alt="{{ $siteName }}" class="h-9 w-auto max-h-9 object-contain">
+                    <img src="{{ $siteLogo }}" alt="{{ $siteName }}" class="h-14 w-auto max-h-14 object-contain md:h-16 md:max-h-16">
                 @else
-                    <span class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-saudi-green text-white">
+                    <span class="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-saudi-green text-white text-lg">
                         <i class="fa-solid fa-cloud-arrow-down"></i>
                     </span>
-                    <span class="font-cairo font-black text-xl text-white">{{ $siteName }}</span>
+                    <span class="font-cairo font-black text-2xl text-white">{{ $siteName }}</span>
                 @endif
             </div>
             <p class="text-sm text-gray-400 leading-relaxed">{{ Setting::text('footer_about', __('site.footer.about')) }}</p>
