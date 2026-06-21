@@ -47,7 +47,10 @@
                         <td bgcolor="{{ $primary }}" align="center"
                             style="background:{{ $primary }}; background:linear-gradient(135deg,{{ $primary }},{{ $primaryDark }}); padding:30px 24px;">
                             @if ($logo)
-                                <img src="{{ $logo }}" alt="{{ $site }}" height="40" style="height:40px; max-height:40px; border:0; display:block; margin:0 auto;">
+                                {{-- White chip so the logo stays sharp on the coloured header (any logo colour). --}}
+                                <span style="display:inline-block; background:#ffffff; padding:10px 18px; border-radius:12px; line-height:0; box-shadow:0 2px 8px rgba(0,0,0,.12);">
+                                    <img src="{{ $logo }}" alt="{{ $site }}" height="44" style="height:44px; max-height:44px; border:0; display:block;">
+                                </span>
                             @else
                                 <span style="color:#ffffff; font-size:24px; font-weight:800; letter-spacing:.5px;">{{ $site }}</span>
                             @endif
