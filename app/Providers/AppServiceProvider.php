@@ -32,6 +32,12 @@ class AppServiceProvider extends ServiceProvider
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
 
+        // Panels are Arabic, but numbers must stay Western (0-9), not Arabic-Indic
+        // (٠-٩). Force the Filament number locale to English everywhere (tables +
+        // infolists) regardless of the 'ar' app locale; translations stay Arabic.
+        \Filament\Tables\Table::$defaultNumberLocale = 'en';
+        \Filament\Infolists\Infolist::$defaultNumberLocale = 'en';
+
         // Raise Livewire's temporary-upload ceiling (default 12 MB) so large
         // media — e.g. tutorial videos — aren't rejected before a field's own
         // maxSize applies. PHP's post_max_size still bounds the real maximum.
