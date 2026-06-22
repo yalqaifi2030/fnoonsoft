@@ -19,11 +19,22 @@ class Setting extends Model
     /** @return array<string,mixed> */
     public static function allCached(): array
     {
-        return Cache::rememberForever('settings.all', function () {
-            return static::all()->mapWithKeys(fn (self $s) => [
-                $s->key => static::castValue($s->value, $s->type),
-            ])->all();
-        });
+        // A cache backend that's down or unwritable (e.g. wrong file ownership)
+        // must NEVER take the whole site down — settings are read on every page.
+        // Fall back to reading straight from the database when caching fails.
+        try {
+            return Cache::rememberForever('settings.all', fn () => static::freshAll());
+        } catch (\Throwable $e) {
+            return static::freshAll();
+        }
+    }
+
+    /** @return array<string,mixed> */
+    protected static function freshAll(): array
+    {
+        return static::all()->mapWithKeys(fn (self $s) => [
+            $s->key => static::castValue($s->value, $s->type),
+        ])->all();
     }
 
     public static function get(string $key, mixed $default = null): mixed
