@@ -276,6 +276,8 @@ class SoftwareResource extends Resource
                             ->helperText(__('software.model_glb_hint'))
                             ->acceptedFileTypes(['model/gltf-binary', 'model/gltf+json', 'model/obj', 'text/plain', 'application/octet-stream'])
                             ->disk('public')->directory('models')
+                            // .glb/.gltf/.obj arrive as octet-stream → keep the real extension (else stored as .bin and the viewer can't route/load it)
+                            ->getUploadedFileNameForStorageUsing(fn ($file): string => (string) \Illuminate\Support\Str::ulid().'.'.(strtolower(pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION)) ?: 'glb'))
                             ->maxSize(1024 * 60) // 60 MB — keep web previews light
                             ->columnSpanFull(),
                         Forms\Components\FileUpload::make('model_usdz')
@@ -283,6 +285,7 @@ class SoftwareResource extends Resource
                             ->helperText(__('software.model_usdz_hint'))
                             ->acceptedFileTypes(['model/vnd.usdz+zip', 'application/octet-stream'])
                             ->disk('public')->directory('models')
+                            ->getUploadedFileNameForStorageUsing(fn ($file): string => (string) \Illuminate\Support\Str::ulid().'.'.(strtolower(pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION)) ?: 'usdz'))
                             ->maxSize(1024 * 60),
                         Forms\Components\FileUpload::make('model_poster')
                             ->label(__('software.model_poster'))
