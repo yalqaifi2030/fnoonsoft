@@ -26,6 +26,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
     protected $fillable = [
         'name', 'username', 'email', 'password', 'avatar', 'cover', 'bio', 'website',
         'twitter', 'github', 'country', 'locale', 'is_active', 'quota_gb', 'tier',
+        'show_files_publicly',
     ];
 
     protected $hidden = [
@@ -41,6 +42,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'show_files_publicly' => 'boolean',
             'tier' => \App\Enums\MemberTier::class,
             'two_factor_secret' => 'encrypted',
             'two_factor_recovery_codes' => 'encrypted:array',

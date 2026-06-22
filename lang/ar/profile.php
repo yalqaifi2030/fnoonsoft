@@ -23,7 +23,14 @@ return [
     'twitter' => 'حساب إكس (تويتر)',
     'github' => 'حساب GitHub',
 
+    'show_files_publicly' => 'إظهار ملفاتي في صفحتي العامة',
+    'show_files_publicly_hint' => 'عند الإيقاف (الافتراضي) لا يرى ملفاتك أحدٌ سواك في صفحة /u/اسم‌المستخدم.',
+
     'public' => [
+        'private_title' => 'هذه الملفات خاصة',
+        'private_body' => 'اختار هذا العضو إبقاء ملفّاته خاصة.',
+        'owner_private_note' => 'ملفاتك خاصة — لا يراها سواك. لإظهارها للعامة فعّل الخيار من :link.',
+        'profile_settings' => 'الملف الشخصي',
         'files' => 'ملف',
         'downloads' => 'تحميل',
         'views' => 'مشاهدة',

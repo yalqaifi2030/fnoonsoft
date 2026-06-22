@@ -23,7 +23,14 @@ return [
     'twitter' => 'X (Twitter) handle',
     'github' => 'GitHub handle',
 
+    'show_files_publicly' => 'Show my files on my public page',
+    'show_files_publicly_hint' => 'When off (default) no one but you sees your files on /u/username.',
+
     'public' => [
+        'private_title' => 'These files are private',
+        'private_body' => 'This member keeps their files private.',
+        'owner_private_note' => 'Your files are private — only you can see them. To show them publicly, enable the option in :link.',
+        'profile_settings' => 'your profile',
         'files' => 'files',
         'downloads' => 'downloads',
         'views' => 'views',

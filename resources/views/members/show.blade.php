@@ -84,7 +84,8 @@
                 </div>
             @endif
 
-            {{-- Stats --}}
+            {{-- Stats (hidden when files are private) --}}
+            @if ($showFiles)
             <div class="mx-auto mt-6 grid max-w-md grid-cols-3 gap-3">
                 @foreach ([
                     ['v' => $stats['files'],     'l' => __('profile.public.files'),     'i' => 'fa-folder',     'c' => '#006C35'],
@@ -100,6 +101,7 @@
                     </div>
                 @endforeach
             </div>
+            @endif
 
             {{-- Share --}}
             @php $shareUrl = url()->current(); @endphp
@@ -118,14 +120,31 @@
     </div>
 
     {{-- ===== Shared files ===== --}}
-    <h2 class="mb-4 mt-8 font-cairo text-lg font-bold">{{ __('profile.public.shared_files') }}</h2>
-
-    @if ($assets->isEmpty())
-        <div class="card-luxury p-10 text-center text-gray-400">
-            <i class="fa-regular fa-folder-open mb-3 text-4xl"></i>
-            <p>{{ __('profile.public.no_files') }}</p>
+    @if (! $showFiles)
+        {{-- Visitor view when the member keeps their files private --}}
+        <div class="card-luxury mt-8 p-10 text-center">
+            <span class="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100 text-2xl text-gray-400">
+                <i class="fa-solid fa-lock"></i>
+            </span>
+            <h2 class="font-cairo text-lg font-bold text-luxury-black">{{ __('profile.public.private_title') }}</h2>
+            <p class="mt-1 text-sm text-gray-500">{{ __('profile.public.private_body') }}</p>
         </div>
     @else
+        @if ($isOwner && ! $user->show_files_publicly)
+            <div class="mt-8 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                <i class="fa-solid fa-lock mt-0.5"></i>
+                <span>{!! __('profile.public.owner_private_note', ['link' => '<a href="'.route('filament.member.auth.profile').'" class="font-bold underline">'.__('profile.public.profile_settings').'</a>']) !!}</span>
+            </div>
+        @endif
+
+        <h2 class="mb-4 mt-8 font-cairo text-lg font-bold">{{ __('profile.public.shared_files') }}</h2>
+
+        @if ($assets->isEmpty())
+            <div class="card-luxury p-10 text-center text-gray-400">
+                <i class="fa-regular fa-folder-open mb-3 text-4xl"></i>
+                <p>{{ __('profile.public.no_files') }}</p>
+            </div>
+        @else
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @foreach ($assets as $a)
                 <a href="{{ route('assets.show', $a) }}" class="card-luxury group flex items-center gap-3 p-4 transition hover:shadow-lg">
@@ -144,6 +163,7 @@
                 </a>
             @endforeach
         </div>
+        @endif
     @endif
 
 </div>

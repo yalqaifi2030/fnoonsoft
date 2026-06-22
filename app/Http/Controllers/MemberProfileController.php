@@ -14,11 +14,18 @@ class MemberProfileController extends Controller
     {
         abort_unless($user->is_active && filled($user->username), 404);
 
-        $assets = $user->assets()
-            ->where('is_active', true)
-            ->where(fn ($q) => $q->whereNull('expires_at')->orWhere('expires_at', '>', now()))
-            ->latest()
-            ->get();
+        // Files are PRIVATE by default — only the owner sees them, unless the
+        // member opted in to a public showcase.
+        $isOwner = auth()->check() && auth()->id() === $user->id;
+        $showFiles = $isOwner || (bool) $user->show_files_publicly;
+
+        $assets = $showFiles
+            ? $user->assets()
+                ->where('is_active', true)
+                ->where(fn ($q) => $q->whereNull('expires_at')->orWhere('expires_at', '>', now()))
+                ->latest()
+                ->get()
+            : collect();
 
         $stats = [
             'files' => $assets->count(),
@@ -26,6 +33,6 @@ class MemberProfileController extends Controller
             'views' => (int) $assets->sum('views_count'),
         ];
 
-        return view('members.show', compact('user', 'assets', 'stats'));
+        return view('members.show', compact('user', 'assets', 'stats', 'showFiles', 'isOwner'));
     }
 }

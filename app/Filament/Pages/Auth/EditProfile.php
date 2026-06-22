@@ -8,6 +8,7 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Pages\Auth\EditProfile as BaseEditProfile;
 use Illuminate\Support\HtmlString;
@@ -80,6 +81,11 @@ class EditProfile extends BaseEditProfile
                     Textarea::make('bio')
                         ->label(__('profile.bio'))
                         ->maxLength(500)->rows(3)
+                        ->columnSpanFull(),
+
+                    Toggle::make('show_files_publicly')
+                        ->label(__('profile.show_files_publicly'))
+                        ->helperText(__('profile.show_files_publicly_hint'))
                         ->columnSpanFull(),
                 ]),
 
