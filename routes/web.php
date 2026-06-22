@@ -89,6 +89,14 @@ Route::get('/locale/{locale}', [LocaleController::class, 'switch'])->name('local
 // Language switch (Filament panels — separate session key)
 Route::get('/panel-locale/{locale}', [LocaleController::class, 'switchPanel'])->name('panel.locale.switch');
 
+// Two-factor login challenge (for users who enabled an authenticator app).
+Route::middleware('auth')->group(function () {
+    Route::get('/two-factor', [\App\Http\Controllers\TwoFactorController::class, 'show'])->name('two-factor.challenge');
+    Route::post('/two-factor', [\App\Http\Controllers\TwoFactorController::class, 'store'])
+        ->middleware('throttle:10,1')->name('two-factor.verify');
+    Route::post('/two-factor/logout', [\App\Http\Controllers\TwoFactorController::class, 'logout'])->name('two-factor.logout');
+});
+
 // Download gateway (rate-limited) — keep ABOVE the {software} catch-all
 Route::get('/download/{software}/{link}', [DownloadController::class, 'gateway'])
     ->name('download.gateway');

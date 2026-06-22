@@ -31,6 +31,8 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
     protected $hidden = [
         'password',
         'remember_token',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
     ];
 
     protected function casts(): array
@@ -40,7 +42,43 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
             'password' => 'hashed',
             'is_active' => 'boolean',
             'tier' => \App\Enums\MemberTier::class,
+            'two_factor_secret' => 'encrypted',
+            'two_factor_recovery_codes' => 'encrypted:array',
+            'two_factor_confirmed_at' => 'datetime',
         ];
+    }
+
+    // --- Two-factor authentication ---------------------------------------
+
+    /** True once the user has set up AND confirmed an authenticator app. */
+    public function hasTwoFactorEnabled(): bool
+    {
+        return filled($this->two_factor_secret) && $this->two_factor_confirmed_at !== null;
+    }
+
+    /** @return array<int,string> a fresh set of single-use recovery codes. */
+    public function generateRecoveryCodes(): array
+    {
+        return collect(range(1, 8))
+            ->map(fn () => \Illuminate\Support\Str::upper(\Illuminate\Support\Str::random(5).'-'.\Illuminate\Support\Str::random(5)))
+            ->all();
+    }
+
+    /** Consume a recovery code if it matches (one-time use). */
+    public function useRecoveryCode(string $code): bool
+    {
+        $code = trim($code);
+        $codes = (array) ($this->two_factor_recovery_codes ?? []);
+
+        $idx = array_search($code, $codes, true);
+        if ($idx === false) {
+            return false;
+        }
+
+        unset($codes[$idx]);
+        $this->forceFill(['two_factor_recovery_codes' => array_values($codes)])->save();
+
+        return true;
     }
 
     /**
