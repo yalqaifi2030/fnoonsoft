@@ -163,7 +163,7 @@ Route::get('/model-preview/{software}', function (\App\Models\Software $software
     abort_unless($software->has3dModel(), 404);
 
     return view('model-preview-embed', compact('software'));
-})->middleware('auth')->name('model.preview');
+})->name('model.preview');
 
 // Product page — slug catch-all, registered last so it can't shadow the above.
 Route::get('/software/{software}', [SoftwareController::class, 'show'])->name('software.show');
