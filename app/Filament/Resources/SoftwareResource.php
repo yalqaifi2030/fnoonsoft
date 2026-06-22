@@ -274,7 +274,7 @@ class SoftwareResource extends Resource
                         Forms\Components\FileUpload::make('model_glb')
                             ->label(__('software.model_glb'))
                             ->helperText(__('software.model_glb_hint'))
-                            ->acceptedFileTypes(['model/gltf-binary', 'model/gltf+json', 'application/octet-stream'])
+                            ->acceptedFileTypes(['model/gltf-binary', 'model/gltf+json', 'model/obj', 'text/plain', 'application/octet-stream'])
                             ->disk('public')->directory('models')
                             ->maxSize(1024 * 60) // 60 MB — keep web previews light
                             ->columnSpanFull(),

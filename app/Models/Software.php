@@ -326,6 +326,17 @@ class Software extends Model
         return filled($this->model_glb);
     }
 
+    /** Lower-cased extension of the preview model (glb | gltf | obj). */
+    public function modelExt(): string
+    {
+        return strtolower(pathinfo((string) $this->model_glb, PATHINFO_EXTENSION));
+    }
+
+    public function is3dObj(): bool
+    {
+        return $this->modelExt() === 'obj';
+    }
+
     public function modelGlbUrl(): ?string
     {
         return $this->model_glb ? Storage::disk('public')->url($this->model_glb) : null;

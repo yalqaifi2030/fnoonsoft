@@ -295,12 +295,110 @@
                 </div>
             @endif
 
-            {{-- 3D model preview (model-viewer) --}}
+            {{-- 3D model preview --}}
             @if ($software->has3dModel())
+                @once
+                    @push('styles')
+                        <style>.mv-wrap:fullscreen{height:100vh !important;width:100vw;border-radius:0}.mv-wrap:-webkit-full-screen{height:100vh !important;border-radius:0}.is-loading .obj-loading{display:flex}.obj-loading{display:none}</style>
+                    @endpush
+                @endonce
                 <div id="model3d" data-spy class="card-luxury p-6 scroll-mt-32">
                     <h2 class="font-cairo font-bold text-xl mb-4 flex items-center gap-2">
                         <i class="fa-solid fa-cube text-saudi-green"></i> {{ __('software.section.model') }}
                     </h2>
+
+                @php($ctrlBtn = 'flex h-8 w-8 items-center justify-center rounded-full transition hover:bg-white/25')
+
+                @if ($software->is3dObj())
+                    {{-- ===== Three.js viewer for .obj ===== --}}
+                    <div class="mv-wrap is-loading relative overflow-hidden rounded-xl" data-obj-viewer data-src="{{ $software->modelGlbUrl() }}"
+                         style="height:clamp(320px, 60vh, 560px); background:#f1f5f9">
+                        <div class="obj-canvas" style="width:100%; height:100%"></div>
+                        <div class="obj-loading pointer-events-none absolute inset-0 items-center justify-center text-gray-400">
+                            <i class="fa-solid fa-spinner fa-spin text-2xl"></i>
+                        </div>
+                        <div class="absolute bottom-3 end-3 flex items-center gap-0.5 rounded-full bg-black/55 p-1 text-white backdrop-blur">
+                            <button type="button" data-action="rotate" class="{{ $ctrlBtn }}" title="{{ __('software.model_play') }}"><i class="fa-solid fa-pause"></i></button>
+                            <button type="button" data-action="reset" class="{{ $ctrlBtn }}" title="{{ __('software.model_reset') }}"><i class="fa-solid fa-arrows-rotate"></i></button>
+                            <button type="button" data-action="help" class="{{ $ctrlBtn }}" title="{{ __('software.model_controls') }}"><i class="fa-solid fa-circle-question"></i></button>
+                            <button type="button" data-action="fullscreen" class="{{ $ctrlBtn }}" title="{{ __('software.model_fs') }}"><i class="fa-solid fa-expand"></i></button>
+                        </div>
+                        <div class="obj-help absolute bottom-14 end-3 w-56 rounded-xl bg-black/80 p-3 text-xs text-white backdrop-blur" style="display:none">
+                            <div class="mb-1.5 font-bold">{{ __('software.model_controls') }}</div>
+                            <ul class="space-y-1.5 text-white/80">
+                                <li><i class="fa-solid fa-arrows-up-down-left-right w-4"></i> {{ __('software.model_help_rotate') }}</li>
+                                <li><i class="fa-solid fa-magnifying-glass w-4"></i> {{ __('software.model_help_zoom') }}</li>
+                                <li><i class="fa-solid fa-expand w-4"></i> {{ __('software.model_help_fs') }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                    @once
+                        @push('scripts')
+                            <script type="importmap">
+                            { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/" } }
+                            </script>
+                            <script type="module">
+                                import * as THREE from 'three';
+                                import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+                                import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+
+                                document.querySelectorAll('[data-obj-viewer]').forEach((wrap) => {
+                                    const host = wrap.querySelector('.obj-canvas');
+                                    const url = wrap.getAttribute('data-src');
+                                    if (!host || !url) return;
+                                    const w = () => host.clientWidth || 1, h = () => host.clientHeight || 1;
+
+                                    const scene = new THREE.Scene();
+                                    scene.background = new THREE.Color(0xf1f5f9);
+                                    const camera = new THREE.PerspectiveCamera(45, w() / h(), 0.01, 100000);
+                                    const renderer = new THREE.WebGLRenderer({ antialias: true });
+                                    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                                    renderer.setSize(w(), h());
+                                    host.appendChild(renderer.domElement);
+
+                                    scene.add(new THREE.HemisphereLight(0xffffff, 0x555555, 1.0));
+                                    const d1 = new THREE.DirectionalLight(0xffffff, 1.1); d1.position.set(6, 10, 8); scene.add(d1);
+                                    const d2 = new THREE.DirectionalLight(0xffffff, 0.5); d2.position.set(-6, -4, -8); scene.add(d2);
+
+                                    const controls = new OrbitControls(camera, renderer.domElement);
+                                    controls.enableDamping = true; controls.autoRotate = true; controls.autoRotateSpeed = 1.4;
+                                    let homePos = null;
+
+                                    new OBJLoader().load(url, (obj) => {
+                                        obj.traverse((c) => { if (c.isMesh) c.material = new THREE.MeshStandardMaterial({ color: 0xc9ced8, metalness: 0.08, roughness: 0.78 }); });
+                                        const box = new THREE.Box3().setFromObject(obj);
+                                        const size = box.getSize(new THREE.Vector3());
+                                        const center = box.getCenter(new THREE.Vector3());
+                                        obj.position.sub(center);
+                                        const maxDim = Math.max(size.x, size.y, size.z) || 1;
+                                        const dist = maxDim * 2.4;
+                                        camera.position.set(dist * 0.5, dist * 0.35, dist);
+                                        camera.near = maxDim / 200; camera.far = maxDim * 200; camera.updateProjectionMatrix();
+                                        controls.target.set(0, 0, 0); controls.update();
+                                        homePos = camera.position.clone();
+                                        scene.add(obj);
+                                        wrap.classList.remove('is-loading');
+                                    }, undefined, () => { wrap.classList.remove('is-loading'); });
+
+                                    const resize = () => { renderer.setSize(w(), h()); camera.aspect = w() / h(); camera.updateProjectionMatrix(); };
+                                    window.addEventListener('resize', resize);
+                                    document.addEventListener('fullscreenchange', () => setTimeout(resize, 80));
+                                    (function loop() { requestAnimationFrame(loop); controls.update(); renderer.render(scene, camera); })();
+
+                                    wrap.querySelectorAll('[data-action]').forEach((btn) => btn.addEventListener('click', (e) => {
+                                        e.stopPropagation();
+                                        const a = btn.getAttribute('data-action'), icon = btn.querySelector('i');
+                                        if (a === 'rotate') { controls.autoRotate = !controls.autoRotate; if (icon) icon.className = 'fa-solid ' + (controls.autoRotate ? 'fa-pause' : 'fa-play'); }
+                                        else if (a === 'reset') { if (homePos) { camera.position.copy(homePos); controls.target.set(0, 0, 0); controls.update(); } }
+                                        else if (a === 'fullscreen') { if (!document.fullscreenElement) (wrap.requestFullscreen || function () {}).call(wrap); else document.exitFullscreen(); }
+                                        else if (a === 'help') { const hp = wrap.querySelector('.obj-help'); if (hp) hp.style.display = hp.style.display === 'block' ? 'none' : 'block'; }
+                                    }));
+                                });
+                            </script>
+                        @endpush
+                    @endonce
+                @else
+                    {{-- ===== model-viewer for .glb / .gltf ===== --}}
                     <div x-data="fnoonModel3d()" x-ref="wrap"
                          x-init="document.addEventListener('fullscreenchange', () => fs = !!document.fullscreenElement)"
                          class="mv-wrap relative overflow-hidden rounded-xl"
@@ -352,35 +450,33 @@
                             </ul>
                         </div>
                     </div>
+                    @once
+                        @push('scripts')
+                            <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
+                            <script>
+                                function fnoonModel3d() {
+                                    return {
+                                        auto: true, help: false, fs: false,
+                                        reset() {
+                                            const mv = this.$refs.mv; if (!mv) return;
+                                            try { mv.resetTurntableRotation(); } catch (e) {}
+                                            mv.cameraOrbit = '0deg 75deg auto';
+                                            mv.fieldOfView = 'auto';
+                                            if (mv.jumpCameraToGoal) mv.jumpCameraToGoal();
+                                        },
+                                        fullscreen() {
+                                            const el = this.$refs.wrap;
+                                            if (!document.fullscreenElement) {
+                                                (el.requestFullscreen || el.webkitRequestFullscreen || function () {}).call(el);
+                                            } else { document.exitFullscreen(); }
+                                        },
+                                    };
+                                }
+                            </script>
+                        @endpush
+                    @endonce
+                @endif
                 </div>
-                @once
-                    @push('styles')
-                        <style>.mv-wrap:fullscreen{height:100vh !important;width:100vw;border-radius:0}.mv-wrap:-webkit-full-screen{height:100vh !important;border-radius:0}</style>
-                    @endpush
-                    @push('scripts')
-                        <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
-                        <script>
-                            function fnoonModel3d() {
-                                return {
-                                    auto: true, help: false, fs: false,
-                                    reset() {
-                                        const mv = this.$refs.mv; if (!mv) return;
-                                        try { mv.resetTurntableRotation(); } catch (e) {}
-                                        mv.cameraOrbit = '0deg 75deg auto';
-                                        mv.fieldOfView = 'auto';
-                                        if (mv.jumpCameraToGoal) mv.jumpCameraToGoal();
-                                    },
-                                    fullscreen() {
-                                        const el = this.$refs.wrap;
-                                        if (!document.fullscreenElement) {
-                                            (el.requestFullscreen || el.webkitRequestFullscreen || function () {}).call(el);
-                                        } else { document.exitFullscreen(); }
-                                    },
-                                };
-                            }
-                        </script>
-                    @endpush
-                @endonce
             @endif
 
             {{-- Code viewer --}}
