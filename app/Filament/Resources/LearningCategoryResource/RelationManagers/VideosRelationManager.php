@@ -66,7 +66,7 @@ class VideosRelationManager extends RelationManager
                         ->label(__('learn_admin.video.file'))
                         ->disk('public')->directory('learning-videos')
                         ->acceptedFileTypes(['video/mp4', 'video/webm', 'video/ogg'])
-                        ->maxSize(1024 * 200) // 200 MB
+                        ->maxSize(1024 * 1500) // 1500 MB (1.5 GB)
                         ->helperText(__('learn_admin.video.file_hint'))
                         ->required(fn (Forms\Get $get) => $get('source') === 'upload')
                         ->visible(fn (Forms\Get $get) => $get('source') === 'upload')

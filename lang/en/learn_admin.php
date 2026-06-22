@@ -31,7 +31,7 @@ return [
         'src_external' => 'Other URL',
         'src_upload' => 'Upload file',
         'file' => 'Video file',
-        'file_hint' => 'MP4 / WebM / OGG, up to 200 MB.',
+        'file_hint' => 'MP4 / WebM / OGG, up to 1.5 GB (1500 MB).',
         'actions' => 'Actions',
         'watch' => 'Watch',
         'duplicate' => 'Duplicate',

@@ -31,7 +31,7 @@ return [
         'src_external' => 'رابط آخر',
         'src_upload' => 'رفع ملف',
         'file' => 'ملف الفيديو',
-        'file_hint' => 'MP4 / WebM / OGG، حتى 200 ميجابايت.',
+        'file_hint' => 'MP4 / WebM / OGG، حتى 1.5 جيجابايت (1500 ميجا).',
         'actions' => 'إجراءات',
         'watch' => 'مشاهدة',
         'duplicate' => 'تكرار',
