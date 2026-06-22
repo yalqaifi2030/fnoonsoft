@@ -52,6 +52,8 @@ return [
     'model_usdz_hint' => 'Used for “View in your space” (AR) on iPhone/iPad. Optional.',
     'model_poster' => 'Poster image (optional)',
     'model_poster_hint' => 'Shown before the 3D model loads.',
+    'model_preview' => 'Live preview',
+    'model_preview_hint' => 'Drag to rotate. This is exactly how it appears on the product page. Only .glb / .gltf / .obj render — export Revit/FBX/SketchUp to .glb first.',
     'model_ar' => 'View in your space (AR)',
     'model_controls_hint' => 'Drag to rotate · scroll to zoom · two fingers to pan',
     'model_controls' => 'Controls',

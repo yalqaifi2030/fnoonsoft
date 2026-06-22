@@ -52,6 +52,8 @@ return [
     'model_usdz_hint' => 'يُستخدم لِـ«مشاهدة في مكانك» (AR) على آيفون/آيباد. اختياري.',
     'model_poster' => 'صورة الغلاف (اختياري)',
     'model_poster_hint' => 'تظهر قبل تحميل النموذج ثلاثي الأبعاد.',
+    'model_preview' => 'معاينة حيّة',
+    'model_preview_hint' => 'اسحب للتدوير. هكذا يظهر تمامًا في صفحة المنتج. تُعرَض فقط صيغ ‎.glb / .gltf / .obj — صدّر Revit/FBX/SketchUp إلى ‎.glb أوّلًا.',
     'model_ar' => 'مشاهدة في مكانك (AR)',
     'model_controls_hint' => 'اسحب للتدوير · مرّر للتكبير · بإصبعين للتحريك',
     'model_controls' => 'التحكّم',

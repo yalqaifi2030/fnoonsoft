@@ -293,6 +293,15 @@ class SoftwareResource extends Resource
                             ->image()->imageEditor()
                             ->disk('public')->directory('models')
                             ->maxSize(2048),
+                        Forms\Components\Placeholder::make('model_preview')
+                            ->label(__('software.model_preview'))
+                            ->columnSpanFull()
+                            ->visible(fn (?Software $record) => $record && $record->has3dModel())
+                            ->content(fn (?Software $record) => new \Illuminate\Support\HtmlString(
+                                '<iframe src="'.e(route('model.preview', $record)).'" loading="lazy" '
+                                .'style="width:100%;height:420px;border:1px solid rgba(0,0,0,.08);border-radius:12px;background:#f1f5f9"></iframe>'
+                                .'<div style="margin-top:6px;font-size:12px;color:#6b7280">'.e(__('software.model_preview_hint')).'</div>'
+                            )),
                     ]),
 
                 Forms\Components\Section::make(__('software.section.features'))

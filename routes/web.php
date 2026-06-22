@@ -157,6 +157,14 @@ Route::post('/software/{software}/comments', [\App\Http\Controllers\CommentContr
 Route::post('/software/{software}/reviews', [\App\Http\Controllers\ReviewController::class, 'store'])
     ->middleware('throttle:5,1')->name('reviews.store');
 
+// Isolated 3D preview (embedded as an iframe in the admin form). Auth-only.
+Route::get('/model-preview/{software}', function (\App\Models\Software $software) {
+    abort_unless(auth()->check(), 403);
+    abort_unless($software->has3dModel(), 404);
+
+    return view('model-preview-embed', compact('software'));
+})->middleware('auth')->name('model.preview');
+
 // Product page — slug catch-all, registered last so it can't shadow the above.
 Route::get('/software/{software}', [SoftwareController::class, 'show'])->name('software.show');
 
