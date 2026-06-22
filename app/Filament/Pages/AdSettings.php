@@ -131,13 +131,27 @@ class AdSettings extends Page implements HasForms
     {
         $d = $this->form->getState();
 
+        // The master switch is always present.
         Setting::put('ads_enabled', (bool) ($d['ads_enabled'] ?? false), 'boolean', 'ads');
-        Setting::put('ads_publisher_id', $d['ads_publisher_id'] ?? '', 'string', 'ads');
-        Setting::put('ads_mode', $d['ads_mode'] ?? 'auto', 'string', 'ads');
-        Setting::put('ads_hide_members', (bool) ($d['ads_hide_members'] ?? true), 'boolean', 'ads');
+
+        // Everything else is conditionally hidden (e.g. while ads are disabled, or
+        // slots while in Auto mode). A hidden field is dropped from the form state,
+        // so we must NOT overwrite its setting — otherwise toggling ads off would
+        // wipe the saved publisher id / slots. Only persist what's actually present.
+        if (array_key_exists('ads_publisher_id', $d)) {
+            Setting::put('ads_publisher_id', $d['ads_publisher_id'] ?? '', 'string', 'ads');
+        }
+        if (array_key_exists('ads_mode', $d)) {
+            Setting::put('ads_mode', $d['ads_mode'] ?: 'auto', 'string', 'ads');
+        }
+        if (array_key_exists('ads_hide_members', $d)) {
+            Setting::put('ads_hide_members', (bool) $d['ads_hide_members'], 'boolean', 'ads');
+        }
 
         foreach (['header', 'incontent', 'sidebar', 'gateway', 'footer'] as $p) {
-            Setting::put('ads_slot_'.$p, $d['ads_slot_'.$p] ?? '', 'string', 'ads');
+            if (array_key_exists('ads_slot_'.$p, $d)) {
+                Setting::put('ads_slot_'.$p, $d['ads_slot_'.$p] ?? '', 'string', 'ads');
+            }
         }
 
         Notification::make()->success()->title(__('settings.saved'))->send();
