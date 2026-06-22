@@ -87,6 +87,60 @@
         h1,h2,h3,h4,h5 { font-family: 'Cairo','Tajawal',sans-serif; }
         ::selection { background: var(--color-secondary); color: #000; }
 
+        /* Rich content typography. The Tailwind CDN ships no @tailwindcss/typography
+           plugin, so the `prose` classes were no-ops — style rich HTML by hand here
+           (RTL-aware) for CMS pages, software descriptions, the blog and legal pages. */
+        .prose { color: #3f4753; line-height: 1.9; font-size: 1.02rem; }
+        .prose > :first-child { margin-top: 0 !important; }
+        .prose > :last-child { margin-bottom: 0 !important; }
+        .prose p { margin: 0 0 1.15em; }
+        .prose h1, .prose h2, .prose h3, .prose h4, .prose h5 {
+            font-family: 'Cairo','Tajawal',sans-serif; color: #1A1A1A; font-weight: 800; line-height: 1.35;
+        }
+        .prose h1 { font-size: 1.75rem; margin: 1.5em 0 .6em; }
+        .prose h2 {
+            font-size: 1.4rem; margin: 1.7em 0 .7em; padding-bottom: .35em;
+            border-bottom: 1px solid rgb(var(--c-secondary) / .3); display: flex; align-items: center; gap: .55rem;
+        }
+        .prose h2::before {
+            content: ""; flex: 0 0 auto; width: .35rem; height: 1.15em; border-radius: 9999px;
+            background: linear-gradient(var(--color-primary), var(--color-secondary));
+        }
+        .prose h3 { font-size: 1.2rem; margin: 1.4em 0 .55em; }
+        .prose h4 { font-size: 1.05rem; margin: 1.3em 0 .45em; }
+        .prose ul, .prose ol { margin: 0 0 1.15em; padding-inline-start: 1.6em; }
+        .prose ul { list-style: disc; }
+        .prose ol { list-style: decimal; }
+        .prose ul ul, .prose ol ol, .prose ul ol, .prose ol ul { margin-bottom: 0; }
+        .prose li { margin: .45em 0; padding-inline-start: .25em; }
+        .prose li::marker { color: var(--color-primary); font-weight: 700; }
+        .prose a {
+            color: var(--color-primary); font-weight: 600; text-decoration: underline;
+            text-underline-offset: 3px; text-decoration-thickness: 1px; text-decoration-color: rgb(var(--c-primary) / .4);
+        }
+        .prose a:hover { color: var(--color-primary-dark); text-decoration-color: currentColor; }
+        .prose strong, .prose b { font-weight: 800; color: #1A1A1A; }
+        .prose em, .prose i { font-style: italic; }
+        .prose blockquote {
+            margin: 1.3em 0; padding: .7em 1.1em; border-inline-start: 4px solid var(--color-primary);
+            background: rgb(var(--c-primary) / .05); border-radius: .6rem; color: #4b5563;
+        }
+        .prose blockquote p { margin: 0; }
+        .prose hr { margin: 1.9em 0; border: 0; border-top: 1px solid rgb(var(--c-secondary) / .3); }
+        .prose img { max-width: 100%; height: auto; border-radius: .8rem; margin: 1.3em 0; }
+        .prose code {
+            background: rgb(var(--c-primary) / .08); color: var(--color-primary-dark);
+            padding: .15em .45em; border-radius: .35rem; font-size: .9em; font-family: ui-monospace,Menlo,monospace; direction: ltr;
+        }
+        .prose pre {
+            background: #1A1A1A; color: #f1f5f9; padding: 1em 1.2em; border-radius: .8rem;
+            overflow-x: auto; margin: 1.3em 0; direction: ltr; text-align: left;
+        }
+        .prose pre code { background: transparent; color: inherit; padding: 0; }
+        .prose table { width: 100%; border-collapse: collapse; margin: 1.3em 0; font-size: .96em; }
+        .prose th, .prose td { border: 1px solid rgb(var(--c-secondary) / .3); padding: .55em .85em; text-align: start; }
+        .prose th { background: rgb(var(--c-primary) / .06); font-weight: 700; color: #1A1A1A; }
+
         .btn-primary {
             background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
             color: #fff; border-radius: .75rem; padding: .65rem 1.4rem; font-weight: 700;
