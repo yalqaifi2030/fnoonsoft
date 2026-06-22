@@ -301,29 +301,84 @@
                     <h2 class="font-cairo font-bold text-xl mb-4 flex items-center gap-2">
                         <i class="fa-solid fa-cube text-saudi-green"></i> {{ __('software.section.model') }}
                     </h2>
-                    <model-viewer
-                        src="{{ $software->modelGlbUrl() }}"
-                        @if ($software->modelUsdzUrl()) ios-src="{{ $software->modelUsdzUrl() }}" @endif
-                        @if ($software->modelPosterUrl()) poster="{{ $software->modelPosterUrl() }}" @endif
-                        alt="{{ $software->name }}"
-                        camera-controls auto-rotate touch-action="pan-y"
-                        ar ar-modes="webxr scene-viewer quick-look"
-                        shadow-intensity="1" exposure="1" environment-image="neutral"
-                        loading="lazy"
-                        style="width:100%; height:clamp(320px, 60vh, 560px); background:#f1f5f9; border-radius:1rem;">
-                        <button slot="ar-button"
-                                class="absolute bottom-4 end-4 inline-flex items-center gap-2 rounded-full bg-saudi-green px-4 py-2 text-sm font-bold text-white shadow-lg"
-                                style="background:#006C35">
-                            <i class="fa-solid fa-vr-cardboard"></i> {{ __('software.model_ar') }}
-                        </button>
-                    </model-viewer>
-                    <p class="mt-3 text-center text-xs text-gray-400">
-                        <i class="fa-solid fa-arrows-up-down-left-right"></i> {{ __('software.model_controls_hint') }}
-                    </p>
+                    <div x-data="fnoonModel3d()" x-ref="wrap"
+                         x-init="document.addEventListener('fullscreenchange', () => fs = !!document.fullscreenElement)"
+                         class="mv-wrap relative overflow-hidden rounded-xl"
+                         style="height:clamp(320px, 60vh, 560px); background:#f1f5f9">
+                        <model-viewer x-ref="mv"
+                            src="{{ $software->modelGlbUrl() }}"
+                            @if ($software->modelUsdzUrl()) ios-src="{{ $software->modelUsdzUrl() }}" @endif
+                            @if ($software->modelPosterUrl()) poster="{{ $software->modelPosterUrl() }}" @endif
+                            alt="{{ $software->name }}"
+                            camera-controls touch-action="pan-y"
+                            :auto-rotate="auto"
+                            ar ar-modes="webxr scene-viewer quick-look"
+                            shadow-intensity="1" exposure="1" environment-image="neutral"
+                            loading="lazy"
+                            style="width:100%; height:100%; background:#f1f5f9">
+                            <button slot="ar-button"
+                                    class="absolute bottom-3 start-3 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold text-white shadow-lg"
+                                    style="background:#006C35">
+                                <i class="fa-solid fa-vr-cardboard"></i> {{ __('software.model_ar') }}
+                            </button>
+                        </model-viewer>
+
+                        {{-- Sketchfab-style control bar --}}
+                        <div class="absolute bottom-3 end-3 flex items-center gap-0.5 rounded-full bg-black/55 p-1 text-white backdrop-blur">
+                            @php($btn = 'flex h-8 w-8 items-center justify-center rounded-full transition hover:bg-white/25')
+                            <button type="button" @click.stop="auto = !auto" class="{{ $btn }}" :title="auto ? '{{ __('software.model_pause') }}' : '{{ __('software.model_play') }}'">
+                                <i class="fa-solid" :class="auto ? 'fa-pause' : 'fa-play'"></i>
+                            </button>
+                            <button type="button" @click.stop="reset()" class="{{ $btn }}" title="{{ __('software.model_reset') }}">
+                                <i class="fa-solid fa-arrows-rotate"></i>
+                            </button>
+                            <button type="button" @click.stop="help = !help" class="{{ $btn }}" title="{{ __('software.model_controls') }}">
+                                <i class="fa-solid fa-circle-question"></i>
+                            </button>
+                            <button type="button" @click.stop="fullscreen()" class="{{ $btn }}" :title="fs ? '{{ __('software.model_exit_fs') }}' : '{{ __('software.model_fs') }}'">
+                                <i class="fa-solid" :class="fs ? 'fa-compress' : 'fa-expand'"></i>
+                            </button>
+                        </div>
+
+                        {{-- Help popover --}}
+                        <div x-show="help" x-cloak @click.outside="help = false"
+                             class="absolute bottom-14 end-3 w-56 rounded-xl bg-black/80 p-3 text-xs text-white backdrop-blur" style="display:none">
+                            <div class="mb-1.5 font-bold">{{ __('software.model_controls') }}</div>
+                            <ul class="space-y-1.5 text-white/80">
+                                <li><i class="fa-solid fa-arrows-up-down-left-right w-4"></i> {{ __('software.model_help_rotate') }}</li>
+                                <li><i class="fa-solid fa-magnifying-glass w-4"></i> {{ __('software.model_help_zoom') }}</li>
+                                <li><i class="fa-solid fa-expand w-4"></i> {{ __('software.model_help_fs') }}</li>
+                                <li><i class="fa-solid fa-vr-cardboard w-4"></i> {{ __('software.model_help_ar') }}</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
                 @once
+                    @push('styles')
+                        <style>.mv-wrap:fullscreen{height:100vh !important;width:100vw;border-radius:0}.mv-wrap:-webkit-full-screen{height:100vh !important;border-radius:0}</style>
+                    @endpush
                     @push('scripts')
                         <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
+                        <script>
+                            function fnoonModel3d() {
+                                return {
+                                    auto: true, help: false, fs: false,
+                                    reset() {
+                                        const mv = this.$refs.mv; if (!mv) return;
+                                        try { mv.resetTurntableRotation(); } catch (e) {}
+                                        mv.cameraOrbit = '0deg 75deg auto';
+                                        mv.fieldOfView = 'auto';
+                                        if (mv.jumpCameraToGoal) mv.jumpCameraToGoal();
+                                    },
+                                    fullscreen() {
+                                        const el = this.$refs.wrap;
+                                        if (!document.fullscreenElement) {
+                                            (el.requestFullscreen || el.webkitRequestFullscreen || function () {}).call(el);
+                                        } else { document.exitFullscreen(); }
+                                    },
+                                };
+                            }
+                        </script>
                     @endpush
                 @endonce
             @endif
