@@ -30,6 +30,7 @@
         $software->screenshots->isNotEmpty() ? ['id' => 'screenshots', 'label' => __('site.screenshots')] : null,
         $software->activeBeforeAfterSlides->isNotEmpty() ? ['id' => 'before_after', 'label' => __('site.before_after.title')] : null,
         $software->fileFormats->where('is_active', true)->isNotEmpty() ? ['id' => 'formats', 'label' => __('formats.section')] : null,
+        $software->has3dModel() ? ['id' => 'model3d', 'label' => __('software.section.model')] : null,
         $software->hasCode() ? ['id' => 'code', 'label' => __('software.section.code')] : null,
         $software->requirements->isNotEmpty() ? ['id' => 'requirements', 'label' => __('site.requirements')] : null,
         ['id' => 'reviews', 'label' => __('site.feedback')],
@@ -292,6 +293,39 @@
                         @endforeach
                     </div>
                 </div>
+            @endif
+
+            {{-- 3D model preview (model-viewer) --}}
+            @if ($software->has3dModel())
+                <div id="model3d" data-spy class="card-luxury p-6 scroll-mt-32">
+                    <h2 class="font-cairo font-bold text-xl mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-cube text-saudi-green"></i> {{ __('software.section.model') }}
+                    </h2>
+                    <model-viewer
+                        src="{{ $software->modelGlbUrl() }}"
+                        @if ($software->modelUsdzUrl()) ios-src="{{ $software->modelUsdzUrl() }}" @endif
+                        @if ($software->modelPosterUrl()) poster="{{ $software->modelPosterUrl() }}" @endif
+                        alt="{{ $software->name }}"
+                        camera-controls auto-rotate touch-action="pan-y"
+                        ar ar-modes="webxr scene-viewer quick-look"
+                        shadow-intensity="1" exposure="1" environment-image="neutral"
+                        loading="lazy"
+                        style="width:100%; height:clamp(320px, 60vh, 560px); background:#f1f5f9; border-radius:1rem;">
+                        <button slot="ar-button"
+                                class="absolute bottom-4 end-4 inline-flex items-center gap-2 rounded-full bg-saudi-green px-4 py-2 text-sm font-bold text-white shadow-lg"
+                                style="background:#006C35">
+                            <i class="fa-solid fa-vr-cardboard"></i> {{ __('software.model_ar') }}
+                        </button>
+                    </model-viewer>
+                    <p class="mt-3 text-center text-xs text-gray-400">
+                        <i class="fa-solid fa-arrows-up-down-left-right"></i> {{ __('software.model_controls_hint') }}
+                    </p>
+                </div>
+                @once
+                    @push('scripts')
+                        <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
+                    @endpush
+                @endonce
             @endif
 
             {{-- Code viewer --}}

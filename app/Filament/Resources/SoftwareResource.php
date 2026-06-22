@@ -265,6 +265,33 @@ class SoftwareResource extends Resource
                             ->defaultItems(0),
                     ]),
 
+                Forms\Components\Section::make(__('software.section.model'))
+                    ->icon('heroicon-o-cube-transparent')
+                    ->description(__('software.model_hint'))
+                    ->collapsed()
+                    ->columns(2)
+                    ->schema([
+                        Forms\Components\FileUpload::make('model_glb')
+                            ->label(__('software.model_glb'))
+                            ->helperText(__('software.model_glb_hint'))
+                            ->acceptedFileTypes(['model/gltf-binary', 'model/gltf+json', 'application/octet-stream'])
+                            ->disk('public')->directory('models')
+                            ->maxSize(1024 * 60) // 60 MB — keep web previews light
+                            ->columnSpanFull(),
+                        Forms\Components\FileUpload::make('model_usdz')
+                            ->label(__('software.model_usdz'))
+                            ->helperText(__('software.model_usdz_hint'))
+                            ->acceptedFileTypes(['model/vnd.usdz+zip', 'application/octet-stream'])
+                            ->disk('public')->directory('models')
+                            ->maxSize(1024 * 60),
+                        Forms\Components\FileUpload::make('model_poster')
+                            ->label(__('software.model_poster'))
+                            ->helperText(__('software.model_poster_hint'))
+                            ->image()->imageEditor()
+                            ->disk('public')->directory('models')
+                            ->maxSize(2048),
+                    ]),
+
                 Forms\Components\Section::make(__('software.section.features'))
                     ->icon('heroicon-o-sparkles')
                     ->description(__('software.features_hint'))

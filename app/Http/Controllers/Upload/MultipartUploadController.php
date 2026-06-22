@@ -31,6 +31,9 @@ class MultipartUploadController extends Controller
         'iso', 'img', 'bin',
         'php', 'js', 'ts', 'py', 'rb', 'go', 'rs', 'java', 'jar',
         'sql', 'json', 'xml', 'yml', 'yaml', 'env',
+        // 3D models
+        'obj', 'mtl', 'fbx', 'gltf', 'glb', 'stl', 'ply', '3ds', 'dae',
+        'usd', 'usdz', 'usdc', 'abc', 'blend', 'max', 'c4d', '3dm', 'skp',
     ];
 
     public function __construct(

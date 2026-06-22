@@ -36,6 +36,7 @@ class Software extends Model
         'downloads_count', 'reviews_count', 'rating_avg', 'views_count',
         'meta_title', 'meta_description', 'published_at',
         'notice_enabled', 'notice_type', 'notice_text', 'notice_url',
+        'model_glb', 'model_usdz', 'model_poster',
     ];
 
     protected function casts(): array
@@ -316,6 +317,28 @@ class Software extends Model
     public function hasCode(): bool
     {
         return filled($this->code);
+    }
+
+    // --- 3D model preview (model-viewer) ---------------------------------
+
+    public function has3dModel(): bool
+    {
+        return filled($this->model_glb);
+    }
+
+    public function modelGlbUrl(): ?string
+    {
+        return $this->model_glb ? Storage::disk('public')->url($this->model_glb) : null;
+    }
+
+    public function modelUsdzUrl(): ?string
+    {
+        return $this->model_usdz ? Storage::disk('public')->url($this->model_usdz) : null;
+    }
+
+    public function modelPosterUrl(): ?string
+    {
+        return $this->model_poster ? Storage::disk('public')->url($this->model_poster) : null;
     }
 
     /** Prism.js language token (defaults to plain text). */
