@@ -327,6 +327,45 @@ class SoftwareResource extends Resource
                 ]),
 
                 Forms\Components\Tabs\Tab::make(__('software.tab.advanced'))->icon('heroicon-o-adjustments-horizontal')->schema([
+                Forms\Components\Section::make(__('software.section.notice'))
+                    ->icon('heroicon-o-megaphone')
+                    ->description(__('software.notice_hint'))
+                    ->collapsed()
+                    ->schema([
+                        Forms\Components\Toggle::make('notice_enabled')
+                            ->label(__('software.notice_enabled'))
+                            ->live()
+                            ->columnSpanFull(),
+                        Forms\Components\Textarea::make('notice_text')
+                            ->label(__('software.notice_text'))
+                            ->rows(3)->maxLength(600)
+                            ->visible(fn (Forms\Get $get) => $get('notice_enabled'))
+                            ->columnSpanFull(),
+                        Forms\Components\ToggleButtons::make('notice_type')
+                            ->label(__('software.notice_type'))
+                            ->inline()
+                            ->options([
+                                'info' => __('software.notice.type_info'),
+                                'success' => __('software.notice.type_success'),
+                                'warning' => __('software.notice.type_warning'),
+                                'promo' => __('software.notice.type_promo'),
+                            ])
+                            ->icons([
+                                'info' => 'heroicon-m-information-circle',
+                                'success' => 'heroicon-m-check-circle',
+                                'warning' => 'heroicon-m-exclamation-triangle',
+                                'promo' => 'heroicon-m-megaphone',
+                            ])
+                            ->colors(['info' => 'info', 'success' => 'success', 'warning' => 'warning', 'promo' => 'primary'])
+                            ->default('info')
+                            ->visible(fn (Forms\Get $get) => $get('notice_enabled')),
+                        Forms\Components\TextInput::make('notice_url')
+                            ->label(__('software.notice_url'))
+                            ->helperText(__('software.notice_url_hint'))
+                            ->url()->prefixIcon('heroicon-m-link')->extraInputAttributes(['dir' => 'ltr'])
+                            ->visible(fn (Forms\Get $get) => $get('notice_enabled')),
+                    ]),
+
                 Forms\Components\Section::make(__('software.section.code'))
                     ->icon('heroicon-o-code-bracket')
                     ->description(__('software.code_hint'))

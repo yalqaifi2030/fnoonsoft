@@ -44,6 +44,34 @@
         <span class="text-gray-600 truncate">{{ $software->name }}</span>
     </nav>
 
+    {{-- Dismissible notice / announcement (per-software, managed from admin) --}}
+    @if ($software->notice_enabled && filled($software->notice_text))
+        @php($ntype = $software->notice_type ?: 'info')
+        @php($nmap = [
+            'info'    => ['bg' => '#eff6ff', 'bd' => '#bfdbfe', 'tx' => '#1e40af', 'ic' => 'fa-circle-info'],
+            'success' => ['bg' => '#ecfdf5', 'bd' => '#a7f3d0', 'tx' => '#065f46', 'ic' => 'fa-circle-check'],
+            'warning' => ['bg' => '#fffbeb', 'bd' => '#fde68a', 'tx' => '#92400e', 'ic' => 'fa-triangle-exclamation'],
+            'promo'   => ['bg' => '#faf5ff', 'bd' => '#e9d5ff', 'tx' => '#6b21a8', 'ic' => 'fa-bullhorn'],
+        ])
+        @php($ns = $nmap[$ntype] ?? $nmap['info'])
+        @php($nkey = 'fn_notice_'.$software->id.'_'.substr(md5((string) $software->notice_text), 0, 8))
+        <div x-data="{ show: localStorage.getItem('{{ $nkey }}') !== '1' }" x-show="show" x-cloak
+             class="mb-5 flex items-start gap-3 rounded-xl border px-4 py-3"
+             style="display:none; background: {{ $ns['bg'] }}; border-color: {{ $ns['bd'] }}; color: {{ $ns['tx'] }}">
+            <i class="fa-solid {{ $ns['ic'] }} mt-0.5 text-lg"></i>
+            <div class="min-w-0 flex-1 text-sm leading-relaxed">
+                <span class="whitespace-pre-line">{{ $software->notice_text }}</span>
+                @if ($software->notice_url)
+                    <a href="{{ $software->notice_url }}" target="_blank" rel="noopener" class="ms-1 font-bold underline">{{ __('software.notice.learn_more') }}</a>
+                @endif
+            </div>
+            <button type="button" @click="show = false; localStorage.setItem('{{ $nkey }}', '1')"
+                    class="shrink-0 opacity-60 transition hover:opacity-100" aria-label="{{ __('software.notice.close') }}">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    @endif
+
     {{-- Hero --}}
     <div class="card-luxury relative overflow-hidden p-0">
         <div class="absolute inset-0 bg-gradient-to-br from-saudi-green to-[#00582b]"></div>

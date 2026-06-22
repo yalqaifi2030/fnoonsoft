@@ -24,7 +24,7 @@ class Software extends Model
     protected $table = 'software';
 
     public array $translatable = [
-        'name', 'short_description', 'description', 'meta_title', 'meta_description',
+        'name', 'short_description', 'description', 'meta_title', 'meta_description', 'notice_text',
     ];
 
     protected $fillable = [
@@ -35,6 +35,7 @@ class Software extends Model
         'status', 'is_featured', 'is_editor_choice', 'is_malware_free',
         'downloads_count', 'reviews_count', 'rating_avg', 'views_count',
         'meta_title', 'meta_description', 'published_at',
+        'notice_enabled', 'notice_type', 'notice_text', 'notice_url',
     ];
 
     protected function casts(): array
@@ -51,6 +52,7 @@ class Software extends Model
             'is_featured' => 'boolean',
             'is_editor_choice' => 'boolean',
             'is_malware_free' => 'boolean',
+            'notice_enabled' => 'boolean',
             'published_at' => 'datetime',
         ];
     }
