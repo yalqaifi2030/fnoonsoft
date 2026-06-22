@@ -479,6 +479,22 @@
                 return Object.assign({}, extra, FNOON_LOCALE ? { locale: FNOON_LOCALE } : {});
             }
 
+            // Track every Uppy instance + warn before leaving while an upload is busy.
+            window.__fnoonUppies = window.__fnoonUppies || [];
+            function fnoonTrackUppy(u) {
+                window.__fnoonUppies.push(u);
+                if (window.__fnoonGuard) return;
+                window.__fnoonGuard = true;
+                window.addEventListener('beforeunload', function (e) {
+                    var busy = window.__fnoonUppies.some(function (x) {
+                        return x.getFiles().some(function (f) {
+                            return f.progress && f.progress.uploadStarted && !f.progress.uploadComplete;
+                        });
+                    });
+                    if (busy) { e.preventDefault(); e.returnValue = ''; }
+                });
+            }
+
             // Shared store so both uploaders feed the same "ready to share" panel.
             document.addEventListener('alpine:init', () => {
                 Alpine.store('share', { items: [] });
@@ -506,8 +522,10 @@
                             return res.json();
                         };
 
-                        new Uppy.Uppy(uppyOptions({ autoProceed: false, restrictions: { maxNumberOfFiles: 5, maxFileSize: {{ $maxBytes }} } }))
+                        const uppy = new Uppy.Uppy(uppyOptions({ autoProceed: false, restrictions: { maxNumberOfFiles: 5, maxFileSize: {{ $maxBytes }} } }))
                             .use(Uppy.Dashboard, { inline: true, target: '#fnoon-files', height: 320, proudlyDisplayPoweredByUppy: false, note: '{{ __('upload.center.zone_hint') }}' })
+                            // Restore in-progress uploads after a refresh/accidental close.
+                            .use(Uppy.GoldenRetriever, { serviceWorker: false })
                             .use(Uppy.AwsS3Multipart, {
                                 limit: {{ $concurrency }},
                                 retryDelays: [0, 3000, 6000, 12000, 24000, 30000],
@@ -520,6 +538,11 @@
                                 signPart: async (file, { uploadId, key, partNumber }) => {
                                     const data = await post('{{ route('upload.multipart.sign') }}', { key, uploadId, partNumber });
                                     return { url: data.url };
+                                },
+                                // On resume, tell Uppy which parts already landed so it skips them.
+                                listParts: async (file, { uploadId, key }) => {
+                                    const data = await post('{{ route('upload.multipart.list-parts') }}', { sessionUuid: file.meta.sessionUuid, key, uploadId });
+                                    return data.parts || [];
                                 },
                                 completeMultipartUpload: async (file, { uploadId, key, parts }) => {
                                     const data = await post('{{ route('upload.multipart.complete') }}', { sessionUuid: file.meta.sessionUuid, key, uploadId, parts });
@@ -534,6 +557,8 @@
                                 console.error('[fnoon upload] part failed:', error?.message || error, 'status:', response?.status, response);
                             })
                             .on('complete', refreshTable);
+
+                        fnoonTrackUppy(uppy);
                     },
                 };
             }
@@ -546,7 +571,7 @@
                         if (!el || el.dataset.mounted) return;   // guard against double-mount
                         el.dataset.mounted = '1';
 
-                        new Uppy.Uppy(uppyOptions({
+                        const uppy = new Uppy.Uppy(uppyOptions({
                             autoProceed: true,
                             restrictions: { maxNumberOfFiles: 10, maxFileSize: {{ (int) env('MEDIA_MAX_KB', 51200) }} * 1024, allowedFileTypes: ['image/*', '.pdf'] },
                         }))
@@ -560,6 +585,8 @@
                             })
                             .on('upload-success', (file, response) => { pushAsset(response.body); })
                             .on('complete', refreshTable);
+
+                        fnoonTrackUppy(uppy);
                     },
                 };
             }

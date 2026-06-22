@@ -165,6 +165,41 @@ class R2UploadService
     }
 
     /**
+     * List the parts already uploaded for an in-flight multipart upload, in the
+     * shape Uppy's AwsS3Multipart plugin expects — so a refreshed/reopened page
+     * can RESUME and skip parts that are already on R2.
+     *
+     * @return array<int,array{PartNumber:int,ETag:string,Size:int}>
+     */
+    public function listParts(string $key, string $uploadId): array
+    {
+        $parts = [];
+        $marker = 0;
+
+        do {
+            $res = $this->client()->listParts([
+                'Bucket' => $this->bucket(),
+                'Key' => $key,
+                'UploadId' => $uploadId,
+                'PartNumberMarker' => $marker,
+            ]);
+
+            foreach ($res['Parts'] ?? [] as $p) {
+                $parts[] = [
+                    'PartNumber' => (int) $p['PartNumber'],
+                    'ETag' => (string) $p['ETag'],
+                    'Size' => (int) ($p['Size'] ?? 0),
+                ];
+            }
+
+            $marker = (int) ($res['NextPartNumberMarker'] ?? 0);
+            $truncated = (bool) ($res['IsTruncated'] ?? false);
+        } while ($truncated);
+
+        return $parts;
+    }
+
+    /**
      * Short-lived presigned GET URL used to actually serve a download.
      */
     public function temporaryDownloadUrl(string $key, ?string $downloadName = null): string

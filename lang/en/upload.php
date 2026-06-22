@@ -1,6 +1,11 @@
 <?php
 
 return [
+    'cleanup' => [
+        'action' => 'Clean incomplete uploads',
+        'confirm' => 'Permanently removes every upload that never finished (temp chunks + rows) from everywhere. Completed files are not affected.',
+        'done' => 'Removed :n incomplete upload(s).',
+    ],
     'center' => [
         'title' => 'Upload Center',
         'nav' => 'Upload',

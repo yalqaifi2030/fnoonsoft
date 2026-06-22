@@ -2,44 +2,27 @@
 
 namespace App\Console\Commands;
 
-use App\Enums\UploadStatus;
-use App\Models\UploadSession;
-use App\Services\Upload\R2UploadService;
+use App\Services\Upload\UploadCleanup;
 use Illuminate\Console\Command;
 
 /**
- * Aborts multipart uploads that were started but never completed, so orphaned
- * parts don't accumulate (and bill) in R2. Schedule hourly.
+ * Fully removes uploads that were started but never completed: aborts the R2
+ * multipart (frees the billed parts), drops local temp chunks, and deletes the
+ * tracking row + any minted asset. Also sweeps orphaned local chunk dirs.
+ * Scheduled hourly.
  */
 class PruneAbandonedUploads extends Command
 {
     protected $signature = 'uploads:prune';
 
-    protected $description = 'Abort and remove expired/abandoned upload sessions from R2';
+    protected $description = 'Remove expired/abandoned upload sessions (R2 parts, local chunks, rows)';
 
-    public function handle(R2UploadService $r2): int
+    public function handle(UploadCleanup $cleanup): int
     {
-        $expired = UploadSession::where('status', UploadStatus::Pending->value)
-            ->where('expires_at', '<', now())
-            ->get();
+        $pruned = $cleanup->purgeIncomplete(expiredOnly: true);
+        $orphans = $cleanup->purgeOrphanTmp();
 
-        $count = 0;
-        foreach ($expired as $session) {
-            try {
-                if ($session->r2_upload_id) {
-                    $r2->abortMultipartUpload($session->r2_key, $session->r2_upload_id);
-                }
-                $session->update([
-                    'status' => UploadStatus::Failed,
-                    'error_message' => 'Abandoned (expired before completion).',
-                ]);
-                $count++;
-            } catch (\Throwable $e) {
-                $this->warn("Failed to prune {$session->uuid}: {$e->getMessage()}");
-            }
-        }
-
-        $this->info("Pruned {$count} abandoned upload(s).");
+        $this->info("Pruned {$pruned} abandoned upload(s); cleaned {$orphans} orphan chunk dir(s).");
 
         return self::SUCCESS;
     }

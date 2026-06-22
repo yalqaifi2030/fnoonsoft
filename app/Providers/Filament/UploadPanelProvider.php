@@ -47,6 +47,10 @@ class UploadPanelProvider extends PanelProvider
                 fn (): string => view('filament.upload.chrome-styles')->render(),
             )
             ->renderHook(
+                PanelsRenderHook::BODY_END,
+                fn (): string => view('filament.unsaved-guard')->render(),
+            )
+            ->renderHook(
                 PanelsRenderHook::SIDEBAR_FOOTER,
                 fn (): string => view('filament.upload.sidebar-footer')->render(),
             )

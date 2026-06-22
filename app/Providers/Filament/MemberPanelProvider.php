@@ -54,6 +54,10 @@ class MemberPanelProvider extends PanelProvider
                 fn (): string => view('filament.upload.chrome-styles')->render()
                     .view('filament.member.chrome-styles')->render(),
             )
+            ->renderHook(
+                PanelsRenderHook::BODY_END,
+                fn (): string => view('filament.unsaved-guard')->render(),
+            )
             ->discoverResources(in: app_path('Filament/Member/Resources'), for: 'App\\Filament\\Member\\Resources')
             ->discoverPages(in: app_path('Filament/Member/Pages'), for: 'App\\Filament\\Member\\Pages')
             ->discoverWidgets(in: app_path('Filament/Member/Widgets'), for: 'App\\Filament\\Member\\Widgets')

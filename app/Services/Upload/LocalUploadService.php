@@ -93,6 +93,34 @@ class LocalUploadService
         Storage::disk($this->disk)->deleteDirectory($this->tmpDir($session));
     }
 
+    /**
+     * Parts already buffered locally, in Uppy's expected shape — lets a refreshed
+     * page RESUME and skip chunks already on the server.
+     *
+     * @return array<int,array{PartNumber:int,ETag:string,Size:int}>
+     */
+    public function listParts(UploadSession $session): array
+    {
+        $disk = Storage::disk($this->disk);
+        $parts = [];
+
+        foreach ($disk->files($this->tmpDir($session)) as $file) {
+            if (! preg_match('/(\d+)\.part$/', basename($file), $m)) {
+                continue;
+            }
+            $abs = $disk->path($file);
+            $parts[] = [
+                'PartNumber' => (int) $m[1],
+                'ETag' => '"'.md5_file($abs).'"',
+                'Size' => is_file($abs) ? (int) filesize($abs) : 0,
+            ];
+        }
+
+        usort($parts, fn ($a, $b) => $a['PartNumber'] <=> $b['PartNumber']);
+
+        return $parts;
+    }
+
     public function exists(string $key): bool
     {
         return Storage::disk($this->disk)->exists($key);

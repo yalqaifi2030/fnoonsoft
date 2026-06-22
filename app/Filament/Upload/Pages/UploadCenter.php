@@ -2,6 +2,9 @@
 
 namespace App\Filament\Upload\Pages;
 
+use App\Services\Upload\UploadCleanup;
+use Filament\Actions\Action;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 
@@ -31,6 +34,29 @@ class UploadCenter extends Page
     public static function getNavigationLabel(): string
     {
         return __('upload.center.nav');
+    }
+
+    /** Manually remove incomplete/abandoned uploads (bytes + chunks + rows). */
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('cleanIncomplete')
+                ->label(__('upload.cleanup.action'))
+                ->icon('heroicon-o-trash')
+                ->color('gray')
+                ->requiresConfirmation()
+                ->modalHeading(__('upload.cleanup.action'))
+                ->modalDescription(__('upload.cleanup.confirm'))
+                ->action(function (): void {
+                    $userId = auth()->user()?->hasRole('super_admin') ? null : auth()->id();
+                    $cleanup = app(UploadCleanup::class);
+                    $n = $cleanup->purgeIncomplete($userId);
+                    $cleanup->purgeOrphanTmp();
+
+                    Notification::make()->success()->title(__('upload.cleanup.done', ['n' => $n]))->send();
+                    $this->dispatch('$refresh');
+                }),
+        ];
     }
 
     /** Recent shareable assets (files + images + PDF) for the signed-in uploader. */

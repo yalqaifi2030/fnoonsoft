@@ -301,6 +301,29 @@ class MultipartUploadController extends Controller
         return response()->json(['ok' => true]);
     }
 
+    /** Parts already uploaded — lets Uppy RESUME after a refresh, skipping them. */
+    public function listParts(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'sessionUuid' => ['required', 'string'],
+            'key' => ['nullable', 'string'],
+            'uploadId' => ['nullable', 'string'],
+        ]);
+
+        $session = $this->session($request, $data['sessionUuid']);
+
+        try {
+            $parts = ($session->storage_disk === 'local' || $session->proxied)
+                ? $this->local->listParts($session)
+                : $this->r2->listParts($session->r2_key, $session->r2_upload_id);
+        } catch (\Throwable $e) {
+            // Can't list (expired/aborted on the backend) — Uppy restarts cleanly.
+            $parts = [];
+        }
+
+        return response()->json(['parts' => $parts]);
+    }
+
     private function maxBytes(): int
     {
         return (int) env('UPLOAD_MAX_BYTES', 32212254720); // 30 GB

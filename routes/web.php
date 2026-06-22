@@ -103,6 +103,7 @@ Route::get('/go/{software}/{link}', [DownloadController::class, 'start'])
 Route::middleware(['auth'])->prefix('upload/multipart')->name('upload.multipart.')->group(function () {
     Route::post('/create', [MultipartUploadController::class, 'create'])->name('create');
     Route::post('/sign', [MultipartUploadController::class, 'sign'])->name('sign');
+    Route::post('/list-parts', [MultipartUploadController::class, 'listParts'])->name('list-parts');
     Route::post('/complete', [MultipartUploadController::class, 'complete'])->name('complete');
     Route::post('/abort', [MultipartUploadController::class, 'abort'])->name('abort');
 
