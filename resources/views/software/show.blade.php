@@ -26,10 +26,16 @@
 
     {{-- Record this download to the visitor's browser history (localStorage) when
          any download trigger is clicked. Members also get an account-based history. --}}
+    @php($dlData = [
+        'slug' => $software->slug,
+        'name' => (string) $software->name,
+        'icon' => $software->icon ? \Illuminate\Support\Facades\Storage::disk('public')->url($software->icon) : null,
+        'dev' => optional($software->developer)->name,
+    ])
     @push('scripts')
         <script>
             (function () {
-                const dl = @json(['slug' => $software->slug, 'name' => (string) $software->name, 'icon' => $software->icon ? \Illuminate\Support\Facades\Storage::disk('public')->url($software->icon) : null, 'dev' => optional($software->developer)->name]);
+                const dl = @json($dlData);
                 function record() {
                     try {
                         const k = 'fnoon_downloads';
