@@ -38,6 +38,11 @@
                         {{ $locale === 'ar' ? 'EN' : 'ع' }}
                     </a>
                 @endunless
+                <a href="{{ route('my.downloads') }}" title="{{ __('site.my_downloads.nav') }}"
+                   class="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-royal-gold/30 px-2.5 py-1.5 text-sm hover:bg-royal-gold/10">
+                    <i class="fa-solid fa-clock-rotate-left text-saudi-green"></i>
+                    <span class="hidden lg:inline">{{ __('site.my_downloads.nav') }}</span>
+                </a>
                 @if (\App\Models\Setting::get('member_uploads_enabled'))
                     @auth
                         <a href="/dashboard" class="hidden sm:inline-flex btn-primary text-sm">
@@ -67,6 +72,7 @@
             <a href="{{ route('browse', ['type' => 'template']) }}">{{ __('site.nav.templates') }}</a>
             <a href="{{ route('browse', ['type' => 'plugin']) }}">{{ __('site.nav.plugins') }}</a>
             <a href="{{ route('blog.index') }}">{{ __('site.nav.blog') }}</a>
+            <a href="{{ route('my.downloads') }}"><i class="fa-solid fa-clock-rotate-left text-saudi-green"></i> {{ __('site.my_downloads.nav') }}</a>
             @if (\App\Models\Setting::get('member_uploads_enabled'))
                 @auth
                     <a href="/dashboard" class="font-bold text-saudi-green">{{ __('site.nav.my_files') }}</a>

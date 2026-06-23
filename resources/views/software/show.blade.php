@@ -23,6 +23,29 @@
      }">
     @php($primary = $software->downloadLinks->first())
     @php($totalSize = (int) $software->downloadLinks->sum('size_bytes'))
+
+    {{-- Record this download to the visitor's browser history (localStorage) when
+         any download trigger is clicked. Members also get an account-based history. --}}
+    @push('scripts')
+        <script>
+            (function () {
+                const dl = @json(['slug' => $software->slug, 'name' => (string) $software->name, 'icon' => $software->icon ? \Illuminate\Support\Facades\Storage::disk('public')->url($software->icon) : null, 'dev' => optional($software->developer)->name]);
+                function record() {
+                    try {
+                        const k = 'fnoon_downloads';
+                        let arr = JSON.parse(localStorage.getItem(k) || '[]');
+                        if (!Array.isArray(arr)) arr = [];
+                        arr = arr.filter(x => x && x.slug !== dl.slug);
+                        arr.unshift(Object.assign({}, dl, { at: Date.now() }));
+                        localStorage.setItem(k, JSON.stringify(arr.slice(0, 60)));
+                    } catch (e) {}
+                }
+                document.addEventListener('click', function (e) {
+                    if (e.target.closest('a[href*="/download/"], [data-dl-all]')) record();
+                }, true);
+            })();
+        </script>
+    @endpush
     @php($tabs = array_values(array_filter([
         ['id' => 'about', 'label' => __('site.about')],
         $software->hasVideo() ? ['id' => 'video', 'label' => __('software.section.video')] : null,
@@ -693,7 +716,7 @@
                                               this.urls.forEach((u, i) => setTimeout(() => { const f = document.createElement('iframe'); f.style.display='none'; f.src=u; document.body.appendChild(f); setTimeout(() => f.remove(), 120000); }, i * 1500));
                                           },
                                           copyAll() { window.fnoonCopy(this.urls.join('\n')); this.copied = true; setTimeout(() => this.copied = false, 1800); } }">
-                                <button type="button" x-on:click="all()"
+                                <button type="button" x-on:click="all()" data-dl-all
                                         class="btn-primary w-full justify-center text-base shadow-lg shadow-saudi-green/20">
                                     <i class="fa-solid fa-cloud-arrow-down"></i> {{ __('site.download.all', ['n' => $links->count()]) }}
                                 </button>

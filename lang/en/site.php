@@ -83,6 +83,22 @@ return [
         'malware_free' => 'Malware-free',
         'scanned' => 'Scanned — VirusTotal',
     ],
+    'my_downloads' => [
+        'nav' => 'My downloads',
+        'title' => 'My downloads',
+        'subtitle' => 'Programs you downloaded from this browser.',
+        'count' => ':n programs',
+        'clear' => 'Clear history',
+        'empty' => 'No downloads on this device yet.',
+        'browse' => 'Browse software',
+        'open' => 'Open',
+        'remove' => 'Remove',
+        'guest_banner' => 'This history is stored on this device only. Sign in to save it to your account across all your devices.',
+        'guest_login' => 'Sign in',
+        'member_banner' => 'Your full account-based history is available in your dashboard (works across all devices).',
+        'member_link' => 'Open my account history',
+    ],
+
     'download' => [
         'button' => 'Download',
         'now' => 'Download now',

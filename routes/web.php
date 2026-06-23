@@ -157,6 +157,10 @@ Route::post('/software/{software}/comments', [\App\Http\Controllers\CommentContr
 Route::post('/software/{software}/reviews', [\App\Http\Controllers\ReviewController::class, 'store'])
     ->middleware('throttle:5,1')->name('reviews.store');
 
+// "My downloads" — the visitor's browser (localStorage) history; members also
+// have an account-based history inside their dashboard.
+Route::view('/my-downloads', 'my-downloads')->name('my.downloads');
+
 // Isolated 3D preview (embedded as an iframe in the admin form). Auth-only.
 Route::get('/model-preview/{software}', function (\App\Models\Software $software) {
     abort_unless(auth()->check(), 403);

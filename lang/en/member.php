@@ -6,6 +6,16 @@ return [
     'public_page' => 'My public page',
     'profile' => 'Profile',
 
+    'downloads' => [
+        'nav' => 'Download history',
+        'title' => 'My download history',
+        'programs' => 'Programs downloaded',
+        'total' => 'Total downloads',
+        'again' => 'Download',
+        'empty' => "You haven't downloaded anything yet.",
+        'browse' => 'Browse software',
+    ],
+
     'stats' => [
         'nav' => 'Statistics',
         'title' => 'My statistics',
