@@ -644,6 +644,15 @@ class SoftwareResource extends Resource
                             Notification::make()->success()->title(__('software.action.updated'))->send();
                         }),
 
+                    Tables\Actions\Action::make('toggle_private')
+                        ->label(fn (Software $r) => $r->download_requires_login ? __('software.action.make_public') : __('software.action.make_private'))
+                        ->icon(fn (Software $r) => $r->download_requires_login ? 'heroicon-m-lock-open' : 'heroicon-m-lock-closed')
+                        ->color(fn (Software $r) => $r->download_requires_login ? 'gray' : 'success')
+                        ->action(function (Software $r): void {
+                            $r->update(['download_requires_login' => ! $r->download_requires_login]);
+                            Notification::make()->success()->title(__('software.action.updated'))->send();
+                        }),
+
                     Tables\Actions\ReplicateAction::make()
                         ->label(__('software.action.duplicate'))
                         ->icon('heroicon-m-document-duplicate')->color('gray')

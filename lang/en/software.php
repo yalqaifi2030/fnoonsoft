@@ -150,6 +150,8 @@ return [
         'feature' => 'Feature',
         'unfeature' => 'Unfeature',
         'duplicate' => 'Duplicate',
+        'make_private' => 'Make private (login to download)',
+        'make_public' => 'Make public',
         'updated' => 'Item updated.',
         'copy_links' => 'Copy download links',
         'links_copied' => 'Download links copied.',
