@@ -9,15 +9,24 @@
    class="card-luxury group flex h-full flex-col gap-4 p-5">
 
     <div class="flex items-start gap-4">
-        @if ($software->icon)
-            <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($software->icon) }}"
-                 alt="{{ $software->name }}" width="96" height="96" loading="lazy" decoding="async"
-                 class="h-[76px] w-[76px] shrink-0 rounded-2xl bg-white object-contain ring-1 ring-royal-gold/15">
-        @else
-            <span class="inline-flex h-[76px] w-[76px] shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-saudi-green/10 to-royal-gold/10 text-saudi-green">
-                <i class="{{ $software->content_type->icon() }} text-3xl"></i>
-            </span>
-        @endif
+        <div class="relative shrink-0">
+            @if ($software->icon)
+                <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($software->icon) }}"
+                     alt="{{ $software->name }}" width="96" height="96" loading="lazy" decoding="async"
+                     class="h-[76px] w-[76px] rounded-2xl bg-white object-contain ring-1 ring-royal-gold/15">
+            @else
+                <span class="inline-flex h-[76px] w-[76px] items-center justify-center rounded-2xl bg-gradient-to-br from-saudi-green/10 to-royal-gold/10 text-saudi-green">
+                    <i class="{{ $software->content_type->icon() }} text-3xl"></i>
+                </span>
+            @endif
+            @if ($software->download_requires_login)
+                {{-- Members-only file: lock tag --}}
+                <span class="absolute -end-1.5 -top-1.5 inline-flex h-6 w-6 items-center justify-center rounded-full bg-saudi-green text-[11px] text-white shadow-md ring-2 ring-white"
+                      title="{{ __('site.download.members_only') }}">
+                    <i class="fa-solid fa-lock"></i>
+                </span>
+            @endif
+        </div>
 
         <div class="min-w-0 flex-1">
             <span class="mb-1 inline-flex max-w-full items-center gap-1 rounded-full bg-saudi-green/8 px-2 py-0.5 text-[10px] font-semibold text-saudi-green/90">

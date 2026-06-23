@@ -100,6 +100,7 @@ return [
         'platforms' => 'Platforms',
         'free' => 'Free download',
         'secure' => 'Safe & verified download',
+        'members_only' => 'Members only — sign in required',
         'private_title' => 'This content is private!',
         'private_body' => 'Sign in to view the download links for this item.',
         'private_login' => 'Sign in to download',
