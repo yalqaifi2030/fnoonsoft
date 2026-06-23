@@ -2,6 +2,7 @@
 
 return [
     'nav' => 'Learn & Build',
+    'preview' => 'Live preview',
     'hero' => [
         'badge' => 'For university students',
         'title' => 'Learn by building — live, in your browser',
