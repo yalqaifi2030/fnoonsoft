@@ -17,12 +17,25 @@ class LearningVideo extends Model
 
     protected $fillable = [
         'learning_category_id', 'title', 'description', 'url', 'source', 'file_path',
+        'thumbnail_path', 'is_processing',
         'duration', 'level', 'sort_order', 'is_active',
     ];
 
     protected function casts(): array
     {
-        return ['is_active' => 'boolean'];
+        return ['is_active' => 'boolean', 'is_processing' => 'boolean'];
+    }
+
+    protected static function booted(): void
+    {
+        // After an uploaded video's file changes, optimise it with ffmpeg
+        // (transcode + poster) on the queue.
+        static::saved(function (self $video) {
+            if ($video->source === 'upload' && $video->file_path && $video->wasChanged('file_path')) {
+                $video->forceFill(['is_processing' => true])->saveQuietly();
+                \App\Jobs\ProcessLearningVideo::dispatch($video->id);
+            }
+        });
     }
 
     public function category(): BelongsTo
@@ -88,6 +101,11 @@ class LearningVideo extends Model
 
     public function thumbnailUrl(): ?string
     {
+        // Prefer the ffmpeg-generated poster (uploaded videos); else YouTube's.
+        if ($this->thumbnail_path) {
+            return Storage::disk('public')->url($this->thumbnail_path);
+        }
+
         $id = $this->isYoutube() ? $this->youtubeId() : null;
 
         return $id ? "https://img.youtube.com/vi/{$id}/hqdefault.jpg" : null;

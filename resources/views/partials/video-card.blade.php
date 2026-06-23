@@ -18,6 +18,7 @@
             {{-- The video itself is the thumbnail: a frame is seeked on metadata load,
                  and it plays muted on hover for a live preview. --}}
             <video x-ref="prev" muted loop playsinline preload="metadata"
+                   @if ($video->thumbnailUrl()) poster="{{ $video->thumbnailUrl() }}" @endif
                    @loadedmetadata="onMeta($el)"
                    src="{{ $directSrc }}#t=2"
                    class="h-full w-full object-cover opacity-90 transition duration-500 group-hover:opacity-100 group-hover:scale-[1.03]"></video>
