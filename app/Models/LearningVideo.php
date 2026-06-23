@@ -28,12 +28,13 @@ class LearningVideo extends Model
 
     protected static function booted(): void
     {
-        // After an uploaded video's file changes, optimise it with ffmpeg
-        // (transcode + poster) on the queue.
+        // Flag an uploaded video for ffmpeg optimisation (transcode + poster).
+        // A root cron (`learn:process-videos`) picks it up — the panel's process
+        // guard blocks the web user from running ffmpeg, so we can't queue it.
         static::saved(function (self $video) {
-            if ($video->source === 'upload' && $video->file_path && $video->wasChanged('file_path')) {
+            if ($video->source === 'upload' && $video->file_path
+                && $video->wasChanged('file_path') && ! $video->is_processing) {
                 $video->forceFill(['is_processing' => true])->saveQuietly();
-                \App\Jobs\ProcessLearningVideo::dispatch($video->id);
             }
         });
     }
