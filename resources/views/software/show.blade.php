@@ -669,6 +669,20 @@
                     </div>
 
                     <div class="p-6">
+                        @if ($software->download_requires_login && ! auth()->check())
+                            {{-- Private content — download links gated behind login --}}
+                            <div class="rounded-2xl border border-saudi-green/20 bg-saudi-green/5 px-5 py-7 text-center">
+                                <span class="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-saudi-green/10 text-2xl text-saudi-green">
+                                    <i class="fa-solid fa-lock"></i>
+                                </span>
+                                <h4 class="font-cairo text-lg font-black text-luxury-black">{{ __('site.download.private_title') }}</h4>
+                                <p class="mx-auto mt-1.5 max-w-[16rem] text-sm leading-relaxed text-gray-500">{{ __('site.download.private_body') }}</p>
+                                <a href="/dashboard/login?redirect={{ urlencode(route('software.show', $software)) }}" class="btn-primary mt-5 w-full justify-center text-base">
+                                    <i class="fa-solid fa-right-to-bracket"></i> {{ __('site.download.private_login') }}
+                                </a>
+                                <a href="/dashboard/login" class="mt-2.5 inline-block text-xs font-semibold text-saudi-green hover:underline">{{ __('site.download.private_register') }}</a>
+                            </div>
+                        @else
                         @if ($multi)
                             {{-- One-click download of all parts (sequential, via hidden iframes) --}}
                             <div x-data="{ urls: @js($links->map(fn ($l) => route('download.start', [$software, $l]))->values()), copied: false,
@@ -725,6 +739,7 @@
                             <p class="mt-3 flex items-center justify-center gap-1.5 text-xs text-gray-400">
                                 <i class="fa-solid fa-shield-halved text-saudi-green"></i> {{ __('site.download.secure') }}
                             </p>
+                        @endif
                         @endif
 
                         {{-- Meta grid --}}

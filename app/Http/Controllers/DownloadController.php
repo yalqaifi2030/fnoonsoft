@@ -20,12 +20,26 @@ class DownloadController extends Controller
     }
 
     /** Intermediate gateway page with a short countdown before the download. */
-    public function gateway(Software $software, DownloadLink $link): View
+    public function gateway(Software $software, DownloadLink $link): View|RedirectResponse
     {
         abort_unless($software->status === ContentStatus::Published
             && $link->software_id === $software->id && $link->is_active, 404);
 
+        if ($redirect = $this->guardPrivate($software)) {
+            return $redirect;
+        }
+
         return view('download.gateway', compact('software', 'link'));
+    }
+
+    /** Private items hide downloads behind login — block guests at the source. */
+    private function guardPrivate(Software $software): ?RedirectResponse
+    {
+        if ($software->download_requires_login && ! auth()->check()) {
+            return redirect('/dashboard/login?redirect='.urlencode(route('software.show', $software)));
+        }
+
+        return null;
     }
 
     /**
@@ -36,6 +50,10 @@ class DownloadController extends Controller
     {
         abort_unless($software->status === ContentStatus::Published
             && $link->software_id === $software->id && $link->is_active, 404);
+
+        if ($redirect = $this->guardPrivate($software)) {
+            return $redirect;
+        }
 
         $this->log($request, $software, $link);
 

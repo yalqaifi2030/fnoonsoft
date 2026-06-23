@@ -482,6 +482,11 @@ class SoftwareResource extends Resource
                         Forms\Components\Toggle::make('is_featured')->label(__('software.featured'))->inline(false),
                         Forms\Components\Toggle::make('is_editor_choice')->label(__('software.editor_choice'))->inline(false),
                         Forms\Components\Toggle::make('is_malware_free')->label(__('software.malware_free'))->inline(false),
+                        Forms\Components\Toggle::make('download_requires_login')
+                            ->label(__('software.private_download'))
+                            ->helperText(__('software.private_download_hint'))
+                            ->inline(false)
+                            ->columnSpanFull(),
                     ]),
 
                 Forms\Components\Section::make(__('software.section.taxonomy'))

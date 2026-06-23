@@ -37,6 +37,7 @@ class Software extends Model
         'meta_title', 'meta_description', 'published_at',
         'notice_enabled', 'notice_type', 'notice_text', 'notice_url',
         'model_glb', 'model_usdz', 'model_poster',
+        'download_requires_login',
     ];
 
     protected function casts(): array
@@ -53,6 +54,7 @@ class Software extends Model
             'is_featured' => 'boolean',
             'is_editor_choice' => 'boolean',
             'is_malware_free' => 'boolean',
+            'download_requires_login' => 'boolean',
             'notice_enabled' => 'boolean',
             'published_at' => 'datetime',
         ];

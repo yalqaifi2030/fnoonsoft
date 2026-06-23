@@ -116,6 +116,8 @@ return [
     'featured' => 'Featured',
     'editor_choice' => "Editor's choice",
     'malware_free' => 'Malware-free',
+    'private_download' => 'Private content (login required to download)',
+    'private_download_hint' => 'When on: the description and images stay public, but the download links/buttons show only to signed-in members.',
     'category' => 'Category',
     'developer' => 'Developer',
     'tags' => 'Tags',
