@@ -1,73 +1,70 @@
 <x-filament-panels::page>
+    {{-- Inline styles on purpose: Filament's panel CSS doesn't ship the custom
+         Tailwind utilities used here, so we size everything explicitly. --}}
+
     {{-- Summary --}}
-    <div class="grid grid-cols-2 gap-4">
-        <div class="rounded-2xl border border-gray-100 bg-white p-5 dark:border-white/10 dark:bg-gray-900">
-            <div class="flex items-center gap-3">
-                <span class="flex h-11 w-11 items-center justify-center rounded-xl text-lg text-white" style="background:#006C35">
-                    <i class="fa-solid fa-box-open"></i>
-                </span>
-                <div>
-                    <div class="text-2xl font-black" dir="ltr">{{ number_format($programs) }}</div>
-                    <div class="text-xs text-gray-500">{{ __('member.downloads.programs') }}</div>
-                </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:20px">
+        <div style="display:flex;align-items:center;gap:12px;border:1px solid rgba(0,0,0,.08);border-radius:16px;background:#fff;padding:18px">
+            <span style="display:inline-flex;width:44px;height:44px;flex:0 0 44px;align-items:center;justify-content:center;border-radius:12px;background:#006C35;color:#fff;font-size:18px">
+                <i class="fa-solid fa-box-open"></i>
+            </span>
+            <div>
+                <div style="font-size:24px;font-weight:800;line-height:1.1" dir="ltr">{{ number_format($programs) }}</div>
+                <div style="font-size:12px;color:#6b7280">{{ __('member.downloads.programs') }}</div>
             </div>
         </div>
-        <div class="rounded-2xl border border-gray-100 bg-white p-5 dark:border-white/10 dark:bg-gray-900">
-            <div class="flex items-center gap-3">
-                <span class="flex h-11 w-11 items-center justify-center rounded-xl text-lg text-white" style="background:#3b82f6">
-                    <i class="fa-solid fa-arrow-down"></i>
-                </span>
-                <div>
-                    <div class="text-2xl font-black" dir="ltr">{{ number_format($totalDownloads) }}</div>
-                    <div class="text-xs text-gray-500">{{ __('member.downloads.total') }}</div>
-                </div>
+        <div style="display:flex;align-items:center;gap:12px;border:1px solid rgba(0,0,0,.08);border-radius:16px;background:#fff;padding:18px">
+            <span style="display:inline-flex;width:44px;height:44px;flex:0 0 44px;align-items:center;justify-content:center;border-radius:12px;background:#3b82f6;color:#fff;font-size:18px">
+                <i class="fa-solid fa-arrow-down"></i>
+            </span>
+            <div>
+                <div style="font-size:24px;font-weight:800;line-height:1.1" dir="ltr">{{ number_format($totalDownloads) }}</div>
+                <div style="font-size:12px;color:#6b7280">{{ __('member.downloads.total') }}</div>
             </div>
         </div>
     </div>
 
-    {{-- History list --}}
     @if ($rows->isEmpty())
-        <div class="rounded-2xl border border-dashed border-gray-200 bg-white py-16 text-center dark:border-white/10 dark:bg-gray-900">
-            <i class="fa-solid fa-clock-rotate-left mb-3 text-4xl text-gray-300"></i>
-            <p class="font-bold text-gray-600 dark:text-gray-300">{{ __('member.downloads.empty') }}</p>
-            <a href="{{ url('/browse') }}" class="mt-4 inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold text-white" style="background:#006C35">
+        <div style="border:1px dashed #e5e7eb;border-radius:16px;background:#fff;padding:56px 24px;text-align:center">
+            <i class="fa-solid fa-clock-rotate-left" style="font-size:34px;color:#d1d5db"></i>
+            <p style="margin:12px 0 0;font-weight:700;color:#4b5563">{{ __('member.downloads.empty') }}</p>
+            <a href="{{ url('/browse') }}" target="_blank"
+               style="display:inline-flex;align-items:center;gap:8px;margin-top:16px;border-radius:12px;background:#006C35;color:#fff;padding:9px 16px;font-size:14px;font-weight:700;text-decoration:none">
                 <i class="fa-solid fa-compass"></i> {{ __('member.downloads.browse') }}
             </a>
         </div>
     @else
-        <div class="overflow-hidden rounded-2xl border border-gray-100 bg-white dark:border-white/10 dark:bg-gray-900">
-            <ul class="divide-y divide-gray-100 dark:divide-white/10">
-                @foreach ($rows as $row)
-                    @php($s = $softwares[$row->software_id] ?? null)
-                    @continue(! $s)
-                    <li class="flex items-center gap-4 p-4 transition hover:bg-gray-50 dark:hover:bg-white/5">
-                        @if ($s->icon)
-                            <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($s->icon) }}" alt="" loading="lazy"
-                                 class="h-12 w-12 shrink-0 rounded-xl bg-white object-contain ring-1 ring-gray-100">
-                        @else
-                            <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-white" style="background:#006C35">
-                                <i class="fa-solid fa-cube"></i>
-                            </span>
-                        @endif
+        <div style="border:1px solid rgba(0,0,0,.08);border-radius:16px;background:#fff;overflow:hidden">
+            @foreach ($rows as $row)
+                @php($s = $softwares[$row->software_id] ?? null)
+                @continue(! $s)
+                <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;{{ ! $loop->last ? 'border-bottom:1px solid #f3f4f6' : '' }}">
+                    @if ($s->icon)
+                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($s->icon) }}" alt="" loading="lazy"
+                             style="width:48px;height:48px;flex:0 0 48px;border-radius:12px;background:#fff;object-fit:contain;border:1px solid #f1f3f5">
+                    @else
+                        <span style="display:inline-flex;width:48px;height:48px;flex:0 0 48px;align-items:center;justify-content:center;border-radius:12px;background:#006C35;color:#fff">
+                            <i class="fa-solid fa-cube"></i>
+                        </span>
+                    @endif
 
-                        <div class="min-w-0 flex-1">
-                            <a href="{{ route('software.show', $s) }}" target="_blank"
-                               class="block truncate font-bold text-gray-800 hover:text-[#006C35] dark:text-gray-100">{{ $s->name }}</a>
-                            <div class="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-400">
-                                <span><i class="fa-regular fa-clock"></i> {{ \Illuminate\Support\Carbon::parse($row->last_at)->diffForHumans() }}</span>
-                                @if ($row->times > 1)
-                                    <span class="rounded-full bg-gray-100 px-2 py-0.5 font-semibold text-gray-500 dark:bg-white/10" dir="ltr">×{{ $row->times }}</span>
-                                @endif
-                            </div>
-                        </div>
-
+                    <div style="flex:1 1 auto;min-width:0">
                         <a href="{{ route('software.show', $s) }}" target="_blank"
-                           class="inline-flex shrink-0 items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold text-white transition" style="background:#006C35">
-                            <i class="fa-solid fa-arrow-down"></i> <span class="hidden sm:inline">{{ __('member.downloads.again') }}</span>
-                        </a>
-                    </li>
-                @endforeach
-            </ul>
+                           style="display:block;font-weight:700;color:#1f2937;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $s->name }}</a>
+                        <div style="margin-top:3px;font-size:12px;color:#9ca3af">
+                            <i class="fa-regular fa-clock"></i> {{ \Illuminate\Support\Carbon::parse($row->last_at)->diffForHumans() }}
+                            @if ($row->times > 1)
+                                · <span dir="ltr">&times;{{ $row->times }}</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <a href="{{ route('software.show', $s) }}" target="_blank"
+                       style="flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;border-radius:12px;background:#006C35;color:#fff;padding:8px 14px;font-size:14px;font-weight:700;text-decoration:none">
+                        <i class="fa-solid fa-arrow-down"></i> {{ __('member.downloads.again') }}
+                    </a>
+                </div>
+            @endforeach
         </div>
     @endif
 </x-filament-panels::page>
