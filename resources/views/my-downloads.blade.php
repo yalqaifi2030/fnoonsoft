@@ -2,6 +2,7 @@
 
 @section('title', __('site.my_downloads.title'))
 @section('meta_description', __('site.my_downloads.subtitle'))
+@section('robots', 'noindex, follow')
 
 @section('content')
 <div class="mx-auto max-w-4xl px-4 py-10" x-data="fnoonDownloads()" x-cloak>

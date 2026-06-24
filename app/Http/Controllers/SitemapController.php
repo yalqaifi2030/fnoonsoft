@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Page;
 use App\Models\Software;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 /**
@@ -18,8 +19,8 @@ class SitemapController extends Controller
     public function index(): Response
     {
         $urls = [];
-        $add = function (string $loc, string $priority = '0.6', string $changefreq = 'weekly', ?string $lastmod = null) use (&$urls): void {
-            $urls[] = compact('loc', 'priority', 'changefreq', 'lastmod');
+        $add = function (string $loc, string $priority = '0.6', string $changefreq = 'weekly', ?string $lastmod = null, array $images = []) use (&$urls): void {
+            $urls[] = compact('loc', 'priority', 'changefreq', 'lastmod', 'images');
         };
 
         // Static high-value pages.
@@ -27,12 +28,23 @@ class SitemapController extends Controller
         $add(route('browse'), '0.9', 'daily');
         $add(route('blog.index'), '0.7', 'daily');
         $add(route('learn'), '0.6', 'weekly');
+        $add(route('formats.index'), '0.5', 'monthly');
         $add(route('contact'), '0.3', 'monthly');
 
-        // Published software.
-        Software::published()->get(['id', 'slug', 'updated_at', 'published_at'])->each(function (Software $s) use ($add): void {
-            $add(route('software.show', $s), '0.8', 'weekly', ($s->updated_at ?? $s->published_at)?->toAtomString());
-        });
+        // Published software (with image entries for Google Images).
+        Software::published()
+            ->with('screenshots:id,software_id,path')
+            ->get(['id', 'slug', 'icon', 'updated_at', 'published_at'])
+            ->each(function (Software $s) use ($add): void {
+                $images = [];
+                if ($s->icon) {
+                    $images[] = Storage::disk('public')->url($s->icon);
+                }
+                foreach ($s->screenshots as $shot) {
+                    $images[] = Storage::disk('public')->url($shot->path);
+                }
+                $add(route('software.show', $s), '0.8', 'weekly', ($s->updated_at ?? $s->published_at)?->toAtomString(), array_slice($images, 0, 10));
+            });
 
         // Published blog articles.
         Article::published()->get(['id', 'slug', 'updated_at', 'published_at'])->each(function (Article $a) use ($add): void {

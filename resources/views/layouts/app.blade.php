@@ -8,6 +8,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', \App\Models\Setting::text('site_name', config('app.name'))) — {{ \App\Models\Setting::text('tagline', __('site.tagline')) }}</title>
     <meta name="description" content="@yield('meta_description', \App\Models\Setting::text('hero_subtitle', __('site.hero.subtitle')))">
+    <meta name="robots" content="@yield('robots', 'index, follow, max-image-preview:large, max-snippet:-1')">
 
     {{-- SEO: canonical + Open Graph + Twitter Card + structured data --}}
     @php($seoName = \App\Models\Setting::text('site_name', config('app.name')))
@@ -26,6 +27,34 @@
     <meta name="twitter:title" content="{{ $seoTitle }}">
     <meta name="twitter:description" content="{{ $seoDesc }}">
     <meta name="twitter:image" content="{{ $seoImage }}">
+
+    {{-- Site-wide structured data: Organization + WebSite (enables Google's
+         sitelinks search box). Per-page schema is pushed via @stack('jsonld'). --}}
+    <script type="application/ld+json">{!! json_encode([
+        '@context' => 'https://schema.org',
+        '@graph' => [
+            [
+                '@type' => 'Organization',
+                '@id' => url('/').'#organization',
+                'name' => $seoName,
+                'url' => url('/'),
+                'logo' => $seoImage,
+            ],
+            [
+                '@type' => 'WebSite',
+                '@id' => url('/').'#website',
+                'name' => $seoName,
+                'url' => url('/'),
+                'inLanguage' => 'ar',
+                'publisher' => ['@id' => url('/').'#organization'],
+                'potentialAction' => [
+                    '@type' => 'SearchAction',
+                    'target' => ['@type' => 'EntryPoint', 'urlTemplate' => url('/search').'?q={search_term_string}'],
+                    'query-input' => 'required name=search_term_string',
+                ],
+            ],
+        ],
+    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
     @stack('jsonld')
 
     {{-- Favicon (admin-configurable, falls back to the bundled icon) --}}
