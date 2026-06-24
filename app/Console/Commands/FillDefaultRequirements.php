@@ -82,18 +82,10 @@ class FillDefaultRequirements extends Command
 
     private function classify(string $haystack): string
     {
-        foreach (self::HEAVY as $kw) {
-            if (str_contains($haystack, $kw)) {
-                return 'heavy';
-            }
-        }
-        foreach (self::LIGHT as $kw) {
-            if (str_contains($haystack, $kw)) {
-                return 'light';
-            }
-        }
-
-        return 'standard';
+        // Uniform high baseline for every program by default (i7/16GB → i9/32GB);
+        // admins refine individual items afterwards. (Category tiers kept below in
+        // case per-category defaults are wanted again.)
+        return 'heavy';
     }
 
     private function primaryOs(mixed $osSupport): string
