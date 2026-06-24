@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsureSiteIsAvailable;
+use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\TrackVisit;
 use Illuminate\Foundation\Application;
@@ -24,6 +25,9 @@ return Application::configure(basePath: dirname(__DIR__))
             EnsureSiteIsAvailable::class,
             TrackVisit::class,
         ]);
+
+        // Security hardening headers on every response (UpGuard findings).
+        $middleware->append(SecurityHeaders::class);
 
         // Local-disk chunk uploads are authenticated by a signed URL, not a CSRF
         // token (Uppy PUTs raw bytes with no token), so exempt that one endpoint.
