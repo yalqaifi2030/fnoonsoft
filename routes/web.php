@@ -32,12 +32,15 @@ Route::get('/ads.txt', function () {
 // SEO: dynamic sitemap + robots (point crawlers to the sitemap).
 Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
 Route::get('/robots.txt', function () {
+    // Keep crawlers off download endpoints + thin utility pages. Intentionally
+    // does NOT list /admin or /upload — those are login-gated (never indexed) and
+    // advertising them in robots.txt only hands attackers the paths.
     return response(implode("\n", [
         'User-agent: *',
-        'Disallow: /admin',
-        'Disallow: /upload',
         'Disallow: /go/',
         'Disallow: /d/',
+        'Disallow: /my-downloads',
+        'Disallow: /search',
         '',
         'Sitemap: '.url('/sitemap.xml'),
     ]), 200, ['Content-Type' => 'text/plain; charset=UTF-8']);
