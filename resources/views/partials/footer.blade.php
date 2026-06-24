@@ -80,6 +80,7 @@
                 <li><a href="{{ url('/terms') }}" class="hover:text-royal-gold">{{ __('pages.nav.terms') }}</a></li>
                 <li><a href="{{ route('dmca') }}" class="hover:text-royal-gold">{{ __('pages.nav.dmca') }}</a></li>
                 <li><a href="{{ route('abuse') }}" class="hover:text-royal-gold">{{ __('pages.nav.abuse') }}</a></li>
+                <li><button type="button" onclick="window.dispatchEvent(new Event('fnoon-open-cookies'))" class="hover:text-royal-gold"><i class="fa-solid fa-cookie-bite"></i> {{ __('site.cookies.manage') }}</button></li>
             </ul>
         </div>
 

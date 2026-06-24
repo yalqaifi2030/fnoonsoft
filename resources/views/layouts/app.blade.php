@@ -67,6 +67,26 @@
         <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
     @endif
 
+    {{-- Google Consent Mode v2 — set defaults from the stored choice BEFORE AdSense
+         loads, so ads/analytics stay denied until the visitor consents. --}}
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){ dataLayer.push(arguments); }
+        (function () {
+            var m = document.cookie.match(/(?:^|;\s*)fnoon_consent=([^;]+)/);
+            var c = m ? decodeURIComponent(m[1]) : '';
+            var ads = c === 'all' || c.indexOf('ads') > -1;
+            var an = c === 'all' || c.indexOf('analytics') > -1;
+            gtag('consent', 'default', {
+                ad_storage: ads ? 'granted' : 'denied',
+                ad_user_data: ads ? 'granted' : 'denied',
+                ad_personalization: ads ? 'granted' : 'denied',
+                analytics_storage: an ? 'granted' : 'denied',
+                wait_for_update: 500
+            });
+        })();
+    </script>
+
     {{-- Google AdSense (admin-toggled). Auto Ads place themselves; manual units use <x-ad>. --}}
     @php($ads = app(\App\Support\Ads::class))
     @if ($ads->enabled())
@@ -264,6 +284,7 @@
 
     {{-- Report-a-problem widget (floating button + screenshot modal) --}}
     @include('partials.report-problem')
+    @include('partials.cookie-consent')
 
     {{-- Global custom <x-select> behaviour (defined before deferred Alpine runs) --}}
     <script>
