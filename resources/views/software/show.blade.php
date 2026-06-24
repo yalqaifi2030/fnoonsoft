@@ -540,8 +540,98 @@
 
             {{-- Requirements --}}
             @if ($software->requirements->isNotEmpty())
+                @php
+                    $reqs = $software->requirements;
+                    $parseGb = fn ($t) => preg_match('/(\d+(?:\.\d+)?)\s*(?:GB|gb|جيجا|جيغا)/iu', (string) $t, $m) ? (float) $m[1] : null;
+                    $allRam = $reqs->map(fn ($r) => $parseGb($r->memory))->filter();
+                    $recRam = $reqs->where('tier', 'recommended')->map(fn ($r) => $parseGb($r->memory))->filter()->max();
+                    $firstReq = $reqs->first();
+                    $compat = [
+                        'os' => $reqs->pluck('os')->filter()->map(fn ($o) => strtolower(trim($o)))->unique()->values()->all(),
+                        'minRam' => $allRam->min(),
+                        'recRam' => $recRam,
+                        'processor' => $firstReq->processor,
+                        'graphics' => $firstReq->graphics,
+                    ];
+                    $compatLabels = [
+                        'ok' => __('site.compat.verdict_ok'),
+                        'warn' => __('site.compat.verdict_warn'),
+                        'fail' => __('site.compat.verdict_fail'),
+                        'ram_unknown' => __('site.compat.ram_unknown'),
+                        'coresTpl' => __('site.compat.cores'),
+                        'rows' => [
+                            'os' => __('site.compat.row_os'),
+                            'ram' => __('site.compat.row_ram'),
+                            'cpu' => __('site.compat.row_cpu'),
+                            'gpu' => __('site.compat.row_gpu'),
+                            'screen' => __('site.compat.row_screen'),
+                        ],
+                        'os' => [
+                            'windows' => __('site.compat.os_windows'),
+                            'macos' => __('site.compat.os_macos'),
+                            'linux' => __('site.compat.os_linux'),
+                            'android' => __('site.compat.os_android'),
+                            'ios' => __('site.compat.os_ios'),
+                            'unknown' => __('site.compat.os_unknown'),
+                        ],
+                    ];
+                @endphp
                 <div id="requirements" data-spy class="card-luxury p-6 scroll-mt-32">
                     <h2 class="font-cairo font-bold text-xl mb-4">{{ __('site.requirements') }}</h2>
+
+                    {{-- Compatibility checker: detects the visitor's device (in-browser) and compares it to the requirements --}}
+                    <div x-data="fnoonCompat(@js($compat), @js($compatLabels))"
+                         class="mb-5 rounded-2xl border border-saudi-green/20 bg-gradient-to-br from-saudi-green/5 to-royal-gold/5 p-5">
+                        <div class="flex flex-wrap items-center gap-3">
+                            <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-saudi-green text-lg text-white"><i class="fa-solid fa-microchip"></i></span>
+                            <div class="min-w-0 flex-1">
+                                <h3 class="font-cairo font-bold text-luxury-black">{{ __('site.compat.title') }}</h3>
+                                <p class="text-xs text-gray-500">{{ __('site.compat.subtitle') }}</p>
+                            </div>
+                            <button type="button" @click="check()" x-show="!checked" class="btn-primary shrink-0 text-sm">
+                                <i class="fa-solid fa-gauge-high"></i> {{ __('site.compat.button') }}
+                            </button>
+                        </div>
+
+                        <div x-show="checked" x-cloak class="mt-4">
+                            <div class="flex items-center gap-2 rounded-xl px-4 py-3 font-bold" :class="vClass">
+                                <i class="fa-solid" :class="vIcon"></i> <span x-text="vText"></span>
+                            </div>
+                            <div class="mt-3 overflow-x-auto">
+                                <table class="w-full text-start text-sm">
+                                    <thead>
+                                        <tr class="text-[11px] uppercase tracking-wide text-gray-400">
+                                            <th class="py-1 text-start font-semibold"></th>
+                                            <th class="py-1 text-start font-semibold">{{ __('site.compat.col_req') }}</th>
+                                            <th class="py-1 text-start font-semibold">{{ __('site.compat.col_you') }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template x-for="r in rows" :key="r.label">
+                                            <tr class="border-t border-gray-100">
+                                                <td class="py-2 pe-3 font-semibold text-gray-700" x-text="r.label"></td>
+                                                <td class="py-2 pe-3 text-gray-500" x-text="r.req"></td>
+                                                <td class="py-2">
+                                                    <span class="inline-flex items-center gap-1.5 font-semibold"
+                                                          :class="{'text-green-600': r.status==='ok','text-red-600': r.status==='fail','text-amber-600': r.status==='warn','text-gray-700': r.status==='info'}">
+                                                        <i class="fa-solid text-[11px]" :class="{'fa-circle-check': r.status==='ok','fa-circle-xmark': r.status==='fail','fa-triangle-exclamation': r.status==='warn'}"></i>
+                                                        <span x-text="r.you"></span>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="mt-2 flex items-center justify-between gap-2">
+                                <p class="text-[11px] leading-relaxed text-gray-400">{{ __('site.compat.note') }}</p>
+                                <button type="button" @click="check()" class="shrink-0 text-xs font-semibold text-saudi-green hover:underline">
+                                    <i class="fa-solid fa-rotate-right"></i> {{ __('site.compat.recheck') }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm">
                             <tbody>
@@ -555,6 +645,69 @@
                         </table>
                     </div>
                 </div>
+                @once
+                    @push('scripts')
+                        <script>
+                            function fnoonCompat(req, L) {
+                                return {
+                                    req: req, L: L, checked: false, rows: [], vText: '', vClass: '', vIcon: '',
+                                    osDetect() {
+                                        const ua = navigator.userAgent || '';
+                                        const p = ((navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '').toLowerCase();
+                                        if (/android/i.test(ua)) return 'android';
+                                        if (/iphone|ipad|ipod/i.test(ua)) return 'ios';
+                                        if (p.indexOf('win') > -1 || /windows/i.test(ua)) return 'windows';
+                                        if (p.indexOf('mac') > -1 || /mac os/i.test(ua)) return (navigator.maxTouchPoints > 2 && /mobile/i.test(ua)) ? 'ios' : 'macos';
+                                        if (p.indexOf('linux') > -1 || /linux/i.test(ua)) return 'linux';
+                                        return 'unknown';
+                                    },
+                                    gpuDetect() {
+                                        try {
+                                            const c = document.createElement('canvas');
+                                            const gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+                                            if (!gl) return null;
+                                            const e = gl.getExtension('WEBGL_debug_renderer_info');
+                                            let s = e ? gl.getParameter(e.UNMASKED_RENDERER_WEBGL) : null;
+                                            if (s) s = s.replace(/\s*\([^)]*\)\s*/g, ' ').replace(/(ANGLE|Direct3D|OpenGL|vs_\d_\d|ps_\d_\d).*/gi, '').trim();
+                                            return s || null;
+                                        } catch (e) { return null; }
+                                    },
+                                    check() {
+                                        const R = this.req, L = this.L, rows = [];
+                                        const os = this.osDetect(), ram = navigator.deviceMemory || null, cores = navigator.hardwareConcurrency || null, gpu = this.gpuDetect();
+                                        const sw = Math.round(screen.width * (window.devicePixelRatio || 1)), sh = Math.round(screen.height * (window.devicePixelRatio || 1));
+                                        const osName = o => (L.os[o] || o);
+                                        let fail = false, warn = false;
+
+                                        if (R.os && R.os.length) {
+                                            const ok = R.os.indexOf(os) > -1;
+                                            if (!ok) fail = true;
+                                            rows.push({ label: L.rows.os, req: R.os.map(osName).join(' / '), you: osName(os), status: ok ? 'ok' : 'fail' });
+                                        }
+                                        if (R.minRam) {
+                                            if (ram) {
+                                                const ok = ram >= R.minRam, smooth = R.recRam ? ram >= R.recRam : true;
+                                                if (!ok) warn = true;
+                                                rows.push({ label: L.rows.ram, req: (R.minRam + ' GB' + (R.recRam ? (' / ' + R.recRam + ' GB') : '')), you: (ram + ' GB+'), status: ok ? (smooth ? 'ok' : 'warn') : 'warn' });
+                                            } else {
+                                                rows.push({ label: L.rows.ram, req: (R.minRam + ' GB'), you: L.ram_unknown, status: 'info' });
+                                            }
+                                        }
+                                        if (cores) rows.push({ label: L.rows.cpu, req: (R.processor || '—'), you: L.coresTpl.replace(':n', cores), status: 'info' });
+                                        if (gpu) rows.push({ label: L.rows.gpu, req: (R.graphics || '—'), you: gpu, status: 'info' });
+                                        rows.push({ label: L.rows.screen, req: '—', you: (sw + '×' + sh), status: 'info' });
+
+                                        this.rows = rows;
+                                        if (fail) { this.vText = L.fail; this.vClass = 'bg-red-50 text-red-700'; this.vIcon = 'fa-circle-xmark'; }
+                                        else if (warn) { this.vText = L.warn; this.vClass = 'bg-amber-50 text-amber-700'; this.vIcon = 'fa-triangle-exclamation'; }
+                                        else { this.vText = L.ok; this.vClass = 'bg-green-50 text-green-700'; this.vIcon = 'fa-circle-check'; }
+                                        this.checked = true;
+                                    },
+                                };
+                            }
+                        </script>
+                    @endpush
+                @endonce
             @endif
 
             {{-- User feedback: reviews + comments as tabs in one card --}}
