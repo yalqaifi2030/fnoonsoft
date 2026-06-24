@@ -1,9 +1,4 @@
 <x-filament-panels::page>
-    @php
-        use Illuminate\Support\Facades\Storage;
-        use Illuminate\Support\Carbon;
-    @endphp
-
     {{-- Summary --}}
     <div class="grid grid-cols-2 gap-4">
         <div class="rounded-2xl border border-gray-100 bg-white p-5 dark:border-white/10 dark:bg-gray-900">
@@ -47,7 +42,7 @@
                     @continue(! $s)
                     <li class="flex items-center gap-4 p-4 transition hover:bg-gray-50 dark:hover:bg-white/5">
                         @if ($s->icon)
-                            <img src="{{ Storage::disk('public')->url($s->icon) }}" alt="" loading="lazy"
+                            <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($s->icon) }}" alt="" loading="lazy"
                                  class="h-12 w-12 shrink-0 rounded-xl bg-white object-contain ring-1 ring-gray-100">
                         @else
                             <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-white" style="background:#006C35">
@@ -59,7 +54,7 @@
                             <a href="{{ route('software.show', $s) }}" target="_blank"
                                class="block truncate font-bold text-gray-800 hover:text-[#006C35] dark:text-gray-100">{{ $s->name }}</a>
                             <div class="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-400">
-                                <span><i class="fa-regular fa-clock"></i> {{ Carbon::parse($row->last_at)->diffForHumans() }}</span>
+                                <span><i class="fa-regular fa-clock"></i> {{ \Illuminate\Support\Carbon::parse($row->last_at)->diffForHumans() }}</span>
                                 @if ($row->times > 1)
                                     <span class="rounded-full bg-gray-100 px-2 py-0.5 font-semibold text-gray-500 dark:bg-white/10" dir="ltr">×{{ $row->times }}</span>
                                 @endif
