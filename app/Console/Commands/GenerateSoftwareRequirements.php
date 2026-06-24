@@ -51,7 +51,7 @@ class GenerateSoftwareRequirements extends Command
         foreach ($items as $s) {
             $os = $this->primaryOs($s->os_support);
             try {
-                $reqs = $this->ask($key, $model, (string) $s->name, $os);
+                $reqs = $this->requestSpecs($key, $model, (string) $s->name, $os);
                 if (! $reqs || empty($reqs['minimum'])) {
                     $fail++;
                     $this->warn("  ✗ #{$s->id} no data returned");
@@ -106,7 +106,7 @@ class GenerateSoftwareRequirements extends Command
         return 'windows';
     }
 
-    private function ask(string $key, string $model, string $name, string $os): ?array
+    private function requestSpecs(string $key, string $model, string $name, string $os): ?array
     {
         $osLabel = ['windows' => 'Windows', 'macos' => 'macOS', 'linux' => 'Linux', 'android' => 'Android', 'ios' => 'iOS'][$os] ?? 'Windows';
         $prompt = "Provide realistic MINIMUM and RECOMMENDED system requirements for this software on {$osLabel}.\n"
