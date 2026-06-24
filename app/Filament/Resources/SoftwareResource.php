@@ -508,6 +508,37 @@ class SoftwareResource extends Resource
                             ->multiple()->preload(),
                     ]),
 
+                Forms\Components\Section::make(__('software.section.requirements'))
+                    ->icon('heroicon-o-cpu-chip')
+                    ->description(__('software.requirements_hint'))
+                    ->collapsed()
+                    ->schema([
+                        Forms\Components\Repeater::make('requirements')
+                            ->relationship()
+                            ->label('')
+                            ->schema([
+                                Forms\Components\Select::make('os')
+                                    ->label(__('software.req.os'))
+                                    ->options(['windows' => 'Windows', 'macos' => 'macOS', 'linux' => 'Linux', 'android' => 'Android', 'ios' => 'iOS'])
+                                    ->default('windows')->required(),
+                                Forms\Components\Select::make('tier')
+                                    ->label(__('software.req.tier'))
+                                    ->options(['minimum' => __('software.req.minimum'), 'recommended' => __('software.req.recommended')])
+                                    ->default('minimum')->required(),
+                                Forms\Components\TextInput::make('processor')->label(__('software.req.processor'))->placeholder('Intel/AMD 64-bit'),
+                                Forms\Components\TextInput::make('memory')->label(__('software.req.memory'))
+                                    ->placeholder('8 GB RAM')->helperText(__('software.req.memory_hint')),
+                                Forms\Components\TextInput::make('storage')->label(__('software.req.storage'))->placeholder('600 MB'),
+                                Forms\Components\TextInput::make('graphics')->label(__('software.req.graphics'))->placeholder('OpenGL 4.1 / 4 GB VRAM'),
+                                Forms\Components\TextInput::make('os_version')->label(__('software.req.os_version'))->placeholder('Windows 10/11'),
+                            ])
+                            ->columns(2)
+                            ->defaultItems(0)
+                            ->addActionLabel(__('software.req.add'))
+                            ->collapsible()
+                            ->itemLabel(fn (array $state): ?string => ($state['os'] ?? 'OS').' · '.($state['tier'] ?? '')),
+                    ]),
+
                 Forms\Components\Section::make(__('software.section.media'))
                     ->icon('heroicon-o-photo')
                     ->schema([
