@@ -540,42 +540,39 @@
 
             {{-- Requirements --}}
             @if ($software->requirements->isNotEmpty())
-                @php
-                    $reqs = $software->requirements;
-                    $parseGb = fn ($t) => preg_match('/(\d+(?:\.\d+)?)\s*(?:GB|gb|جيجا|جيغا)/iu', (string) $t, $m) ? (float) $m[1] : null;
-                    $allRam = $reqs->map(fn ($r) => $parseGb($r->memory))->filter();
-                    $recRam = $reqs->where('tier', 'recommended')->map(fn ($r) => $parseGb($r->memory))->filter()->max();
-                    $firstReq = $reqs->first();
-                    $compat = [
-                        'os' => $reqs->pluck('os')->filter()->map(fn ($o) => strtolower(trim($o)))->unique()->values()->all(),
-                        'minRam' => $allRam->min(),
-                        'recRam' => $recRam,
-                        'processor' => $firstReq->processor,
-                        'graphics' => $firstReq->graphics,
-                    ];
-                    $compatLabels = [
-                        'ok' => __('site.compat.verdict_ok'),
-                        'warn' => __('site.compat.verdict_warn'),
-                        'fail' => __('site.compat.verdict_fail'),
-                        'ram_unknown' => __('site.compat.ram_unknown'),
-                        'coresTpl' => __('site.compat.cores'),
-                        'rows' => [
-                            'os' => __('site.compat.row_os'),
-                            'ram' => __('site.compat.row_ram'),
-                            'cpu' => __('site.compat.row_cpu'),
-                            'gpu' => __('site.compat.row_gpu'),
-                            'screen' => __('site.compat.row_screen'),
-                        ],
-                        'os' => [
-                            'windows' => __('site.compat.os_windows'),
-                            'macos' => __('site.compat.os_macos'),
-                            'linux' => __('site.compat.os_linux'),
-                            'android' => __('site.compat.os_android'),
-                            'ios' => __('site.compat.os_ios'),
-                            'unknown' => __('site.compat.os_unknown'),
-                        ],
-                    ];
-                @endphp
+                @php($reqs = $software->requirements)
+                @php($parseGb = fn ($t) => preg_match('/(\d+(?:\.\d+)?)\s*(?:GB|gb|جيجا|جيغا)/iu', (string) $t, $m) ? (float) $m[1] : null)
+                @php($recRam = $reqs->where('tier', 'recommended')->map(fn ($r) => $parseGb($r->memory))->filter()->max())
+                @php($firstReq = $reqs->first())
+                @php($compat = [
+                    'os' => $reqs->pluck('os')->filter()->map(fn ($o) => strtolower(trim($o)))->unique()->values()->all(),
+                    'minRam' => $reqs->map(fn ($r) => $parseGb($r->memory))->filter()->min(),
+                    'recRam' => $recRam,
+                    'processor' => $firstReq->processor,
+                    'graphics' => $firstReq->graphics,
+                ])
+                @php($compatLabels = [
+                    'ok' => __('site.compat.verdict_ok'),
+                    'warn' => __('site.compat.verdict_warn'),
+                    'fail' => __('site.compat.verdict_fail'),
+                    'ram_unknown' => __('site.compat.ram_unknown'),
+                    'coresTpl' => __('site.compat.cores'),
+                    'rows' => [
+                        'os' => __('site.compat.row_os'),
+                        'ram' => __('site.compat.row_ram'),
+                        'cpu' => __('site.compat.row_cpu'),
+                        'gpu' => __('site.compat.row_gpu'),
+                        'screen' => __('site.compat.row_screen'),
+                    ],
+                    'os' => [
+                        'windows' => __('site.compat.os_windows'),
+                        'macos' => __('site.compat.os_macos'),
+                        'linux' => __('site.compat.os_linux'),
+                        'android' => __('site.compat.os_android'),
+                        'ios' => __('site.compat.os_ios'),
+                        'unknown' => __('site.compat.os_unknown'),
+                    ],
+                ])
                 <div id="requirements" data-spy class="card-luxury p-6 scroll-mt-32">
                     <h2 class="font-cairo font-bold text-xl mb-4">{{ __('site.requirements') }}</h2>
 
