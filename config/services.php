@@ -31,4 +31,11 @@ return [
         ],
     ],
 
+    // Anthropic / Claude API — used by `requirements:generate` to fill realistic
+    // system requirements. Key lives in .env (ANTHROPIC_API_KEY), never committed.
+    'anthropic' => [
+        'key' => env('ANTHROPIC_API_KEY'),
+        'model' => env('ANTHROPIC_MODEL', 'claude-opus-4-8'),
+    ],
+
 ];
