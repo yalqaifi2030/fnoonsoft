@@ -36,6 +36,7 @@ class HomeController extends Controller
             'recentlyAdded' => (clone $base)->latest('published_at')->limit(8)->get(),
             'editorChoice' => (clone $base)->where('is_editor_choice', true)->limit(8)->get(),
             'featured' => (clone $base)->featured()->limit(8)->get(),
+            'mobileApps' => (clone $base)->where('content_type', ContentType::MobileApp->value)->latest('published_at')->limit(8)->get(),
             'categories' => Category::roots()->where('is_active', true)->orderBy('sort_order')->limit(12)->get(),
             'banners' => Banner::active()->where('position', 'home_top')->orderBy('sort_order')->get(),
             'features' => Feature::active()->orderBy('sort_order')->get(),
