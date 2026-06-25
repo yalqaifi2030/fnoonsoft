@@ -3,12 +3,12 @@
     <h3 class="font-cairo text-lg font-black">محاكاة خوارزميات الترتيب</h3>
 
     <div class="mt-4 flex flex-wrap items-end gap-3" dir="ltr">
-        <label><span class="text-xs font-bold text-gray-500">الخوارزمية</span>
-            <select x-model="algo" :disabled="running" class="mt-1 rounded-xl border-gray-200">
-                <option value="bubble">الترتيب الفقاعي (Bubble)</option>
-                <option value="selection">ترتيب الاختيار (Selection)</option>
-                <option value="insertion">ترتيب الإدراج (Insertion)</option>
-            </select></label>
+        <div><span class="text-xs font-bold text-gray-500">الخوارزمية</span>
+            <div class="mt-1 w-60" @fnoon-select-change="algo = $event.detail">
+                <x-select name="sort_algo" value="bubble"
+                    :options="['bubble' => 'الترتيب الفقاعي (Bubble)', 'selection' => 'ترتيب الاختيار (Selection)', 'insertion' => 'ترتيب الإدراج (Insertion)']" />
+            </div>
+        </div>
         <label><span class="text-xs font-bold text-gray-500">العناصر: <span x-text="n"></span></span>
             <input type="range" min="10" max="60" x-model.number="n" :disabled="running" @change="shuffle()" class="mt-2 block w-36"></label>
         <label><span class="text-xs font-bold text-gray-500">السرعة</span>

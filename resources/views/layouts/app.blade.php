@@ -315,6 +315,9 @@
                 choose(v) {
                     this.value = v;
                     this.open = false;
+                    // Notify any Alpine parent (e.g. interactive labs) that the
+                    // value changed. Bubbles up; harmless for form-only usages.
+                    this.$dispatch('fnoon-select-change', v);
                     if (config.submitOnChange) {
                         this.$nextTick(() => this.$refs.input.form && this.$refs.input.form.submit());
                     }

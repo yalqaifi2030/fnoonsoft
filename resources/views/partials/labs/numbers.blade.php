@@ -7,13 +7,12 @@
         <div class="mt-4 flex flex-wrap items-end gap-3" dir="ltr">
             <label class="flex-1"><span class="text-xs font-bold text-gray-500">القيمة</span>
                 <input type="text" x-model="input" @input="convert()" class="mt-1 w-full rounded-xl border-gray-200 font-mono"></label>
-            <label><span class="text-xs font-bold text-gray-500">النظام المُدخَل</span>
-                <select x-model.number="base" @change="convert()" class="mt-1 rounded-xl border-gray-200">
-                    <option value="10">عشري (10)</option>
-                    <option value="2">ثنائي (2)</option>
-                    <option value="16">سداسي (16)</option>
-                    <option value="8">ثماني (8)</option>
-                </select></label>
+            <div><span class="text-xs font-bold text-gray-500">النظام المُدخَل</span>
+                <div class="mt-1 w-40" @fnoon-select-change="base = parseInt($event.detail); convert()">
+                    <x-select name="num_base" value="10"
+                        :options="['10' => 'عشري (10)', '2' => 'ثنائي (2)', '16' => 'سداسي (16)', '8' => 'ثماني (8)']" />
+                </div>
+            </div>
         </div>
         <p x-show="convErr" x-text="convErr" class="mt-2 text-sm font-semibold text-red-600"></p>
         <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4" dir="ltr">
@@ -35,15 +34,12 @@
         <div class="mt-4 flex flex-wrap items-end gap-3" dir="ltr">
             <label><span class="text-xs font-bold text-gray-500">A</span>
                 <input type="number" x-model.number="a" @input="calcBit()" class="mt-1 w-28 rounded-xl border-gray-200 font-mono"></label>
-            <label><span class="text-xs font-bold text-gray-500">العملية</span>
-                <select x-model="op" @change="calcBit()" class="mt-1 rounded-xl border-gray-200">
-                    <option value="AND">AND (&)</option>
-                    <option value="OR">OR (|)</option>
-                    <option value="XOR">XOR (^)</option>
-                    <option value="NOT">NOT (~A)</option>
-                    <option value="SHL">A &lt;&lt; 1</option>
-                    <option value="SHR">A &gt;&gt; 1</option>
-                </select></label>
+            <div><span class="text-xs font-bold text-gray-500">العملية</span>
+                <div class="mt-1 w-40" @fnoon-select-change="op = $event.detail; calcBit()">
+                    <x-select name="bit_op" value="AND"
+                        :options="['AND' => 'AND (&)', 'OR' => 'OR (|)', 'XOR' => 'XOR (^)', 'NOT' => 'NOT (~A)', 'SHL' => 'A << 1', 'SHR' => 'A >> 1']" />
+                </div>
+            </div>
             <label x-show="op !== 'NOT' && op !== 'SHL' && op !== 'SHR'"><span class="text-xs font-bold text-gray-500">B</span>
                 <input type="number" x-model.number="b" @input="calcBit()" class="mt-1 w-28 rounded-xl border-gray-200 font-mono"></label>
         </div>
