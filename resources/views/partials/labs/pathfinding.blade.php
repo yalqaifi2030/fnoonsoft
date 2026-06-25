@@ -4,12 +4,12 @@
     <p class="mt-1 text-sm text-gray-500">اسحب الفأرة على الشبكة لرسم الجدران، ثمّ شغّل الخوارزمية.</p>
 
     <div class="mt-4 flex flex-wrap items-end gap-3" dir="ltr">
-        <label><span class="text-xs font-bold text-gray-500">الخوارزمية</span>
+        <div><span class="text-xs font-bold text-gray-500">الخوارزمية</span>
             <div class="mt-1 w-44" @fnoon-select-change="algo = $event.detail">
                 <x-select name="path_algo" value="bfs"
                     :options="['bfs' => 'BFS (أقصر مسار)', 'astar' => 'A* (موجّهة بالاستدلال)']" />
             </div>
-        </label>
+        </div>
         <label><span class="text-xs font-bold text-gray-500">السرعة</span>
             <input type="range" min="1" max="80" x-model.number="speed" class="mt-2 block w-36"></label>
         <button @click="run()" :disabled="running" class="btn-primary text-sm disabled:opacity-50"><i class="fa-solid fa-play"></i> ابدأ البحث</button>

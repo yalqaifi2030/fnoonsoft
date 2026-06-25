@@ -43,6 +43,10 @@
         .lab-surface :is(input[type="text"],
                          input[type="number"],
                          input[type="search"],
+                         input[type="password"],
+                         input[type="email"],
+                         input[type="tel"],
+                         input[type="url"],
                          input:not([type]),
                          select) {
             border: 1px solid #e5e7eb;            /* gray-200 — subtle, like the panel */
@@ -56,7 +60,7 @@
             box-shadow: 0 1px 2px 0 rgb(0 0 0 / .05);
             transition: border-color .15s ease, box-shadow .15s ease;
         }
-        .lab-surface :is(input[type="text"], input[type="number"], input[type="search"], select):focus {
+        .lab-surface :is(input[type="text"], input[type="number"], input[type="search"], input[type="password"], input[type="email"], input[type="tel"], input[type="url"], select):focus {
             outline: none;
             border-color: rgb(var(--c-primary) / 1);
             box-shadow: 0 0 0 3px rgb(var(--c-primary) / .15);
