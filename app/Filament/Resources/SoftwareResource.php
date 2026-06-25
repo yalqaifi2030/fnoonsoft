@@ -344,12 +344,18 @@ class SoftwareResource extends Resource
                             ->placeholder('/app-previews/your-app/ — أو — https://…')
                             ->maxLength(500)
                             ->columnSpanFull(),
+                        Forms\Components\TextInput::make('appetize_public_key')
+                            ->label(__('software.appetize_key'))
+                            ->helperText(__('software.appetize_key_hint'))
+                            ->placeholder('b5w...  — أو رابط https://appetize.io/embed/...')
+                            ->maxLength(500)
+                            ->columnSpanFull(),
                         Forms\Components\Placeholder::make('live_preview_show')
                             ->label(__('software.section.live'))
                             ->columnSpanFull()
                             ->visible(fn (?Software $record) => $record && $record->hasLivePreview())
                             ->content(fn (?Software $record) => new \Illuminate\Support\HtmlString(
-                                '<iframe src="'.e($record->live_preview_url).'" loading="lazy" '
+                                '<iframe src="'.e($record->livePreviewSrc()).'" loading="lazy" '
                                 .'style="width:320px;max-width:100%;height:560px;border:1px solid rgba(0,0,0,.08);border-radius:24px;background:#fff"></iframe>'
                             )),
                     ]),

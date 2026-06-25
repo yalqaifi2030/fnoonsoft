@@ -52,6 +52,8 @@ return [
     'live_hint' => 'URL to an interactive web build of the app (e.g. Flutter Web) shown live inside a phone frame on the product page.',
     'live_url' => 'Live preview URL',
     'live_url_hint' => 'A full URL (https://…) or an internal path like /app-previews/your-app/. Leave empty to hide the preview.',
+    'appetize_key' => 'Real APK emulator (Appetize.io)',
+    'appetize_key_hint' => 'Upload the APK to Appetize.io and paste the publicKey here — the real app runs live in the phone frame. Used only when no web preview URL is set above.',
     'stores_hint' => 'App store links — shown as download badges on the app page. Leave empty if not available.',
     'play_url' => 'Google Play URL',
     'appstore_url' => 'App Store URL (iOS)',

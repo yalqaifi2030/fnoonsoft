@@ -37,7 +37,7 @@ class Software extends Model
         'meta_title', 'meta_description', 'published_at',
         'notice_enabled', 'notice_type', 'notice_text', 'notice_url',
         'model_glb', 'model_usdz', 'model_poster',
-        'live_preview_url', 'play_url', 'appstore_url', 'qr_enabled',
+        'live_preview_url', 'appetize_public_key', 'play_url', 'appstore_url', 'qr_enabled',
         'download_requires_login',
     ];
 
@@ -327,7 +327,32 @@ class Software extends Model
 
     public function hasLivePreview(): bool
     {
-        return filled($this->live_preview_url);
+        return filled($this->live_preview_url) || filled($this->appetize_public_key);
+    }
+
+    /** True when the preview is a real-device cloud emulator (Appetize), not a web build. */
+    public function isEmulatorPreview(): bool
+    {
+        return blank($this->live_preview_url) && filled($this->appetize_public_key);
+    }
+
+    /** The iframe src for the live preview — a web build URL, or an Appetize embed. */
+    public function livePreviewSrc(): ?string
+    {
+        if (filled($this->live_preview_url)) {
+            return $this->live_preview_url;
+        }
+
+        $key = trim((string) $this->appetize_public_key);
+        if ($key === '') {
+            return null;
+        }
+        if (str_starts_with($key, 'http')) {
+            return $key; // a full embed URL was pasted
+        }
+
+        return 'https://appetize.io/embed/'.$key
+            .'?device=pixel7&osVersion=13.0&scale=auto&autoplay=true&screenOnly=true&deviceColor=black';
     }
 
     public function hasStoreLinks(): bool

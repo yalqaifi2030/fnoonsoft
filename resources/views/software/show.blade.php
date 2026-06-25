@@ -234,6 +234,9 @@
                 <div id="live" data-spy class="card-luxury p-6 scroll-mt-32" x-data="{ run: false }">
                     <h2 class="font-cairo font-bold text-xl mb-1 flex items-center gap-2">
                         <i class="fa-solid fa-mobile-screen-button text-saudi-green"></i> {{ __('software.section.live') }}
+                        @if ($software->isEmulatorPreview())
+                            <span class="inline-flex items-center gap-1 rounded-full bg-saudi-green/10 px-2.5 py-1 text-[11px] font-bold text-saudi-green"><i class="fa-brands fa-android"></i> {{ __('site.live_preview.real_emulator') }}</span>
+                        @endif
                     </h2>
                     <p class="text-sm text-gray-500 mb-5">{{ __('site.live_preview.hint') }}</p>
 
@@ -253,7 +256,7 @@
                                 </button>
 
                                 <template x-if="run">
-                                    <iframe src="{{ $software->live_preview_url }}" loading="lazy" scrolling="no"
+                                    <iframe src="{{ $software->livePreviewSrc() }}" loading="lazy" scrolling="no"
                                             class="absolute inset-0 h-full w-full rounded-[1.9rem] bg-white"
                                             style="overflow:hidden;"
                                             title="{{ $software->name }}" allow="fullscreen; clipboard-write; accelerometer; gyroscope"></iframe>

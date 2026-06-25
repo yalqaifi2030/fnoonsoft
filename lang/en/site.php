@@ -252,6 +252,7 @@ return [
         'hint' => 'Try the real app right in your browser — no install needed.',
         'play' => 'Launch live preview',
         'fullscreen' => 'Open fullscreen',
+        'real_emulator' => 'Real emulator',
     ],
     'share' => [
         'title' => 'Share this page',
