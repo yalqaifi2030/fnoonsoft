@@ -873,6 +873,30 @@
 
         {{-- Sidebar: download --}}
         <aside class="space-y-6" id="fnoon-sidebar">
+            @if ($software->hasStoreLinks())
+                <div class="card-luxury p-5">
+                    <h3 class="mb-3 flex items-center gap-2 font-cairo text-sm font-bold text-gray-700">
+                        <i class="fa-solid fa-cloud-arrow-down text-saudi-green"></i> {{ __('site.stores.title') }}
+                    </h3>
+                    <div class="flex flex-col gap-2.5">
+                        @if ($software->play_url)
+                            <a href="{{ $software->play_url }}" target="_blank" rel="noopener"
+                               class="flex items-center gap-3 rounded-xl bg-luxury-black px-4 py-2.5 text-white transition hover:-translate-y-0.5 hover:opacity-90">
+                                <i class="fa-brands fa-google-play text-xl text-emerald-400"></i>
+                                <span class="leading-tight text-start"><span class="block text-[10px] text-white/60">{{ __('site.stores.get_on') }}</span><span class="block font-bold">Google Play</span></span>
+                            </a>
+                        @endif
+                        @if ($software->appstore_url)
+                            <a href="{{ $software->appstore_url }}" target="_blank" rel="noopener"
+                               class="flex items-center gap-3 rounded-xl bg-luxury-black px-4 py-2.5 text-white transition hover:-translate-y-0.5 hover:opacity-90">
+                                <i class="fa-brands fa-apple text-2xl"></i>
+                                <span class="leading-tight text-start"><span class="block text-[10px] text-white/60">{{ __('site.stores.download_on') }}</span><span class="block font-bold">App Store</span></span>
+                            </a>
+                        @endif
+                    </div>
+                </div>
+            @endif
+
             <div class="card-luxury overflow-hidden">
                 @php($primary = $software->downloadLinks->first())
                 @php($osIcons = ['windows' => 'fa-brands fa-windows', 'macos' => 'fa-brands fa-apple', 'linux' => 'fa-brands fa-linux', 'android' => 'fa-brands fa-android', 'ios' => 'fa-brands fa-apple', 'web' => 'fa-solid fa-globe'])

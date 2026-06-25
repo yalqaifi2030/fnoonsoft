@@ -17,6 +17,8 @@ return [
 
     'software' => 'Content',
     'software_single' => 'Item',
+    'mobile_apps' => 'Mobile Apps',
+    'mobile_app_single' => 'Mobile App',
     'categories' => 'Categories',
     'category_single' => 'Category',
     'developers' => 'Developers',

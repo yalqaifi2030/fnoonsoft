@@ -17,6 +17,8 @@ return [
 
     'software' => 'المحتوى',
     'software_single' => 'عنصر',
+    'mobile_apps' => 'تطبيقات الجوال',
+    'mobile_app_single' => 'تطبيق جوال',
     'categories' => 'الفئات',
     'category_single' => 'فئة',
     'developers' => 'المطوّرون',

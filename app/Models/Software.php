@@ -37,7 +37,7 @@ class Software extends Model
         'meta_title', 'meta_description', 'published_at',
         'notice_enabled', 'notice_type', 'notice_text', 'notice_url',
         'model_glb', 'model_usdz', 'model_poster',
-        'live_preview_url',
+        'live_preview_url', 'play_url', 'appstore_url',
         'download_requires_login',
     ];
 
@@ -327,6 +327,11 @@ class Software extends Model
     public function hasLivePreview(): bool
     {
         return filled($this->live_preview_url);
+    }
+
+    public function hasStoreLinks(): bool
+    {
+        return filled($this->play_url) || filled($this->appstore_url);
     }
 
     // --- 3D model preview (model-viewer) ---------------------------------

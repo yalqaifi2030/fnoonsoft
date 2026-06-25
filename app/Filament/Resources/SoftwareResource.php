@@ -60,6 +60,12 @@ class SoftwareResource extends Resource
         return 'warning';
     }
 
+    /** Mobile apps live in their own dedicated resource — exclude them here. */
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()->where('content_type', '!=', ContentType::MobileApp->value);
+    }
+
     public static function form(Form $form): Form
     {
         return $form->schema([
@@ -75,7 +81,9 @@ class SoftwareResource extends Resource
                             ->options(ContentType::options())
                             ->default(ContentType::Application->value)
                             ->live()
-                            ->required(),
+                            ->required()
+                            // Mobile apps are managed in their own dedicated resource.
+                            ->hidden(fn ($livewire) => str_contains(get_class($livewire), 'MobileApp')),
 
                         Forms\Components\TextInput::make('name')
                             ->label(__('software.name'))
@@ -137,7 +145,7 @@ class SoftwareResource extends Resource
                             ])
                             ->columns(3)
                             ->columnSpanFull()
-                            ->visible(fn (Forms\Get $get) => in_array($get('content_type'), ['application', 'plugin'])),
+                            ->visible(fn (Forms\Get $get, $livewire) => in_array($get('content_type'), ['application', 'plugin', 'mobile_app']) || str_contains(get_class($livewire), 'MobileApp')),
 
                         Forms\Components\Select::make('fileFormats')
                             ->label(__('software.file_formats'))
@@ -196,6 +204,21 @@ class SoftwareResource extends Resource
                             ->addActionLabel(__('software.section.downloads'))
                             ->defaultItems(0),
                     ]),
+
+                Forms\Components\Section::make(__('software.section.stores'))
+                    ->icon('heroicon-o-device-phone-mobile')
+                    ->description(__('software.stores_hint'))
+                    ->visible(fn (Forms\Get $get, $livewire) => $get('content_type') === 'mobile_app' || str_contains(get_class($livewire), 'MobileApp'))
+                    ->schema([
+                        Forms\Components\TextInput::make('play_url')
+                            ->label(__('software.play_url'))->url()
+                            ->prefixIcon('heroicon-m-play')
+                            ->placeholder('https://play.google.com/store/apps/details?id=...'),
+                        Forms\Components\TextInput::make('appstore_url')
+                            ->label(__('software.appstore_url'))->url()
+                            ->prefixIcon('heroicon-m-device-phone-mobile')
+                            ->placeholder('https://apps.apple.com/app/...'),
+                    ])->columns(2),
                 ]),
 
                 Forms\Components\Tabs\Tab::make(__('software.tab.media'))->icon('heroicon-o-photo')->schema([

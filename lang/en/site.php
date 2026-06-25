@@ -239,6 +239,11 @@ return [
         'contact' => 'Need help?',
     ],
     'empty' => 'Nothing found.',
+    'stores' => [
+        'title' => 'Get the app',
+        'get_on' => 'GET IT ON',
+        'download_on' => 'Download on the',
+    ],
     'live_preview' => [
         'hint' => 'Try the real app right in your browser — no install needed.',
         'play' => 'Launch live preview',
