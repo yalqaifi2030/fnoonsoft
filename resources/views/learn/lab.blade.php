@@ -63,6 +63,21 @@
         }
         .lab-surface input::placeholder { color: #9ca3af; }
         .lab-surface input[readonly] { background-color: #f9fafb; color: #4b5563; }  /* gray-50 */
+        /* Custom dropdown chevron like the admin panel (replaces the native arrow). */
+        .lab-surface select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right .7rem center;
+            background-size: 1.05rem 1.05rem;
+            padding-inline-start: .75rem;
+            padding-inline-end: 2.25rem;
+        }
+        .lab-surface select:focus { border-color: rgb(var(--c-primary) / 1); }
+        .lab-surface select::-ms-expand { display: none; }
         /* Range sliders keep their native control, not the field box. */
         .lab-surface input[type="range"] {
             width: auto; min-height: 0; border: 0; box-shadow: none; padding: 0;
