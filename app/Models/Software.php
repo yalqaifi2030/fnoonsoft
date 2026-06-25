@@ -37,6 +37,7 @@ class Software extends Model
         'meta_title', 'meta_description', 'published_at',
         'notice_enabled', 'notice_type', 'notice_text', 'notice_url',
         'model_glb', 'model_usdz', 'model_poster',
+        'live_preview_url',
         'download_requires_login',
     ];
 
@@ -319,6 +320,13 @@ class Software extends Model
     public function hasCode(): bool
     {
         return filled($this->code);
+    }
+
+    // --- Live web preview (interactive app in a phone frame) -------------
+
+    public function hasLivePreview(): bool
+    {
+        return filled($this->live_preview_url);
     }
 
     // --- 3D model preview (model-viewer) ---------------------------------

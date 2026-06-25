@@ -304,6 +304,27 @@ class SoftwareResource extends Resource
                             )),
                     ]),
 
+                Forms\Components\Section::make(__('software.section.live'))
+                    ->icon('heroicon-o-device-phone-mobile')
+                    ->description(__('software.live_hint'))
+                    ->collapsed()
+                    ->schema([
+                        Forms\Components\TextInput::make('live_preview_url')
+                            ->label(__('software.live_url'))
+                            ->helperText(__('software.live_url_hint'))
+                            ->placeholder('/app-previews/your-app/ — أو — https://…')
+                            ->maxLength(500)
+                            ->columnSpanFull(),
+                        Forms\Components\Placeholder::make('live_preview_show')
+                            ->label(__('software.section.live'))
+                            ->columnSpanFull()
+                            ->visible(fn (?Software $record) => $record && $record->hasLivePreview())
+                            ->content(fn (?Software $record) => new \Illuminate\Support\HtmlString(
+                                '<iframe src="'.e($record->live_preview_url).'" loading="lazy" '
+                                .'style="width:320px;max-width:100%;height:560px;border:1px solid rgba(0,0,0,.08);border-radius:24px;background:#fff"></iframe>'
+                            )),
+                    ]),
+
                 Forms\Components\Section::make(__('software.section.features'))
                     ->icon('heroicon-o-sparkles')
                     ->description(__('software.features_hint'))

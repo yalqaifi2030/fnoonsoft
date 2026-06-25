@@ -239,6 +239,11 @@ return [
         'contact' => 'Need help?',
     ],
     'empty' => 'Nothing found.',
+    'live_preview' => [
+        'hint' => 'Try the real app right in your browser — no install needed.',
+        'play' => 'Launch live preview',
+        'fullscreen' => 'Open fullscreen',
+    ],
     'share' => [
         'title' => 'Share this page',
         'label' => 'Share:',

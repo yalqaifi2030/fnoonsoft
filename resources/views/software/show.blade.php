@@ -63,6 +63,7 @@
     @endpush
     @php($tabs = array_values(array_filter([
         ['id' => 'about', 'label' => __('site.about')],
+        $software->hasLivePreview() ? ['id' => 'live', 'label' => __('software.section.live')] : null,
         $software->hasVideo() ? ['id' => 'video', 'label' => __('software.section.video')] : null,
         ! empty($software->features) ? ['id' => 'features', 'label' => __('software.section.features')] : null,
         $software->screenshots->isNotEmpty() ? ['id' => 'screenshots', 'label' => __('site.screenshots')] : null,
@@ -227,6 +228,43 @@
                 </div>
                 <p x-show="!open" class="mt-2 text-sm text-gray-400">{{ __('site.read_more_hint') }}</p>
             </div>
+
+            {{-- Live interactive preview (web build inside a phone frame) --}}
+            @if ($software->hasLivePreview())
+                <div id="live" data-spy class="card-luxury p-6 scroll-mt-32" x-data="{ run: false }">
+                    <h2 class="font-cairo font-bold text-xl mb-1 flex items-center gap-2">
+                        <i class="fa-solid fa-mobile-screen-button text-saudi-green"></i> {{ __('software.section.live') }}
+                    </h2>
+                    <p class="text-sm text-gray-500 mb-5">{{ __('site.live_preview.hint') }}</p>
+
+                    <div class="flex flex-col items-center">
+                        {{-- phone frame --}}
+                        <div class="relative w-[300px] max-w-full">
+                            <div class="relative rounded-[2.6rem] border-[11px] border-luxury-black bg-luxury-black shadow-2xl overflow-hidden" style="aspect-ratio: 9 / 19.5;">
+                                {{-- notch --}}
+                                <div class="absolute top-0 left-1/2 -translate-x-1/2 z-20 h-5 w-28 rounded-b-2xl bg-luxury-black"></div>
+
+                                {{-- click-to-load overlay (keeps the heavy app from loading for every visitor) --}}
+                                <button type="button" x-show="!run" @click="run = true"
+                                        class="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 rounded-[1.7rem] bg-gradient-to-br from-saudi-green to-saudi-green-dark text-white">
+                                    <span class="flex h-16 w-16 items-center justify-center rounded-full bg-white/20 text-2xl"><i class="fa-solid fa-play ms-1"></i></span>
+                                    <span class="font-cairo font-bold">{{ __('site.live_preview.play') }}</span>
+                                    <span class="text-xs text-white/70">{{ $software->name }}</span>
+                                </button>
+
+                                <template x-if="run">
+                                    <iframe src="{{ $software->live_preview_url }}" loading="lazy"
+                                            class="absolute inset-0 h-full w-full rounded-[1.7rem] bg-white"
+                                            title="{{ $software->name }}" allow="fullscreen; clipboard-write; accelerometer; gyroscope"></iframe>
+                                </template>
+                            </div>
+                        </div>
+
+                        <a href="{{ $software->live_preview_url }}" target="_blank" rel="noopener"
+                           class="btn-primary mt-5 text-sm"><i class="fa-solid fa-up-right-from-square"></i> {{ __('site.live_preview.fullscreen') }}</a>
+                    </div>
+                </div>
+            @endif
 
             {{-- Explainer video --}}
             @if ($software->hasVideo())
