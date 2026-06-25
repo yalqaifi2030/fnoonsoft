@@ -238,4 +238,11 @@ return [
         'contact' => 'Need help?',
     ],
     'empty' => 'Nothing found.',
+    'share' => [
+        'title' => 'Share this page',
+        'label' => 'Share:',
+        'copy' => 'Copy',
+        'copied' => 'Copied',
+        'more' => 'Share',
+    ],
 ];

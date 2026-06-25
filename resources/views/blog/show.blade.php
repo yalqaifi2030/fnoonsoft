@@ -16,5 +16,9 @@
     <div class="card-luxury p-8 prose max-w-none">
         {!! $article->body !!}
     </div>
+
+    <div class="mt-6">
+        <x-share :title="$article->title" :url="route('blog.show', $article)" />
+    </div>
 </div>
 @endsection

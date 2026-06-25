@@ -159,6 +159,9 @@
                         </span>
                         <span class="text-sm text-white/70"><span dir="ltr">{{ number_format($software->rating_avg, 1) }}</span> ({{ $software->reviews_count }})</span>
                     </div>
+                    <div class="mt-4">
+                        <x-share variant="light" :title="$software->name" :url="route('software.show', $software)" />
+                    </div>
                 </div>
 
             </div>
@@ -979,6 +982,9 @@
                     </div>
                 </div>
             @endif
+
+            <x-share :title="$software->name" :url="route('software.show', $software)"
+                     :heading="__('site.share.title')" />
 
             <x-ad placement="sidebar" />
         </aside>
