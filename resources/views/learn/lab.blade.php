@@ -35,33 +35,38 @@
 @push('styles')
     <style>
         /* Tailwind Preflight zeroes border-width, so lab inputs that only set a
-           border *colour* render borderless. Give every lab text/number/search
-           input and select a proper field look. :where() keeps specificity at 0
-           so per-input utility classes (padding, width, rounded, bg) still win. */
-        :where(.lab-surface input[type="text"],
-               .lab-surface input[type="number"],
-               .lab-surface input[type="search"],
-               .lab-surface input:not([type]),
-               .lab-surface select) {
-            border: 1px solid #d1d5db;
+           border *colour* render borderless. Force every lab text/number/search
+           input and select to the same clean field look used in the admin panel
+           (Filament): light border, rounded-lg, white bg, soft shadow, brand-
+           coloured focus ring. `.lab-surface :is(...)` outranks the per-input
+           utility classes so the look is uniform across all labs. */
+        .lab-surface :is(input[type="text"],
+                         input[type="number"],
+                         input[type="search"],
+                         input:not([type]),
+                         select) {
+            border: 1px solid #e5e7eb;            /* gray-200 — subtle, like the panel */
             background-color: #fff;
-            border-radius: .75rem;
-            padding: .5rem .75rem;
+            border-radius: .5rem;                  /* rounded-lg */
+            padding: .55rem .75rem;
+            min-height: 2.5rem;
             font-size: .875rem;
-            line-height: 1.4;
-            color: #1f2937;
+            line-height: 1.5;
+            color: #111827;
             box-shadow: 0 1px 2px 0 rgb(0 0 0 / .05);
             transition: border-color .15s ease, box-shadow .15s ease;
         }
-        .lab-surface input[type="text"]:focus,
-        .lab-surface input[type="number"]:focus,
-        .lab-surface input[type="search"]:focus,
-        .lab-surface select:focus {
+        .lab-surface :is(input[type="text"], input[type="number"], input[type="search"], select):focus {
             outline: none;
             border-color: rgb(var(--c-primary) / 1);
-            box-shadow: 0 0 0 3px rgb(var(--c-primary) / .2);
+            box-shadow: 0 0 0 3px rgb(var(--c-primary) / .15);
         }
-        /* Range sliders keep their native look but pick up the brand colour. */
-        .lab-surface input[type="range"] { accent-color: rgb(var(--c-primary) / 1); }
+        .lab-surface input::placeholder { color: #9ca3af; }
+        .lab-surface input[readonly] { background-color: #f9fafb; color: #4b5563; }  /* gray-50 */
+        /* Range sliders keep their native control, not the field box. */
+        .lab-surface input[type="range"] {
+            width: auto; min-height: 0; border: 0; box-shadow: none; padding: 0;
+            background: transparent; accent-color: rgb(var(--c-primary) / 1);
+        }
     </style>
 @endpush
