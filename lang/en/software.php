@@ -55,6 +55,8 @@ return [
     'stores_hint' => 'App store links — shown as download badges on the app page. Leave empty if not available.',
     'play_url' => 'Google Play URL',
     'appstore_url' => 'App Store URL (iOS)',
+    'qr_enabled' => 'Show download QR codes',
+    'qr_enabled_hint' => 'Auto-generated from the store links and shown under the download box on the app page.',
     'model_glb' => '3D preview model (.glb / .gltf / .obj)',
     'model_glb_hint' => 'The model that powers the viewer. Prefer a web-optimized .glb (with materials + AR). .obj is also supported (geometry preview).',
     'model_usdz' => 'iOS AR model (.usdz, optional)',

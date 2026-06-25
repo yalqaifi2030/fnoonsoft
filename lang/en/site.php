@@ -244,6 +244,10 @@ return [
         'get_on' => 'GET IT ON',
         'download_on' => 'Download on the',
     ],
+    'qr' => [
+        'title' => 'Download via QR',
+        'hint' => 'Scan with your phone camera to download instantly.',
+    ],
     'live_preview' => [
         'hint' => 'Try the real app right in your browser — no install needed.',
         'play' => 'Launch live preview',

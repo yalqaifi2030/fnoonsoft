@@ -218,6 +218,12 @@ class SoftwareResource extends Resource
                             ->label(__('software.appstore_url'))->url()
                             ->prefixIcon('heroicon-m-device-phone-mobile')
                             ->placeholder('https://apps.apple.com/app/...'),
+                        Forms\Components\Toggle::make('qr_enabled')
+                            ->label(__('software.qr_enabled'))
+                            ->helperText(__('software.qr_enabled_hint'))
+                            ->default(true)
+                            ->inline(false)
+                            ->columnSpanFull(),
                     ])->columns(2),
                 ]),
 

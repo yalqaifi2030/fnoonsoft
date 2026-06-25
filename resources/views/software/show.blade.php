@@ -1027,6 +1027,53 @@
                 @endif
             </div>
 
+            {{-- Scan-to-download QR codes (auto-generated from the store links) --}}
+            @if ($software->qr_enabled && $software->hasStoreLinks())
+                <div class="card-luxury p-5">
+                    <h3 class="mb-1 flex items-center gap-2 font-cairo text-sm font-bold text-gray-700">
+                        <i class="fa-solid fa-qrcode text-saudi-green"></i> {{ __('site.qr.title') }}
+                    </h3>
+                    <p class="mb-4 text-xs text-gray-400">{{ __('site.qr.hint') }}</p>
+                    <div class="flex flex-wrap items-start justify-center gap-5">
+                        @if ($software->play_url)
+                            <div class="text-center">
+                                <div class="fnoon-qr mx-auto inline-block rounded-xl border border-gray-100 bg-white p-2" data-qr="{{ $software->play_url }}"></div>
+                                <span class="mt-2 flex items-center justify-center gap-1.5 text-xs font-bold text-gray-600"><i class="fa-brands fa-android text-emerald-500"></i> Android</span>
+                            </div>
+                        @endif
+                        @if ($software->appstore_url)
+                            <div class="text-center">
+                                <div class="fnoon-qr mx-auto inline-block rounded-xl border border-gray-100 bg-white p-2" data-qr="{{ $software->appstore_url }}"></div>
+                                <span class="mt-2 flex items-center justify-center gap-1.5 text-xs font-bold text-gray-600"><i class="fa-brands fa-apple"></i> iOS</span>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+                @once
+                    @push('scripts')
+                        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+                        <script>
+                            (function () {
+                                function render() {
+                                    if (typeof QRCode === 'undefined') { return setTimeout(render, 150); }
+                                    document.querySelectorAll('.fnoon-qr[data-qr]').forEach(function (el) {
+                                        if (el.dataset.done) return;
+                                        el.dataset.done = '1';
+                                        new QRCode(el, {
+                                            text: el.getAttribute('data-qr'),
+                                            width: 124, height: 124,
+                                            colorDark: '#0a0a0a', colorLight: '#ffffff',
+                                            correctLevel: QRCode.CorrectLevel.M,
+                                        });
+                                    });
+                                }
+                                render();
+                            })();
+                        </script>
+                    @endpush
+                @endonce
+            @endif
+
             @if ($software->tags->isNotEmpty())
                 <div class="card-luxury p-6">
                     <h3 class="mb-3 flex items-center gap-2 font-cairo text-sm font-bold text-gray-700">
