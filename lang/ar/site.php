@@ -10,6 +10,7 @@ return [
         'apps' => 'البرامج',
         'scripts' => 'السكربتات',
         'templates' => 'القوالب',
+        'mobile_apps' => 'تطبيقات الجوال',
         'plugins' => 'الإضافات',
         'blog' => 'المدوّنة',
         'contact' => 'تواصل',

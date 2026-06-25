@@ -7,6 +7,7 @@ enum ContentType: string
     case Application = 'application';
     case Script = 'script';
     case Template = 'template';
+    case MobileApp = 'mobile_app';
     case Plugin = 'plugin';
 
     public function label(): string
@@ -15,6 +16,7 @@ enum ContentType: string
             self::Application => __('content.type.application'),
             self::Script => __('content.type.script'),
             self::Template => __('content.type.template'),
+            self::MobileApp => __('content.type.mobile_app'),
             self::Plugin => __('content.type.plugin'),
         };
     }
@@ -25,6 +27,7 @@ enum ContentType: string
             self::Application => 'fa-solid fa-desktop',
             self::Script => 'fa-solid fa-code',
             self::Template => 'fa-solid fa-palette',
+            self::MobileApp => 'fa-solid fa-mobile-screen-button',
             self::Plugin => 'fa-solid fa-puzzle-piece',
         };
     }

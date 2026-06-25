@@ -8,6 +8,7 @@ return [
         'application' => 'Software & Apps',
         'script' => 'Scripts',
         'template' => 'Website Templates',
+        'mobile_app' => 'Mobile App Templates',
         'plugin' => 'Plugins & Add-ons',
     ],
     'status' => [

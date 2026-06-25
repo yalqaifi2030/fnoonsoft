@@ -22,6 +22,7 @@
                 <a href="{{ route('browse', ['type' => 'application']) }}" class="hover:text-saudi-green">{{ __('site.nav.apps') }}</a>
                 <a href="{{ route('browse', ['type' => 'script']) }}" class="hover:text-saudi-green">{{ __('site.nav.scripts') }}</a>
                 <a href="{{ route('browse', ['type' => 'template']) }}" class="hover:text-saudi-green">{{ __('site.nav.templates') }}</a>
+                <a href="{{ route('browse', ['type' => 'mobile_app']) }}" class="hover:text-saudi-green">{{ __('site.nav.mobile_apps') }}</a>
                 <a href="{{ route('browse', ['type' => 'plugin']) }}" class="hover:text-saudi-green">{{ __('site.nav.plugins') }}</a>
                 <a href="{{ route('learn') }}" class="inline-flex items-center gap-1 font-bold text-saudi-green hover:text-saudi-green-dark">
                     <i class="fa-solid fa-graduation-cap"></i> {{ __('learn.nav') }}
@@ -70,6 +71,7 @@
             <a href="{{ route('browse', ['type' => 'application']) }}">{{ __('site.nav.apps') }}</a>
             <a href="{{ route('browse', ['type' => 'script']) }}">{{ __('site.nav.scripts') }}</a>
             <a href="{{ route('browse', ['type' => 'template']) }}">{{ __('site.nav.templates') }}</a>
+            <a href="{{ route('browse', ['type' => 'mobile_app']) }}">{{ __('site.nav.mobile_apps') }}</a>
             <a href="{{ route('browse', ['type' => 'plugin']) }}">{{ __('site.nav.plugins') }}</a>
             <a href="{{ route('blog.index') }}">{{ __('site.nav.blog') }}</a>
             <a href="{{ route('my.downloads') }}"><i class="fa-solid fa-clock-rotate-left text-saudi-green"></i> {{ __('site.my_downloads.nav') }}</a>

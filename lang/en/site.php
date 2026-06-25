@@ -10,6 +10,7 @@ return [
         'apps' => 'Software',
         'scripts' => 'Scripts',
         'templates' => 'Templates',
+        'mobile_apps' => 'Mobile Apps',
         'plugins' => 'Plugins',
         'blog' => 'Blog',
         'contact' => 'Contact',
