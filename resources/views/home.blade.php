@@ -21,6 +21,7 @@
         'application' => ['grad' => 'from-emerald-500 to-green-700'],
         'script'      => ['grad' => 'from-sky-500 to-indigo-700'],
         'template'    => ['grad' => 'from-amber-400 to-orange-600'],
+        'mobile_app'  => ['grad' => 'from-cyan-500 to-blue-700'],
         'plugin'      => ['grad' => 'from-fuchsia-500 to-purple-700'],
     ];
 @endphp
@@ -120,7 +121,7 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 @foreach ($types as $type)
-                    @php($meta = $typeMeta[$type->value])
+                    @php($meta = $typeMeta[$type->value] ?? ['grad' => 'from-slate-500 to-gray-700'])
                     <a href="{{ route('browse', ['type' => $type->value]) }}" class="type-card group">
                         <span class="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br {{ $meta['grad'] }} text-white text-2xl shadow-lg">
                             <i class="{{ $type->icon() }}"></i>
