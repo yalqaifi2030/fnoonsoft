@@ -119,21 +119,17 @@
                 <p class="text-gray-500 mt-2">{{ __('site.browse_by_type_sub') }}</p>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
                 @foreach ($types as $type)
                     @php($meta = $typeMeta[$type->value] ?? ['grad' => 'from-slate-500 to-gray-700'])
-                    <a href="{{ route('browse', ['type' => $type->value]) }}" class="type-card group">
-                        <span class="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br {{ $meta['grad'] }} text-white text-2xl shadow-lg">
+                    <a href="{{ route('browse', ['type' => $type->value]) }}" class="type-card group !p-4 flex flex-col items-center text-center">
+                        <span class="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br {{ $meta['grad'] }} text-white text-lg shadow-md transition-transform duration-300 group-hover:scale-110">
                             <i class="{{ $type->icon() }}"></i>
                         </span>
-                        <h3 class="font-cairo font-bold text-lg mt-4 text-luxury-black group-hover:text-saudi-green">{{ $type->label() }}</h3>
-                        <p class="text-sm text-gray-500 mt-1">
+                        <h3 class="font-cairo font-bold text-sm mt-3 leading-tight text-luxury-black group-hover:text-saudi-green">{{ $type->label() }}</h3>
+                        <p class="mt-1 text-xs text-gray-400">
                             {{ __('site.items_count', ['count' => number_format($typeCounts[$type->value] ?? 0)]) }}
                         </p>
-                        <span class="mt-4 inline-flex items-center gap-1 text-sm font-bold text-saudi-green">
-                            {{ __('site.view_all') }}
-                            <i class="fa-solid fa-arrow-left rtl:rotate-0 ltr:rotate-180 text-xs"></i>
-                        </span>
                     </a>
                 @endforeach
             </div>
