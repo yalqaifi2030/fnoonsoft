@@ -21,6 +21,8 @@ class SoftwareController extends Controller
         $software->increment('views_count');
 
         $related = Software::published()
+            ->with(['developer', 'category'])
+            ->withSum('downloadLinks as total_size_bytes', 'size_bytes')
             ->where('category_id', $software->category_id)
             ->whereKeyNot($software->id)
             ->limit(6)
@@ -28,6 +30,8 @@ class SoftwareController extends Controller
 
         $fromDeveloper = $software->developer_id
             ? Software::published()
+                ->with(['developer', 'category'])
+                ->withSum('downloadLinks as total_size_bytes', 'size_bytes')
                 ->where('developer_id', $software->developer_id)
                 ->whereKeyNot($software->id)
                 ->limit(6)

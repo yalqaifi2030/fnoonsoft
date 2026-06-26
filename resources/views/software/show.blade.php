@@ -1103,7 +1103,7 @@
     {{-- Related --}}
     @if ($related->isNotEmpty())
         <div class="mt-12">
-            @include('partials.software-row', ['title' => __('site.sections.related'), 'items' => $related])
+            @include('partials.software-list', ['title' => __('site.sections.related'), 'items' => $related])
         </div>
     @endif
 
