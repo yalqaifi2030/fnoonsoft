@@ -203,7 +203,7 @@
         @endif
 
         {{-- ===== CONTENT ROWS ===== --}}
-        @include('partials.software-row', ['title' => __('site.sections.most_downloaded'), 'items' => $mostDownloaded, 'moreUrl' => route('browse', ['sort' => 'downloads'])])
+        @include('partials.software-list', ['title' => __('site.sections.most_downloaded'), 'items' => $mostDownloaded, 'moreUrl' => route('browse', ['sort' => 'downloads']), 'ranked' => true])
         @include('partials.software-row', ['title' => __('site.sections.recently_added'), 'items' => $recentlyAdded, 'moreUrl' => route('browse', ['sort' => 'recent'])])
         @include('partials.software-row', ['title' => __('site.sections.featured'), 'items' => $featured, 'moreUrl' => route('browse')])
         @if ($mobileApps->isNotEmpty())
