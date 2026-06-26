@@ -35,6 +35,7 @@ class ContentByTypeChart extends ChartWidget
             'application' => '#006C35',
             'script' => '#3b82f6',
             'template' => '#f59e0b',
+            'mobile_app' => '#06b6d4',
             'plugin' => '#a855f7',
         ];
 
@@ -44,7 +45,7 @@ class ContentByTypeChart extends ChartWidget
         foreach (ContentType::cases() as $type) {
             $labels[] = $type->label();
             $data[] = (int) ($counts[$type->value] ?? 0);
-            $colors[] = $palette[$type->value];
+            $colors[] = $palette[$type->value] ?? '#9ca3af';
         }
 
         return [
