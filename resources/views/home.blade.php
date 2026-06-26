@@ -204,10 +204,10 @@
 
         {{-- ===== CONTENT ROWS ===== --}}
         @include('partials.software-list', ['title' => __('site.sections.most_downloaded'), 'items' => $mostDownloaded, 'moreUrl' => route('browse', ['sort' => 'downloads']), 'ranked' => true])
-        @include('partials.software-row', ['title' => __('site.sections.recently_added'), 'items' => $recentlyAdded, 'moreUrl' => route('browse', ['sort' => 'recent'])])
-        @include('partials.software-row', ['title' => __('site.sections.featured'), 'items' => $featured, 'moreUrl' => route('browse')])
+        @include('partials.software-list', ['title' => __('site.sections.recently_added'), 'items' => $recentlyAdded, 'moreUrl' => route('browse', ['sort' => 'recent'])])
+        @include('partials.software-list', ['title' => __('site.sections.featured'), 'items' => $featured, 'moreUrl' => route('browse')])
         @if ($mobileApps->isNotEmpty())
-            @include('partials.software-row', ['title' => __('content.type.mobile_app'), 'items' => $mobileApps, 'moreUrl' => route('browse', ['type' => 'mobile_app'])])
+            @include('partials.software-list', ['title' => __('content.type.mobile_app'), 'items' => $mobileApps, 'moreUrl' => route('browse', ['type' => 'mobile_app'])])
         @endif
 
         {{-- ===== CATEGORIES ===== --}}

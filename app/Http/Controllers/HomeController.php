@@ -13,7 +13,9 @@ class HomeController extends Controller
 {
     public function index(): View
     {
-        $base = Software::query()->published()->with(['developer', 'category']);
+        $base = Software::query()->published()
+            ->with(['developer', 'category'])
+            ->withSum('downloadLinks as total_size_bytes', 'size_bytes');
 
         // Published count per content type (for the "browse by type" cards).
         $typeCounts = Software::published()
@@ -32,7 +34,7 @@ class HomeController extends Controller
 
         $data = [
             'spotlight' => $spotlight,
-            'mostDownloaded' => (clone $base)->withSum('downloadLinks as total_size_bytes', 'size_bytes')->orderByDesc('downloads_count')->limit(8)->get(),
+            'mostDownloaded' => (clone $base)->orderByDesc('downloads_count')->limit(8)->get(),
             'recentlyAdded' => (clone $base)->latest('published_at')->limit(8)->get(),
             'editorChoice' => (clone $base)->where('is_editor_choice', true)->limit(8)->get(),
             'featured' => (clone $base)->featured()->limit(8)->get(),
