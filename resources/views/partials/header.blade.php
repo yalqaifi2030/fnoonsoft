@@ -50,11 +50,8 @@
                             <i class="fa-solid fa-folder-open"></i> {{ __('site.nav.my_files') }}
                         </a>
                     @else
-                        <a href="/dashboard/login" class="hidden sm:inline-flex btn-outline text-sm">
+                        <a href="/dashboard/login" class="hidden sm:inline-flex btn-primary text-sm">
                             <i class="fa-solid fa-right-to-bracket"></i> {{ __('site.nav.login') }}
-                        </a>
-                        <a href="/dashboard/register" class="hidden sm:inline-flex btn-primary text-sm">
-                            <i class="fa-solid fa-user-plus"></i> {{ __('site.nav.register') }}
                         </a>
                     @endauth
                 @endif
@@ -79,8 +76,7 @@
                 @auth
                     <a href="/dashboard" class="font-bold text-saudi-green">{{ __('site.nav.my_files') }}</a>
                 @else
-                    <a href="/dashboard/login">{{ __('site.nav.login') }}</a>
-                    <a href="/dashboard/register" class="font-bold text-saudi-green">{{ __('site.nav.register') }}</a>
+                    <a href="/dashboard/login" class="font-bold text-saudi-green">{{ __('site.nav.login') }}</a>
                 @endauth
             @endif
             @unless (config('app.locale_locked'))
