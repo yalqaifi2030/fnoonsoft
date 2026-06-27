@@ -79,6 +79,20 @@ class DeveloperResource extends Resource
                             ->prefixIcon('heroicon-m-globe-alt')
                             ->columnSpanFull(),
 
+                        Forms\Components\TextInput::make('email')
+                            ->label(__('developer.email'))
+                            ->email()
+                            ->prefixIcon('heroicon-m-envelope'),
+                        Forms\Components\TextInput::make('phone')
+                            ->label(__('developer.phone'))
+                            ->helperText(__('developer.phone_hint'))
+                            ->prefixIcon('heroicon-m-chat-bubble-left-right'),
+                        Forms\Components\TextInput::make('twitter')
+                            ->label(__('developer.twitter'))
+                            ->helperText(__('developer.twitter_hint'))
+                            ->prefixIcon('heroicon-m-at-symbol')
+                            ->columnSpanFull(),
+
                         Forms\Components\Textarea::make('description')
                             ->label(__('developer.description'))
                             ->rows(4)

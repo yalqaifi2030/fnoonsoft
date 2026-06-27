@@ -38,6 +38,9 @@ class SoftwareController extends Controller
                 ->get()
             : collect();
 
-        return view('software.show', compact('software', 'related', 'fromDeveloper'));
+        // Mobile apps get a dedicated, marketing-style landing page.
+        $view = $software->content_type === \App\Enums\ContentType::MobileApp ? 'software.app-show' : 'software.show';
+
+        return view($view, compact('software', 'related', 'fromDeveloper'));
     }
 }

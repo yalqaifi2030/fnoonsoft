@@ -239,6 +239,17 @@ return [
         'contact' => 'Need help?',
     ],
     'empty' => 'Nothing found.',
+    'app' => [
+        'by' => 'by',
+        'developer' => 'App developer',
+        'contact_dev' => 'Contact the developer',
+        'download_apk' => 'Download demo APK',
+        'get_app' => 'Get the app',
+        'more_apps' => 'Related apps',
+        'whatsapp' => 'WhatsApp',
+        'email' => 'Email',
+        'website' => 'Website',
+    ],
     'stores' => [
         'title' => 'Get the app',
         'get_on' => 'GET IT ON',
