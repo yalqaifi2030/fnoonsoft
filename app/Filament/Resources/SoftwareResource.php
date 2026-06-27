@@ -220,7 +220,10 @@ class SoftwareResource extends Resource
                                     ->visible(fn (Forms\Get $get) => $get('type') === 'r2'),
                                 Forms\Components\TextInput::make('external_url')->label(__('software.link.url'))->url()
                                     ->visible(fn (Forms\Get $get) => $get('type') === 'external'),
-                                Forms\Components\TextInput::make('size_bytes')->numeric()->label(__('software.link.size')),
+                                Forms\Components\TextInput::make('size_bytes')->numeric()->label(__('software.link.size'))
+                                    ->default(0)
+                                    // The column is NOT NULL (default 0); coerce an empty field to 0 instead of null.
+                                    ->dehydrateStateUsing(fn ($state) => (int) ($state ?: 0)),
                                 Forms\Components\Hidden::make('original_filename'),
                                 Forms\Components\Toggle::make('is_portable')->label(__('software.link.portable')),
                             ])
