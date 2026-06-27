@@ -78,6 +78,23 @@ return [
         'scan' => 'Malware scan', 'scan_desc' => 'Scan uploaded files (VirusTotal).',
         'ads' => 'Ads (AdSense)', 'ads_desc' => 'Google AdSense ads & placements.',
         'members' => 'Member dashboard', 'members_desc' => 'Member self-uploads + storage quota.',
+        'nudge' => 'Rating nudge', 'nudge_desc' => 'A gentle toast that encourages visitors to rate the site.',
+    ],
+
+    'nudge' => [
+        'title' => 'Rating nudge',
+        'status_section' => 'Activation',
+        'enabled' => 'Enable the nudge',
+        'enabled_hint' => 'Shows a gentle toast encouraging visitors to rate the site, then auto-hides.',
+        'text_section' => 'Text',
+        'text_hint' => 'Edit the title, message and CTA button (Arabic/English).',
+        'cta_url' => 'CTA button URL (optional)',
+        'cta_url_hint' => 'e.g. a Google review link or a contact page. Leave empty to hide the button.',
+        'timing_section' => 'Timing',
+        'delay' => 'Delay before showing (seconds)',
+        'delay_hint' => 'How many seconds after the page loads before the toast appears.',
+        'duration' => 'Visible duration (seconds)',
+        'duration_hint' => 'How many seconds it stays before auto-hiding.',
     ],
 
     'members' => [

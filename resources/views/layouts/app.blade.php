@@ -285,6 +285,7 @@
     {{-- Report-a-problem widget (floating button + screenshot modal) --}}
     @include('partials.report-problem')
     @include('partials.cookie-consent')
+    @include('partials.rating-nudge')
 
     {{-- Global custom <x-select> behaviour (defined before deferred Alpine runs) --}}
     <script>

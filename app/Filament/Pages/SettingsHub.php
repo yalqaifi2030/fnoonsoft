@@ -88,6 +88,11 @@ class SettingsHub extends Page
                 'url' => MemberSettings::getUrl(),
             ],
             [
+                'icon' => 'fa-solid fa-star', 'color' => '#f59e0b',
+                'title' => __('settings.hub.nudge'), 'desc' => __('settings.hub.nudge_desc'),
+                'url' => RatingNudgeSettings::getUrl(),
+            ],
+            [
                 'icon' => 'fa-solid fa-file-lines', 'color' => '#7c3aed',
                 'title' => __('settings.hub.pages'), 'desc' => __('settings.hub.pages_desc'),
                 'url' => PageResource::getUrl('index'),
