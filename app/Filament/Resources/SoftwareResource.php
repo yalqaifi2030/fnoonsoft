@@ -66,6 +66,32 @@ class SoftwareResource extends Resource
         return parent::getEloquentQuery()->where('content_type', '!=', ContentType::MobileApp->value);
     }
 
+    /** A "batch add" button that appends N empty rows to a repeater in one click. */
+    protected static function batchAddAction(string $field): Forms\Components\Actions
+    {
+        return Forms\Components\Actions::make([
+            Forms\Components\Actions\Action::make('batch_'.$field)
+                ->label(__('software.batch_add'))
+                ->icon('heroicon-m-squares-plus')
+                ->color('gray')->size('sm')->outlined()
+                ->modalWidth('xs')
+                ->modalSubmitActionLabel(__('software.batch_add'))
+                ->form([
+                    Forms\Components\TextInput::make('count')
+                        ->label(__('software.batch_count'))
+                        ->helperText(__('software.batch_hint'))
+                        ->numeric()->minValue(1)->maxValue(30)->default(4)->required(),
+                ])
+                ->action(function (array $data, Forms\Get $get, Forms\Set $set) use ($field) {
+                    $items = $get($field) ?? [];
+                    for ($i = 0; $i < (int) ($data['count'] ?? 0); $i++) {
+                        $items[(string) Str::uuid()] = [];
+                    }
+                    $set($field, $items);
+                }),
+        ]);
+    }
+
     public static function form(Form $form): Form
     {
         return $form->schema([
@@ -233,6 +259,7 @@ class SoftwareResource extends Resource
                     ->description(__('software.screenshots_hint'))
                     ->collapsed()
                     ->schema([
+                        static::batchAddAction('screenshots'),
                         Forms\Components\Repeater::make('screenshots')
                             ->relationship()
                             ->hiddenLabel()
@@ -365,6 +392,7 @@ class SoftwareResource extends Resource
                     ->description(__('software.features_hint'))
                     ->collapsed()
                     ->schema([
+                        static::batchAddAction('features'),
                         Forms\Components\Repeater::make('features')
                             ->hiddenLabel()
                             ->schema([
