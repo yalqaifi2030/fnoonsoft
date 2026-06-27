@@ -253,6 +253,9 @@ return [
         'play' => 'Launch live preview',
         'fullscreen' => 'Open fullscreen',
         'real_emulator' => 'Real emulator',
+        'demo_login' => 'Demo login',
+        'username' => 'Username',
+        'password' => 'Password',
     ],
     'share' => [
         'title' => 'Share this page',

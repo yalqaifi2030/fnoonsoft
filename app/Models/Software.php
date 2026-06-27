@@ -37,7 +37,8 @@ class Software extends Model
         'meta_title', 'meta_description', 'published_at',
         'notice_enabled', 'notice_type', 'notice_text', 'notice_url',
         'model_glb', 'model_usdz', 'model_poster',
-        'live_preview_url', 'appetize_public_key', 'play_url', 'appstore_url', 'qr_enabled',
+        'live_preview_url', 'appetize_public_key', 'preview_username', 'preview_password',
+        'play_url', 'appstore_url', 'qr_enabled',
         'download_requires_login',
     ];
 
@@ -358,6 +359,12 @@ class Software extends Model
     public function hasStoreLinks(): bool
     {
         return filled($this->play_url) || filled($this->appstore_url);
+    }
+
+    /** Demo login shown next to the live preview (not real secrets). */
+    public function hasPreviewCredentials(): bool
+    {
+        return filled($this->preview_username) || filled($this->preview_password);
     }
 
     // --- 3D model preview (model-viewer) ---------------------------------

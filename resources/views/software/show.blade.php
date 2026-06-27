@@ -263,6 +263,32 @@
                                 </template>
                             </div>
                         </div>
+
+                        @if ($software->hasPreviewCredentials())
+                            <div class="mt-5 w-full max-w-sm rounded-2xl border border-saudi-green/20 bg-saudi-green/5 p-4">
+                                <p class="mb-3 flex items-center gap-2 text-sm font-bold text-saudi-green">
+                                    <i class="fa-solid fa-circle-info"></i> {{ __('site.live_preview.demo_login') }}
+                                </p>
+                                <div class="space-y-2">
+                                    @if ($software->preview_username)
+                                        <div class="flex items-center gap-2">
+                                            <span class="w-24 shrink-0 text-xs font-semibold text-gray-500">{{ __('site.live_preview.username') }}</span>
+                                            <code dir="ltr" class="min-w-0 flex-1 truncate rounded-lg bg-white px-3 py-1.5 text-sm text-gray-800 ring-1 ring-gray-200">{{ $software->preview_username }}</code>
+                                            <button type="button" x-data="{ c: false }" @click="window.fnoonCopy(@js($software->preview_username)); c = true; setTimeout(() => c = false, 1500)"
+                                                    class="shrink-0 rounded-lg bg-saudi-green/10 px-2.5 py-1.5 text-saudi-green transition hover:bg-saudi-green/20" :title="c ? '{{ __('site.share.copied') }}' : '{{ __('site.share.copy') }}'"><i class="fa-solid" :class="c ? 'fa-check' : 'fa-copy'"></i></button>
+                                        </div>
+                                    @endif
+                                    @if ($software->preview_password)
+                                        <div class="flex items-center gap-2">
+                                            <span class="w-24 shrink-0 text-xs font-semibold text-gray-500">{{ __('site.live_preview.password') }}</span>
+                                            <code dir="ltr" class="min-w-0 flex-1 truncate rounded-lg bg-white px-3 py-1.5 text-sm text-gray-800 ring-1 ring-gray-200">{{ $software->preview_password }}</code>
+                                            <button type="button" x-data="{ c: false }" @click="window.fnoonCopy(@js($software->preview_password)); c = true; setTimeout(() => c = false, 1500)"
+                                                    class="shrink-0 rounded-lg bg-saudi-green/10 px-2.5 py-1.5 text-saudi-green transition hover:bg-saudi-green/20" :title="c ? '{{ __('site.share.copied') }}' : '{{ __('site.share.copy') }}'"><i class="fa-solid" :class="c ? 'fa-check' : 'fa-copy'"></i></button>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
             @endif

@@ -377,6 +377,15 @@ class SoftwareResource extends Resource
                             ->placeholder('b5w...  — أو رابط https://appetize.io/embed/...')
                             ->maxLength(500)
                             ->columnSpanFull(),
+                        Forms\Components\TextInput::make('preview_username')
+                            ->label(__('software.preview_username'))
+                            ->helperText(__('software.preview_credentials_hint'))
+                            ->prefixIcon('heroicon-m-user')
+                            ->maxLength(150),
+                        Forms\Components\TextInput::make('preview_password')
+                            ->label(__('software.preview_password'))
+                            ->prefixIcon('heroicon-m-key')
+                            ->maxLength(150),
                         Forms\Components\Placeholder::make('live_preview_show')
                             ->label(__('software.section.live'))
                             ->columnSpanFull()
