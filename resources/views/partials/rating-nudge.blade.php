@@ -56,26 +56,34 @@
             <script>
                 function fnoonRatingNudge(data) {
                     return {
-                        data: data, show: false, barWidth: 100, _t: null,
+                        data: data, show: false, barWidth: 100, _t: null, _arm: null,
                         init() {
-                            try { if (sessionStorage.getItem('fnoon_rating_nudge_seen')) return; } catch (e) {}
-                            setTimeout(() => this.reveal(), this.data.delay * 1000);
+                            // Show on EVERY download — on the gateway/download page, and
+                            // whenever a download trigger is clicked. No session limit.
+                            if (/\/(download|go)\//.test(location.pathname)) {
+                                this._arm = setTimeout(() => this.reveal(), 2000);
+                            }
+                            document.addEventListener('click', (e) => {
+                                if (e.target.closest('a[href*="/download/"], a[href*="/go/"], [data-dl-all]')) {
+                                    clearTimeout(this._arm);
+                                    this._arm = setTimeout(() => this.reveal(), Math.min(this.data.delay, 2) * 1000);
+                                }
+                            }, true);
                         },
                         reveal() {
-                            this.show = true;
-                            this.$nextTick(() => requestAnimationFrame(() => { this.barWidth = 0; }));
-                            this._t = setTimeout(() => this.dismiss(), this.data.duration * 1000);
-                        },
-                        pause() { if (this._t) { clearTimeout(this._t); this._t = null; } },
-                        resume() {
-                            if (!this.show || this._t) return;
-                            this._t = setTimeout(() => this.dismiss(), 4000);
-                        },
-                        dismiss() {
-                            this.show = false;
+                            // restart cleanly so repeated downloads re-animate the toast
+                            this.show = false; this.barWidth = 100;
+                            this.$nextTick(() => {
+                                this.show = true;
+                                this.$nextTick(() => requestAnimationFrame(() => { this.barWidth = 0; }));
+                            });
                             if (this._t) clearTimeout(this._t);
-                            try { sessionStorage.setItem('fnoon_rating_nudge_seen', '1'); } catch (e) {}
+                            this._t = setTimeout(() => this.hide(), this.data.duration * 1000);
                         },
+                        hide() { this.show = false; if (this._t) { clearTimeout(this._t); this._t = null; } },
+                        pause() { if (this._t) { clearTimeout(this._t); this._t = null; } },
+                        resume() { if (this.show && !this._t) this._t = setTimeout(() => this.hide(), 3000); },
+                        dismiss() { this.hide(); },
                     };
                 }
             </script>
