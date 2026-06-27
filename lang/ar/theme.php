@@ -36,6 +36,12 @@ return [
         'rose' => 'وردي فاخر',
         'forest' => 'غابة',
         'mono' => 'رمادي راقٍ',
+        'obsidian' => 'أسود وذهبي',
+        'burgundy' => 'نبيذي ملكي',
+        'imperial' => 'كحلي إمبراطوري',
+        'noir_emerald' => 'زمرّد فاخر',
+        'espresso' => 'إسبريسو برونزي',
+        'sapphire' => 'ياقوت ملكي',
     ],
 
     'preview' => [

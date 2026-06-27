@@ -36,6 +36,13 @@ class Theme
         'rose' => ['#9F1239', '#D4AF37', '#7E22CE'],
         'forest' => ['#14532D', '#A3B18A', '#5E503F'],
         'mono' => ['#1F2937', '#9CA3AF', '#4B5563'],
+        // Classic, luxurious palettes that read as "premium / powerful".
+        'obsidian' => ['#1A1A1A', '#C9A961', '#8B6F47'],
+        'burgundy' => ['#6D1A36', '#C9A961', '#3E1228'],
+        'imperial' => ['#13294B', '#CBA135', '#1E3A5F'],
+        'noir_emerald' => ['#064E3B', '#D4AF37', '#0F766E'],
+        'espresso' => ['#3E2723', '#C9A227', '#8D6E63'],
+        'sapphire' => ['#1E3A5F', '#B08D57', '#2E5984'],
     ];
 
     private static function read(string $key, string $default): string

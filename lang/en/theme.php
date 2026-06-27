@@ -36,6 +36,12 @@ return [
         'rose' => 'Luxe rose',
         'forest' => 'Forest',
         'mono' => 'Elegant gray',
+        'obsidian' => 'Obsidian gold',
+        'burgundy' => 'Royal burgundy',
+        'imperial' => 'Imperial navy',
+        'noir_emerald' => 'Noir emerald',
+        'espresso' => 'Bronze espresso',
+        'sapphire' => 'Royal sapphire',
     ],
 
     'preview' => [
