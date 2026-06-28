@@ -12,7 +12,9 @@ class BrowseController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Software::query()->published()->with(['developer', 'category']);
+        $query = Software::query()->published()
+            ->with(['developer', 'category'])
+            ->withSum('downloadLinks as total_size_bytes', 'size_bytes');
 
         // --- Filters -----------------------------------------------------
         $activeType = null;

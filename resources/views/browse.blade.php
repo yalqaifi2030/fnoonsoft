@@ -194,9 +194,9 @@
                         <a href="{{ route('browse') }}" class="btn-outline mt-5">{{ __('site.filters.reset') }}</a>
                     </div>
                 @else
-                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+                    <div class="space-y-3">
                         @foreach ($software as $item)
-                            <x-software-card :software="$item" />
+                            @include('partials.software-list-row', ['software' => $item])
                         @endforeach
                     </div>
                     <div class="mt-8">{{ $software->links() }}</div>
