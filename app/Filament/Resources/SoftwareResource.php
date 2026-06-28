@@ -629,7 +629,11 @@ class SoftwareResource extends Resource
                                 Forms\Components\TextInput::make('os_version')->label(__('software.req.os_version'))->placeholder('Windows 10/11'),
                             ])
                             ->columns(2)
-                            ->defaultItems(0)
+                            // Pre-filled defaults so every new item ships with sensible requirements (editable).
+                            ->default([
+                                ['os' => 'windows', 'tier' => 'minimum', 'processor' => 'Intel Core i7 / AMD Ryzen 7 (64-bit)', 'memory' => '16 GB RAM', 'storage' => '25 GB', 'graphics' => '', 'os_version' => 'Windows 10/11'],
+                                ['os' => 'windows', 'tier' => 'recommended', 'processor' => 'Intel Core i9 / AMD Ryzen 9', 'memory' => '32 GB RAM', 'storage' => '40 GB SSD', 'graphics' => '', 'os_version' => 'Windows 10/11'],
+                            ])
                             ->addActionLabel(__('software.req.add'))
                             ->collapsible()
                             ->itemLabel(fn (array $state): ?string => ($state['os'] ?? 'OS').' · '.($state['tier'] ?? '')),

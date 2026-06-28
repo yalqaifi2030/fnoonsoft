@@ -751,9 +751,11 @@
                                         }
                                         if (R.minRam) {
                                             if (ram) {
-                                                const ok = ram >= R.minRam, smooth = R.recRam ? ram >= R.recRam : true;
+                                                // Browsers cap navigator.deviceMemory at 8 → a reported 8 means "8 GB or more".
+                                                const capped = ram >= 8;
+                                                const ok = ram >= R.minRam || capped;
                                                 if (!ok) warn = true;
-                                                rows.push({ label: L.rows.ram, req: (R.minRam + ' GB' + (R.recRam ? (' / ' + R.recRam + ' GB') : '')), you: (ram + ' GB+'), status: ok ? (smooth ? 'ok' : 'warn') : 'warn' });
+                                                rows.push({ label: L.rows.ram, req: (R.minRam + ' GB' + (R.recRam ? (' / ' + R.recRam + ' GB') : '')), you: (ram + ' GB' + (capped ? '+' : '')), status: ok ? 'ok' : 'warn' });
                                             } else {
                                                 rows.push({ label: L.rows.ram, req: (R.minRam + ' GB'), you: L.ram_unknown, status: 'info' });
                                             }
