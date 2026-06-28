@@ -202,13 +202,23 @@
             </section>
         @endif
 
-        {{-- ===== CONTENT ROWS ===== --}}
-        @include('partials.software-list', ['title' => __('site.sections.most_downloaded'), 'items' => $mostDownloaded, 'moreUrl' => route('browse', ['sort' => 'downloads']), 'ranked' => true])
-        @include('partials.software-list', ['title' => __('site.sections.recently_added'), 'items' => $recentlyAdded, 'moreUrl' => route('browse', ['sort' => 'recent'])])
-        @include('partials.software-list', ['title' => __('site.sections.featured'), 'items' => $featured, 'moreUrl' => route('browse')])
-        @if ($mobileApps->isNotEmpty())
-            @include('partials.software-list', ['title' => __('content.type.mobile_app'), 'items' => $mobileApps, 'moreUrl' => route('browse', ['type' => 'mobile_app'])])
-        @endif
+        {{-- ===== CONTENT ROWS (lists + categories sidebar) ===== --}}
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+            {{-- categories panel (right in RTL; below the lists on mobile) --}}
+            <aside class="order-last lg:order-none lg:col-span-1">
+                @include('partials.home-categories', ['categories' => $sidebarCategories])
+            </aside>
+
+            {{-- software lists --}}
+            <div class="lg:col-span-3 min-w-0">
+                @include('partials.software-list', ['title' => __('site.sections.most_downloaded'), 'items' => $mostDownloaded, 'moreUrl' => route('browse', ['sort' => 'downloads']), 'ranked' => true])
+                @include('partials.software-list', ['title' => __('site.sections.recently_added'), 'items' => $recentlyAdded, 'moreUrl' => route('browse', ['sort' => 'recent'])])
+                @include('partials.software-list', ['title' => __('site.sections.featured'), 'items' => $featured, 'moreUrl' => route('browse')])
+                @if ($mobileApps->isNotEmpty())
+                    @include('partials.software-list', ['title' => __('content.type.mobile_app'), 'items' => $mobileApps, 'moreUrl' => route('browse', ['type' => 'mobile_app'])])
+                @endif
+            </div>
+        </div>
 
         {{-- ===== CATEGORIES ===== --}}
         @if ($categories->isNotEmpty())
