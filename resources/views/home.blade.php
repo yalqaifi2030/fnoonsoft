@@ -220,24 +220,7 @@
             </div>
         </div>
 
-        {{-- ===== CATEGORIES ===== --}}
-        @if ($categories->isNotEmpty())
-            <section class="py-10">
-                <div class="section-head">
-                    <h2 class="font-cairo font-bold text-2xl">{{ __('site.sections.categories') }}</h2>
-                    <a href="{{ route('browse') }}" class="view-all">{{ __('site.view_all') }} <i class="fa-solid fa-arrow-left rtl:rotate-0 ltr:rotate-180 text-xs"></i></a>
-                </div>
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-                    @foreach ($categories as $cat)
-                        <a href="{{ route('browse', ['category' => $cat->slug]) }}"
-                           class="card-luxury p-5 text-center hover:border-royal-gold/40 group">
-                            <i class="{{ $cat->icon ?? 'fa-solid fa-folder' }} text-2xl text-saudi-green group-hover:scale-110 transition inline-block"></i>
-                            <div class="mt-3 text-sm font-semibold truncate">{{ $cat->name }}</div>
-                        </a>
-                    @endforeach
-                </div>
-            </section>
-        @endif
+        {{-- Categories now live in the sidebar beside the lists (partials.home-categories). --}}
     </div>
 
     {{-- ===== WHY US BAND (managed from the admin → Site features) ===== --}}
