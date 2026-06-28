@@ -107,6 +107,7 @@ class ThemeSettings extends Page implements HasForms
                     $this->data['theme_primary'] = Theme::DEFAULTS['primary'];
                     $this->data['theme_secondary'] = Theme::DEFAULTS['secondary'];
                     $this->data['theme_accent'] = Theme::DEFAULTS['accent'];
+                    $this->form->fill($this->data);
                 }),
         ];
     }
@@ -122,6 +123,9 @@ class ThemeSettings extends Page implements HasForms
         $this->data['theme_primary'] = $preset[0];
         $this->data['theme_secondary'] = $preset[1];
         $this->data['theme_accent'] = $preset[2];
+
+        // Re-fill so the colour-picker fields visibly reflect the preset.
+        $this->form->fill($this->data);
     }
 
     /** @return array<string,array{0:string,1:string,2:string}> */
