@@ -462,28 +462,28 @@ class SoftwareResource extends Resource
                 ]),
 
                 Forms\Components\Tabs\Tab::make(__('software.tab.advanced'))->icon('heroicon-o-adjustments-horizontal')->schema([
-                Forms\Components\Section::make(__('software.section.page_link'))
-                    ->icon('heroicon-o-link')
-                    ->description(__('software.page_link_hint'))
-                    ->visible(fn (?Software $record) => $record && $record->exists)
+                Forms\Components\Section::make(__('software.section.copy_blocks'))
+                    ->icon('heroicon-o-clipboard-document')
+                    ->description(__('software.copy_blocks_hint'))
+                    ->collapsed()
                     ->schema([
-                        Forms\Components\Placeholder::make('page_url')
-                            ->label(__('software.page_url'))
-                            ->columnSpanFull()
-                            ->content(fn (?Software $record) => $record && $record->exists
-                                ? view('filament.forms.copy-url', ['url' => route('software.show', $record)])
-                                : '—'),
-                        Forms\Components\Placeholder::make('download_url')
-                            ->label(__('software.download_url'))
-                            ->columnSpanFull()
-                            ->visible(fn (?Software $record) => $record && $record->downloadLinks()->exists())
-                            ->content(function (?Software $record) {
-                                $link = $record?->downloadLinks()->first();
-
-                                return $link
-                                    ? view('filament.forms.copy-url', ['url' => route('download.gateway', [$record, $link])])
-                                    : '—';
-                            }),
+                        static::batchAddAction('copy_blocks'),
+                        Forms\Components\Repeater::make('copy_blocks')
+                            ->hiddenLabel()
+                            ->schema([
+                                Forms\Components\TextInput::make('label')
+                                    ->label(__('software.copy_block_label'))
+                                    ->placeholder(__('software.copy_block_label_ph')),
+                                Forms\Components\Textarea::make('content')
+                                    ->label(__('software.copy_block_content'))
+                                    ->rows(3)->required()
+                                    ->extraInputAttributes(['dir' => 'ltr']),
+                            ])
+                            ->columns(1)
+                            ->addActionLabel(__('software.copy_block_add'))
+                            ->reorderable()->collapsed()
+                            ->itemLabel(fn (array $state): ?string => ($state['label'] ?? null) ?: \Illuminate\Support\Str::limit((string) ($state['content'] ?? ''), 40))
+                            ->defaultItems(0),
                     ]),
 
                 Forms\Components\Section::make(__('software.section.notice'))

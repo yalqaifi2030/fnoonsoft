@@ -260,6 +260,11 @@ return [
         'get_on' => 'GET IT ON',
         'download_on' => 'Download on the',
     ],
+    'copy_blocks' => [
+        'title' => 'Links & code to copy',
+        'copy' => 'Copy',
+        'copied' => 'Copied',
+    ],
     'qr' => [
         'title' => 'Download via QR',
         'hint' => 'Scan with your phone camera to download instantly.',

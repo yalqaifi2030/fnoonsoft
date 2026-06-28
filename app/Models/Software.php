@@ -38,7 +38,7 @@ class Software extends Model
         'notice_enabled', 'notice_type', 'notice_text', 'notice_url',
         'model_glb', 'model_usdz', 'model_poster',
         'live_preview_url', 'appetize_public_key', 'preview_username', 'preview_password',
-        'play_url', 'appstore_url', 'qr_enabled',
+        'play_url', 'appstore_url', 'qr_enabled', 'copy_blocks',
         'download_requires_login',
     ];
 
@@ -51,6 +51,7 @@ class Software extends Model
             'languages' => 'array',
             'meta' => 'array',
             'features' => 'array',
+            'copy_blocks' => 'array',
             'price' => 'decimal:2',
             'rating_avg' => 'decimal:2',
             'is_featured' => 'boolean',

@@ -293,6 +293,37 @@
                 </div>
             @endif
 
+            {{-- Admin-defined copyable blocks (links, code, keys…) --}}
+            @if (! empty($software->copy_blocks))
+                <div id="copy_blocks" data-spy class="card-luxury p-6 scroll-mt-32">
+                    <h2 class="mb-4 flex items-center gap-2 font-cairo text-xl font-bold">
+                        <i class="fa-solid fa-clipboard text-saudi-green"></i> {{ __('site.copy_blocks.title') }}
+                    </h2>
+                    <div class="space-y-4">
+                        @foreach ($software->copy_blocks as $block)
+                            @php($content = is_array($block) ? (string) ($block['content'] ?? '') : '')
+                            @php($label = is_array($block) ? trim((string) ($block['label'] ?? '')) : '')
+                            @if ($content !== '')
+                                <div x-data="{ c: false }">
+                                    @if ($label !== '')
+                                        <p class="mb-1.5 text-sm font-semibold text-gray-700">{{ $label }}</p>
+                                    @endif
+                                    <div class="flex items-stretch gap-2">
+                                        <code class="min-w-0 flex-1 overflow-x-auto whitespace-pre rounded-xl bg-gray-50 px-3.5 py-2.5 font-mono text-sm text-gray-800 ring-1 ring-gray-200" dir="ltr">{{ $content }}</code>
+                                        <button type="button"
+                                                @click="window.fnoonCopy(@js($content)); c = true; setTimeout(() => c = false, 1500)"
+                                                class="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-saudi-green px-3.5 text-sm font-bold text-white transition hover:bg-saudi-green-dark">
+                                            <i class="fa-solid" :class="c ? 'fa-check' : 'fa-copy'"></i>
+                                            <span class="hidden sm:inline" x-text="c ? @js(__('site.copy_blocks.copied')) : @js(__('site.copy_blocks.copy'))"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            @endif
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
             {{-- Explainer video --}}
             @if ($software->hasVideo())
                 <div id="video" data-spy class="card-luxury p-6 scroll-mt-32">
