@@ -462,6 +462,19 @@ class SoftwareResource extends Resource
                 ]),
 
                 Forms\Components\Tabs\Tab::make(__('software.tab.advanced'))->icon('heroicon-o-adjustments-horizontal')->schema([
+                Forms\Components\Section::make(__('software.section.page_link'))
+                    ->icon('heroicon-o-link')
+                    ->description(__('software.page_link_hint'))
+                    ->visible(fn (?Software $record) => $record && $record->exists)
+                    ->schema([
+                        Forms\Components\Placeholder::make('page_url')
+                            ->label(__('software.page_url'))
+                            ->columnSpanFull()
+                            ->content(fn (?Software $record) => $record && $record->exists
+                                ? view('filament.forms.copy-url', ['url' => route('software.show', $record)])
+                                : '—'),
+                    ]),
+
                 Forms\Components\Section::make(__('software.section.notice'))
                     ->icon('heroicon-o-megaphone')
                     ->description(__('software.notice_hint'))
