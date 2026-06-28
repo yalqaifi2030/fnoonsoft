@@ -46,6 +46,22 @@
         @endif
     </div>
 
+    {{-- Anti-misleading-ad warning --}}
+    <div class="mt-6 rounded-2xl border-2 border-amber-300 bg-amber-50 p-5 text-start">
+        <div class="flex items-start gap-3">
+            <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-400 text-lg text-white"><i class="fa-solid fa-triangle-exclamation"></i></span>
+            <div class="min-w-0">
+                <h2 class="font-cairo text-base font-black text-amber-900">{{ __('site.download.warn_title') }}</h2>
+                <ul class="mt-2 space-y-1.5 text-sm leading-relaxed text-amber-900/90">
+                    <li class="flex gap-2"><i class="fa-solid fa-circle-check mt-1 text-[11px] text-amber-600"></i><span>{!! __('site.download.warn_1') !!}</span></li>
+                    <li class="flex gap-2"><i class="fa-solid fa-circle-xmark mt-1 text-[11px] text-amber-600"></i><span>{!! __('site.download.warn_2') !!}</span></li>
+                    <li class="flex gap-2"><i class="fa-solid fa-weight-hanging mt-1 text-[11px] text-amber-600"></i><span>{!! __('site.download.warn_3') !!}</span></li>
+                    <li class="flex gap-2"><i class="fa-solid fa-ban mt-1 text-[11px] text-amber-600"></i><span>{!! __('site.download.warn_4') !!}</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
     {{-- Rate the program (after the download starts) --}}
     <div class="card-luxury p-6 mt-6 text-start">
         <h2 class="font-cairo font-bold text-lg flex items-center gap-2">
