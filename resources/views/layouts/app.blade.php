@@ -166,6 +166,8 @@
         .prose a {
             color: var(--color-primary); font-weight: 600; text-decoration: underline;
             text-underline-offset: 3px; text-decoration-thickness: 1px; text-decoration-color: rgb(var(--c-primary) / .4);
+            /* Isolate LTR URLs so neighbouring emoji/markers keep their place in RTL text. */
+            unicode-bidi: isolate;
         }
         .prose a:hover { color: var(--color-primary-dark); text-decoration-color: currentColor; }
         .prose strong, .prose b { font-weight: 800; color: #1A1A1A; }
