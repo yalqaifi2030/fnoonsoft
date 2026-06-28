@@ -40,14 +40,6 @@ class HomeController extends Controller
             'featured' => (clone $base)->featured()->limit(8)->get(),
             'mobileApps' => (clone $base)->where('content_type', ContentType::MobileApp->value)->latest('published_at')->limit(8)->get(),
             'categories' => Category::roots()->where('is_active', true)->orderBy('sort_order')->limit(12)->get(),
-            'sidebarCategories' => Category::query()
-                ->where('is_active', true)
-                ->withCount(['software as count' => fn ($q) => $q->published()])
-                ->orderByDesc('count')
-                ->get()
-                ->filter(fn ($c) => $c->count > 0)
-                ->take(14)
-                ->values(),
             'banners' => Banner::active()->where('position', 'home_top')->orderBy('sort_order')->get(),
             'features' => Feature::active()->orderBy('sort_order')->get(),
             'types' => ContentType::cases(),

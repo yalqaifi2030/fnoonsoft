@@ -202,25 +202,32 @@
             </section>
         @endif
 
-        {{-- ===== CONTENT ROWS (lists + categories sidebar) ===== --}}
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
-            {{-- categories panel (right in RTL; below the lists on mobile) --}}
-            <aside class="order-last lg:order-none lg:col-span-1">
-                @include('partials.home-categories', ['categories' => $sidebarCategories])
-            </aside>
+        {{-- ===== CONTENT ROWS ===== --}}
+        @include('partials.software-list', ['title' => __('site.sections.most_downloaded'), 'items' => $mostDownloaded, 'moreUrl' => route('browse', ['sort' => 'downloads']), 'ranked' => true])
+        @include('partials.software-list', ['title' => __('site.sections.recently_added'), 'items' => $recentlyAdded, 'moreUrl' => route('browse', ['sort' => 'recent'])])
+        @include('partials.software-list', ['title' => __('site.sections.featured'), 'items' => $featured, 'moreUrl' => route('browse')])
+        @if ($mobileApps->isNotEmpty())
+            @include('partials.software-list', ['title' => __('content.type.mobile_app'), 'items' => $mobileApps, 'moreUrl' => route('browse', ['type' => 'mobile_app'])])
+        @endif
 
-            {{-- software lists --}}
-            <div class="lg:col-span-3 min-w-0">
-                @include('partials.software-list', ['title' => __('site.sections.most_downloaded'), 'items' => $mostDownloaded, 'moreUrl' => route('browse', ['sort' => 'downloads']), 'ranked' => true])
-                @include('partials.software-list', ['title' => __('site.sections.recently_added'), 'items' => $recentlyAdded, 'moreUrl' => route('browse', ['sort' => 'recent'])])
-                @include('partials.software-list', ['title' => __('site.sections.featured'), 'items' => $featured, 'moreUrl' => route('browse')])
-                @if ($mobileApps->isNotEmpty())
-                    @include('partials.software-list', ['title' => __('content.type.mobile_app'), 'items' => $mobileApps, 'moreUrl' => route('browse', ['type' => 'mobile_app'])])
-                @endif
-            </div>
-        </div>
-
-        {{-- Categories now live in the sidebar beside the lists (partials.home-categories). --}}
+        {{-- ===== CATEGORIES ===== --}}
+        @if ($categories->isNotEmpty())
+            <section class="py-10">
+                <div class="section-head">
+                    <h2 class="font-cairo font-bold text-2xl">{{ __('site.sections.categories') }}</h2>
+                    <a href="{{ route('browse') }}" class="view-all">{{ __('site.view_all') }} <i class="fa-solid fa-arrow-left rtl:rotate-0 ltr:rotate-180 text-xs"></i></a>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                    @foreach ($categories as $cat)
+                        <a href="{{ route('browse', ['category' => $cat->slug]) }}"
+                           class="card-luxury p-5 text-center hover:border-royal-gold/40 group">
+                            <i class="{{ $cat->icon ?? 'fa-solid fa-folder' }} text-2xl text-saudi-green group-hover:scale-110 transition inline-block"></i>
+                            <div class="mt-3 text-sm font-semibold truncate">{{ $cat->name }}</div>
+                        </a>
+                    @endforeach
+                </div>
+            </section>
+        @endif
     </div>
 
     {{-- ===== WHY US BAND (managed from the admin → Site features) ===== --}}
