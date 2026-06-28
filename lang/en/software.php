@@ -61,6 +61,7 @@ return [
     'preview_credentials_hint' => 'Demo login shown next to the live preview so visitors can try signing in. Not a real secret.',
     'page_link_hint' => "This content's public page link — copy it with one click to share or promote it.",
     'page_url' => 'Page URL (copyable)',
+    'download_url' => 'Direct download URL (copyable)',
     'appetize_key' => 'Real APK emulator (Appetize.io)',
     'appetize_key_hint' => 'Upload the APK to Appetize.io and paste the publicKey here — the real app runs live in the phone frame. Used only when no web preview URL is set above.',
     'stores_hint' => 'App store links — shown as download badges on the app page. Leave empty if not available.',

@@ -473,6 +473,17 @@ class SoftwareResource extends Resource
                             ->content(fn (?Software $record) => $record && $record->exists
                                 ? view('filament.forms.copy-url', ['url' => route('software.show', $record)])
                                 : '—'),
+                        Forms\Components\Placeholder::make('download_url')
+                            ->label(__('software.download_url'))
+                            ->columnSpanFull()
+                            ->visible(fn (?Software $record) => $record && $record->downloadLinks()->exists())
+                            ->content(function (?Software $record) {
+                                $link = $record?->downloadLinks()->first();
+
+                                return $link
+                                    ? view('filament.forms.copy-url', ['url' => route('download.gateway', [$record, $link])])
+                                    : '—';
+                            }),
                     ]),
 
                 Forms\Components\Section::make(__('software.section.notice'))
