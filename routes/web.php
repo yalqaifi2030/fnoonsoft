@@ -58,6 +58,11 @@ Route::get('/search', [SearchController::class, 'index'])->name('search');
 Route::get('/api/search/live', [SearchController::class, 'live'])
     ->middleware('throttle:60,1')->name('search.live');
 
+// AI "describe what you need" assistant
+Route::get('/assistant', [\App\Http\Controllers\AssistantController::class, 'index'])->name('assistant');
+Route::get('/assistant/recommend', [\App\Http\Controllers\AssistantController::class, 'recommend'])
+    ->middleware('throttle:12,1')->name('assistant.recommend');
+
 // Blog / articles
 Route::get('/blog', [ArticleController::class, 'index'])->name('blog.index');
 Route::get('/blog/{article}', [ArticleController::class, 'show'])->name('blog.show');
@@ -178,5 +183,5 @@ Route::get('/software/{software}', [SoftwareController::class, 'show'])->name('s
 // Static pages by slug. The negative lookahead keeps this from swallowing the
 // Filament panels (/admin, /upload), Livewire, storage, or any named route above.
 Route::get('/{page}', [PageController::class, 'show'])
-    ->where('page', '^(?!admin|upload|api|livewire|filament|storage|build|go|download|software|browse|search|blog|contact|newsletter|locale|learn|up).+')
+    ->where('page', '^(?!admin|upload|api|livewire|filament|storage|build|go|download|software|browse|search|assistant|blog|contact|newsletter|locale|learn|up).+')
     ->name('page.show');

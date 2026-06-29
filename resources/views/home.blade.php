@@ -67,6 +67,13 @@
                         </a>
                     </template>
                 </div>
+
+                {{-- AI assistant CTA --}}
+                <a href="{{ route('assistant') }}"
+                   class="mt-4 inline-flex items-center gap-2 rounded-full border border-royal-gold/40 bg-white/10 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20">
+                    <i class="fa-solid fa-wand-magic-sparkles text-royal-gold"></i>
+                    {{ __('assistant.hero_cta') }}
+                </a>
             </div>
 
             {{-- Trust chips --}}
