@@ -24,7 +24,7 @@ class AssistantController extends Controller
 
     public function recommend(Request $request): JsonResponse
     {
-        $q = trim((string) $request->query('q', ''));
+        $q = trim($request->string('q')->toString());
 
         if (mb_strlen($q) < 3) {
             return response()->json(['error' => __('assistant.too_short')], 422);
