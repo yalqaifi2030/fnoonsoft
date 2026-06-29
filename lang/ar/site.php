@@ -215,7 +215,7 @@ return [
         'newsletter_text' => 'أحدث الإصدارات تصلك في بريدك.',
         'subscribe' => 'اشترك',
         'rights' => 'جميع الحقوق محفوظة.',
-        'developed_by' => 'تطوير:',
+        'developed_by' => 'تصميم والتطوير:',
     ],
     'feedback' => 'آراء المستخدمين',
     'reviews' => [

@@ -215,7 +215,7 @@ return [
         'newsletter_text' => 'Get the best new releases in your inbox.',
         'subscribe' => 'Subscribe',
         'rights' => 'All rights reserved.',
-        'developed_by' => 'Developed by',
+        'developed_by' => 'Designed & developed by:',
     ],
     'feedback' => 'User feedback',
     'reviews' => [
