@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Setting;
 use App\Models\Software;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,11 +20,17 @@ class AssistantController extends Controller
 {
     public function index(): View
     {
+        abort_unless((bool) Setting::get('assistant_enabled'), 404);
+
         return view('assistant');
     }
 
     public function recommend(Request $request): JsonResponse
     {
+        if (! Setting::get('assistant_enabled')) {
+            return response()->json(['error' => __('assistant.unavailable')], 503);
+        }
+
         $q = trim($request->string('q')->toString());
 
         if (mb_strlen($q) < 3) {
