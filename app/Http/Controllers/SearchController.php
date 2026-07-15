@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ProgramRequest;
 use App\Models\SearchQuery;
 use App\Models\Software;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class SearchController extends Controller
@@ -29,17 +31,67 @@ class SearchController extends Controller
         return view('search', compact('term', 'results', 'trending'));
     }
 
-    /** A visitor asks us to add a program we don't have yet (from a zero-result search). */
+    /**
+     * A visitor asks us to add a program we don't have yet (from a zero-result
+     * search). Lands as an actionable ProgramRequest the staff work through, plus
+     * bumps the aggregate demand counter on the search term.
+     */
     public function requestProgram(Request $request): JsonResponse
     {
-        $term = trim($request->string('q')->toString());
-        if (mb_strlen($term) < 2 || mb_strlen($term) > 100) {
-            return response()->json(['ok' => false], 422);
+        // Honeypot — a filled hidden field means a bot; pretend success, drop it.
+        if ($request->filled('website')) {
+            return response()->json(['ok' => true]);
         }
 
-        $row = SearchQuery::firstOrCreate(['term' => $term], ['results_count' => 0, 'hits' => 0]);
-        $row->increment('request_count');
-        $row->update(['last_searched_at' => now()]);
+        $data = $request->validate([
+            'q' => 'required|string|min:2|max:100',
+            'note' => 'nullable|string|max:1000',
+            'contact' => 'nullable|string|max:190',
+            'website' => 'nullable|string|max:0',
+        ]);
+
+        $term = trim($data['q']);
+        $note = trim((string) ($data['note'] ?? '')) ?: null;
+        $contact = trim((string) ($data['contact'] ?? '')) ?: null;
+
+        // Aggregate demand signal on the search term.
+        $sq = SearchQuery::firstOrCreate(['term' => $term], ['results_count' => 0, 'hits' => 0]);
+        $sq->increment('request_count');
+        $sq->update(['last_searched_at' => now()]);
+
+        // One actionable request per program: repeat asks bump the vote count.
+        $req = ProgramRequest::firstOrNew(['term' => Str::limit($term, 190, '')]);
+        $isNew = ! $req->exists;
+
+        if ($isNew) {
+            $req->fill([
+                'votes' => 1,
+                'status' => 'new',
+                'user_id' => $request->user()?->id,
+                'ip' => $request->ip(),
+            ]);
+        } else {
+            $req->votes = (int) $req->votes + 1;
+            // A completed/rejected request that people keep asking for reopens.
+            if (in_array($req->status, ['rejected', 'available'], true)) {
+                $req->status = 'new';
+            }
+        }
+
+        // Keep the most recent details/contact a visitor bothered to leave.
+        if ($note) {
+            $req->note = $note;
+        }
+        if ($contact) {
+            $req->contact = $contact;
+        }
+        $req->last_requested_at = now();
+        $req->save();
+
+        // Ping staff only on a brand-new program (the board's vote count carries the rest).
+        if ($isNew) {
+            $req->notifyStaff();
+        }
 
         return response()->json(['ok' => true]);
     }
