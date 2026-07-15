@@ -74,13 +74,19 @@
                     <span class="font-bold text-luxury-black">{{ $term }}</span>
                 </div>
 
-                <textarea x-ref="note" rows="2" maxlength="1000"
-                          placeholder="{{ __('search.form_note') }}"
-                          class="w-full rounded-xl border-gray-200 px-4 py-3 text-sm focus:ring-2 focus:ring-royal-gold"></textarea>
+                <div>
+                    <label class="mb-1 block text-xs font-bold text-gray-600">{{ __('search.form_note_label') }}</label>
+                    <textarea x-ref="note" rows="2" maxlength="1000"
+                              placeholder="{{ __('search.form_note') }}"
+                              class="w-full rounded-xl border-2 border-gray-200 bg-white px-4 py-3 text-sm shadow-sm transition focus:border-royal-gold focus:ring-2 focus:ring-royal-gold/40"></textarea>
+                </div>
 
-                <input x-ref="contact" type="text" maxlength="190"
-                       placeholder="{{ __('search.form_contact') }}"
-                       class="w-full rounded-xl border-gray-200 px-4 py-3 text-sm focus:ring-2 focus:ring-royal-gold">
+                <div>
+                    <label class="mb-1 block text-xs font-bold text-gray-600">{{ __('search.form_contact_label') }}</label>
+                    <input x-ref="contact" type="text" maxlength="190"
+                           placeholder="{{ __('search.form_contact') }}"
+                           class="w-full rounded-xl border-2 border-gray-200 bg-white px-4 py-3 text-sm shadow-sm transition focus:border-royal-gold focus:ring-2 focus:ring-royal-gold/40">
+                </div>
 
                 {{-- Honeypot: keep empty; hidden from real users --}}
                 <input x-ref="website" type="text" name="website" tabindex="-1" autocomplete="off"
