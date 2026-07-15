@@ -263,6 +263,7 @@
 </head>
 <body class="min-h-screen flex flex-col antialiased">
     @include('partials.header')
+    @include('partials.signup-promo')
 
     <x-ad placement="header" :label="false" class="max-w-7xl mx-auto w-full px-4 mt-3" />
 
