@@ -18,6 +18,7 @@ return [
     'username' => 'Username',
     'username_hint' => 'Forms your public page link. Letters, numbers and dashes only.',
     'reserved_name' => 'This name is reserved and can’t be used. Please choose another.',
+    'invalid_name' => 'Please enter a real, valid name (Arabic or English) — random names aren’t accepted.',
     'bio' => 'About you',
     'website' => 'Website',
     'twitter' => 'X (Twitter) handle',

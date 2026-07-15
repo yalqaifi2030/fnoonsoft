@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Auth;
 
+use App\Rules\MeaningfulName;
 use App\Rules\ReservedName;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
@@ -64,7 +65,7 @@ class EditProfile extends BaseEditProfile
 
                     $this->getNameFormComponent()
                         ->prefixIcon('heroicon-m-user')
-                        ->rules($this->reservedRule())
+                        ->rules($this->nameRules())
                         ->columnSpan(1),
 
                     TextInput::make('username')
@@ -133,5 +134,11 @@ class EditProfile extends BaseEditProfile
     private function reservedRule(): array
     {
         return auth()->user()?->isStaff() ? [] : [new ReservedName];
+    }
+
+    /** Display-name guards (members only): reserved + must be a real, meaningful name. */
+    private function nameRules(): array
+    {
+        return auth()->user()?->isStaff() ? [] : [new ReservedName, new MeaningfulName];
     }
 }
