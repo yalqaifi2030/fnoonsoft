@@ -47,6 +47,22 @@ class AppServiceProvider extends ServiceProvider
         // overriding .env so they take effect immediately without a redeploy.
         $this->applyDynamicConfig();
 
+        // Brute-force guard: every failed login feeds the IP's threat score, and
+        // enough failures in the window auto-block the IP (see App\Support\Security).
+        \Illuminate\Support\Facades\Event::listen(
+            \Illuminate\Auth\Events\Failed::class,
+            function (\Illuminate\Auth\Events\Failed $event): void {
+                try {
+                    \App\Support\Security::flagFailedLogin(
+                        request()->ip(),
+                        \is_array($event->credentials) ? ($event->credentials['email'] ?? null) : null,
+                    );
+                } catch (\Throwable $e) {
+                    // never break the auth flow over the security log
+                }
+            },
+        );
+
         // Send the branded welcome email once a member verifies their address.
         \Illuminate\Support\Facades\Event::listen(
             \Illuminate\Auth\Events\Verified::class,

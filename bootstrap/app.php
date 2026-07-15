@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsureSiteIsAvailable;
+use App\Http\Middleware\SecurityGuard;
 use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\TrackVisit;
@@ -24,6 +25,9 @@ return Application::configure(basePath: dirname(__DIR__))
             SetLocale::class,
             EnsureSiteIsAvailable::class,
             TrackVisit::class,
+            // App-layer intrusion detection + auto-block (after session so events
+            // can be tied to a signed-in member; staff are exempted inside).
+            SecurityGuard::class,
         ]);
 
         // Security hardening headers on every response (UpGuard findings).
