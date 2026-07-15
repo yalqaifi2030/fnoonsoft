@@ -23,6 +23,16 @@ class ThreatInspector
         'solr/admin', 'struts', 'hnap1', 'boaform', 'goform', '/.well-known/../',
     ];
 
+    /** Our own top-level routes — never honeypot-scanned (their slugs are legit). */
+    private const LEGIT_PREFIXES = [
+        'software', 'blog', 'learn', 'browse', 'search', 'assistant', 'contact',
+        'newsletter', 'formats', 'sitemap', 'sitemap.xml', 'robots.txt', 'ads.txt',
+        'dmca', 'abuse', 'legal', 'locale', 'panel-locale', 'two-factor',
+        'model-preview', 'my-downloads', 'go', 'download', 'd', 'u', 'api',
+        'dashboard', 'admin', 'upload', 'report-problem', 'system', 'preview', 'up',
+        'livewire', 'storage', 'build',
+    ];
+
     /** Known offensive scanners / exploitation tools (User-Agent). */
     private const SCANNERS = [
         'sqlmap', 'nikto', 'nmap', 'masscan', 'acunetix', 'nessus', 'dirbuster',
@@ -87,12 +97,22 @@ class ThreatInspector
             }
         }
 
-        // 2) Honeypot path (critical).
+        // 2) Honeypot path (critical) — matched precisely so a real slug can never
+        //    collide: our own routes are exempt, and single-token traps must be a
+        //    whole path segment (or a "<trap>.<ext>" filename), not a substring.
         $pathLower = mb_strtolower($path);
-        foreach (self::HONEYPOTS as $trap) {
-            if (str_contains($pathLower, $trap)) {
-                $found[] = ['type' => 'honeypot', 'severity' => 'critical', 'detail' => 'path: '.self::snippet($path)];
-                break;
+        $segments = array_values(array_filter(explode('/', $pathLower), fn ($s) => $s !== ''));
+        $firstSeg = $segments[0] ?? '';
+
+        if (! in_array($firstSeg, self::LEGIT_PREFIXES, true)) {
+            foreach (self::HONEYPOTS as $trap) {
+                $hit = str_contains($trap, '/')
+                    ? str_contains($pathLower, $trap)                       // multi-part trap
+                    : self::segmentMatch($segments, $trap);                 // single-token trap
+                if ($hit) {
+                    $found[] = ['type' => 'honeypot', 'severity' => 'critical', 'detail' => 'path: '.self::snippet($path)];
+                    break;
+                }
             }
         }
 
@@ -113,6 +133,18 @@ class ThreatInspector
         }
 
         return $found;
+    }
+
+    /** A single-token trap matches a whole path segment or a "<trap>.<ext>" filename. */
+    private static function segmentMatch(array $segments, string $trap): bool
+    {
+        foreach ($segments as $seg) {
+            if ($seg === $trap || str_starts_with($seg, $trap.'.')) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /** Flatten request input to scalar strings (skips uploaded files, caps size). */
