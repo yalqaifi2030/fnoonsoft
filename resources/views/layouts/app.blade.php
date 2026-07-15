@@ -261,7 +261,7 @@
 
     @stack('styles')
 </head>
-<body class="min-h-screen flex flex-col antialiased">
+<body class="min-h-screen flex flex-col antialiased" data-auth="{{ auth()->check() ? '1' : '0' }}">
     @include('partials.header')
     @include('partials.signup-promo')
 
@@ -359,5 +359,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     @stack('scripts')
+
+    {{-- First-party "Recommended for you" interest engine (runs last, after page context) --}}
+    @include('partials.interest-tracker')
 </body>
 </html>

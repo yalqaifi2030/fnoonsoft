@@ -60,6 +60,10 @@ Route::get('/api/search/live', [SearchController::class, 'live'])
 Route::post('/search/request', [SearchController::class, 'requestProgram'])
     ->middleware('throttle:10,1')->name('search.request');
 
+// First-party "Recommended for you" — personalized from on-site behaviour only.
+Route::get('/api/recommendations', [\App\Http\Controllers\RecommendationController::class, 'index'])
+    ->middleware('throttle:60,1')->name('recommendations');
+
 // AI "describe what you need" assistant
 Route::get('/assistant', [\App\Http\Controllers\AssistantController::class, 'index'])->name('assistant');
 Route::get('/assistant/recommend', [\App\Http\Controllers\AssistantController::class, 'recommend'])

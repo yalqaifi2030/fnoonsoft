@@ -211,6 +211,9 @@
             </section>
         @endif
 
+        {{-- ===== RECOMMENDED FOR YOU (first-party, filled by the interest engine) ===== --}}
+        <div id="fnoon-recommended" data-endpoint="{{ route('recommendations') }}" hidden></div>
+
         {{-- ===== CONTENT ROWS ===== --}}
         @include('partials.software-list', ['title' => __('site.sections.most_downloaded'), 'items' => $mostDownloaded, 'moreUrl' => route('browse', ['sort' => 'downloads']), 'ranked' => true])
         @include('partials.software-list', ['title' => __('site.sections.recently_added'), 'items' => $recentlyAdded, 'moreUrl' => route('browse', ['sort' => 'recent'])])

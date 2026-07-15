@@ -11,6 +11,8 @@
 @endpush
 
 @section('content')
+{{-- Expose this page's context to the first-party interest engine (no personal data). --}}
+<script>window.fnoonPageCtx = @json(['cat' => $software->category_id, 'type' => $software->content_type->value, 'tags' => $software->tags->pluck('id')->values()]);</script>
 @php
     $dev = $software->developer;
     $apk = $software->downloadLinks->first();

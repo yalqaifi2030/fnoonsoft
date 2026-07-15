@@ -20,6 +20,8 @@
 @endpush
 
 @section('content')
+{{-- Expose this page's context to the first-party interest engine (no personal data). --}}
+<script>window.fnoonPageCtx = @json(['cat' => $software->category_id, 'type' => $software->content_type->value, 'tags' => $software->tags->pluck('id')->values()]);</script>
 @php($shots = $software->screenshots->map(fn ($s) => ['src' => \Illuminate\Support\Facades\Storage::disk('public')->url($s->path), 'cap' => (string) $s->caption])->values())
 <div class="max-w-7xl mx-auto px-4 py-8"
      x-data="{

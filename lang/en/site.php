@@ -72,7 +72,10 @@ return [
         'categories' => 'Categories',
         'related' => 'Related',
         'from_developer' => 'More from this developer',
+        'recommended' => 'Recommended for you',
     ],
+    'recommended_reset' => 'Reset',
+    'recommended_hint' => 'Based only on what you browse on this site — we never access your device data, and you can reset anytime.',
     'stats' => [
         'software' => 'Programs',
         'downloads' => 'Downloads',

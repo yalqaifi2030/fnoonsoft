@@ -72,7 +72,10 @@ return [
         'categories' => 'الفئات',
         'related' => 'ذات صلة',
         'from_developer' => 'المزيد من هذا المطوّر',
+        'recommended' => 'مُقترَح لك',
     ],
+    'recommended_reset' => 'إعادة الضبط',
+    'recommended_hint' => 'مبنيّ على تصفّحك داخل الموقع فقط — لا نصل إلى بيانات جهازك، ويمكنك إعادة الضبط في أي وقت.',
     'stats' => [
         'software' => 'برنامج',
         'downloads' => 'تحميل',
