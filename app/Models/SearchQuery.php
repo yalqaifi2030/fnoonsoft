@@ -9,5 +9,11 @@ class SearchQuery extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['term', 'results_count', 'hits'];
+    protected $fillable = ['term', 'results_count', 'hits', 'request_count', 'last_searched_at'];
+
+    protected function casts(): array
+    {
+        return ['last_searched_at' => 'datetime'];
+    }
 }
+

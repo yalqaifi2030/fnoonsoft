@@ -15,11 +15,33 @@ class SearchController extends Controller
         $term = trim($request->string('q')->toString());
         $results = $term ? $this->query($term)->paginate(24)->withQueryString() : null;
 
-        if ($term) {
+        if ($term && (int) $request->integer('page', 1) === 1) {
             $this->record($term, $results?->total() ?? 0);
         }
 
-        return view('search', compact('term', 'results'));
+        // Trending (fulfilled) searches to help visitors discover popular programs.
+        $trending = SearchQuery::where('results_count', '>', 0)
+            ->where('hits', '>', 1)
+            ->orderByDesc('hits')
+            ->limit(8)
+            ->pluck('term');
+
+        return view('search', compact('term', 'results', 'trending'));
+    }
+
+    /** A visitor asks us to add a program we don't have yet (from a zero-result search). */
+    public function requestProgram(Request $request): JsonResponse
+    {
+        $term = trim($request->string('q')->toString());
+        if (mb_strlen($term) < 2 || mb_strlen($term) > 100) {
+            return response()->json(['ok' => false], 422);
+        }
+
+        $row = SearchQuery::firstOrCreate(['term' => $term], ['results_count' => 0, 'hits' => 0]);
+        $row->increment('request_count');
+        $row->update(['last_searched_at' => now()]);
+
+        return response()->json(['ok' => true]);
     }
 
     /** Live search endpoint for the hero autocomplete (Alpine/fetch). */
@@ -71,9 +93,9 @@ class SearchController extends Controller
         $existing = SearchQuery::where('term', $term)->first();
         if ($existing) {
             $existing->increment('hits');
-            $existing->update(['results_count' => $count]);
+            $existing->update(['results_count' => $count, 'last_searched_at' => now()]);
         } else {
-            SearchQuery::create(['term' => $term, 'results_count' => $count, 'hits' => 1]);
+            SearchQuery::create(['term' => $term, 'results_count' => $count, 'hits' => 1, 'last_searched_at' => now()]);
         }
     }
 }

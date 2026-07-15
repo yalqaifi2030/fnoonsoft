@@ -57,6 +57,8 @@ Route::get('/learn/{category}', [LearnController::class, 'category'])->name('lea
 Route::get('/search', [SearchController::class, 'index'])->name('search');
 Route::get('/api/search/live', [SearchController::class, 'live'])
     ->middleware('throttle:60,1')->name('search.live');
+Route::get('/search/request', [SearchController::class, 'requestProgram'])
+    ->middleware('throttle:20,1')->name('search.request');
 
 // AI "describe what you need" assistant
 Route::get('/assistant', [\App\Http\Controllers\AssistantController::class, 'index'])->name('assistant');
