@@ -29,7 +29,7 @@ class Software extends Model
 
     protected $fillable = [
         'content_type', 'name', 'slug', 'short_description', 'description',
-        'category_id', 'developer_id', 'user_id', 'icon', 'current_version',
+        'category_id', 'developer_id', 'addon_for_id', 'user_id', 'icon', 'current_version',
         'os_support', 'license_type', 'price', 'languages', 'meta', 'features',
         'code', 'code_language', 'video_source', 'video_url', 'video_path',
         'status', 'is_featured', 'is_editor_choice', 'is_malware_free',
@@ -145,6 +145,30 @@ class Software extends Model
     public function developer(): BelongsTo
     {
         return $this->belongsTo(Developer::class);
+    }
+
+    /** The host program this item is an addon/plugin FOR (null = standalone). */
+    public function addonFor(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'addon_for_id');
+    }
+
+    /** Addons/plugins that target this program. */
+    public function addons(): HasMany
+    {
+        return $this->hasMany(self::class, 'addon_for_id');
+    }
+
+    /** Published addons only — what the public product page lists. */
+    public function publishedAddons(): HasMany
+    {
+        return $this->addons()->published()->orderByDesc('downloads_count');
+    }
+
+    /** True when this item is itself an addon for another program. */
+    public function isAddon(): bool
+    {
+        return $this->addon_for_id !== null;
     }
 
     public function uploader(): BelongsTo

@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Enums\ContentStatus;
 use App\Enums\ContentType;
 use App\Filament\Resources\SoftwareResource\Pages;
+use App\Filament\Resources\SoftwareResource\RelationManagers;
 use App\Models\Software;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -193,6 +194,24 @@ class SoftwareResource extends Resource
                         Forms\Components\TextInput::make('meta.platform')
                             ->label(__('software.platform'))
                             ->visible(fn (Forms\Get $get) => $get('content_type') === 'plugin'),
+
+                        // Addon link: mark this item as an addon FOR a host program.
+                        // Only standalone programs are offered (no addon-of-an-addon
+                        // chains), and an item can never be its own host.
+                        Forms\Components\Select::make('addon_for_id')
+                            ->label(__('software.addon_for'))
+                            ->helperText(__('software.addon_for_hint'))
+                            ->prefixIcon('heroicon-m-puzzle-piece')
+                            ->options(fn (?Software $record) => Software::query()
+                                ->whereNull('addon_for_id')
+                                ->when($record, fn ($q) => $q->whereKeyNot($record->getKey()))
+                                ->limit(500)->get()
+                                ->sortBy(fn (Software $s) => (string) $s->name)
+                                ->mapWithKeys(fn (Software $s) => [$s->id => $s->name.' — '.$s->content_type->label()])
+                                ->all())
+                            ->searchable()
+                            ->placeholder(__('software.addon_for_none'))
+                            ->columnSpanFull(),
                     ])->columns(2),
                 ]),
 
@@ -848,6 +867,13 @@ class SoftwareResource extends Resource
             ->defaultSort('created_at', 'desc')
             ->emptyStateHeading(__('software.empty'))
             ->emptyStateIcon('heroicon-o-cube');
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            RelationManagers\AddonsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

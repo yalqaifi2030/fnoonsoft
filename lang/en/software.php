@@ -11,6 +11,7 @@ return [
     'section' => [
         'basics' => 'Basics',
         'details' => 'Details',
+        'addons' => 'Compatible addons',
         'downloads' => 'Download links',
         'publish' => 'Publish',
         'taxonomy' => 'Taxonomy',
@@ -204,4 +205,21 @@ return [
         'title' => 'Upload a large file (same engine as the upload panel)',
         'hint' => 'Upload program files here with chunked, resumable transfer; a download link is added per file automatically.',
     ],
+
+    // Addons (an item can be an addon FOR a host program)
+    'addon_for' => 'This item is an addon for',
+    'addon_for_hint' => 'Leave empty for a standalone program. Pick a program and this item will appear under “Compatible addons” on its page.',
+    'addon_for_none' => 'None — standalone program',
+    'addon_for_label' => 'Addon for:',
+    'addons_hint' => 'Addons and extensions that work with this program — each has its own page and download links.',
+    'addon_attach' => 'Link an existing item',
+    'addon_attach_pick' => 'Pick the item',
+    'addon_attach_hint' => 'Only standalone items are listed (not already linked to another program).',
+    'addon_attached' => 'Addon linked to this program.',
+    'addon_detach' => 'Unlink',
+    'addon_detach_hint' => 'The item is not deleted — it just becomes standalone again.',
+    'addon_detached' => 'Unlinked.',
+    'addon_open' => 'Open',
+    'addon_empty' => 'No addons linked to this program yet.',
+    'addon_empty_hint' => 'Link an existing item, or set this program in the addon’s “This item is an addon for” field.',
 ];

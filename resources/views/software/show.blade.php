@@ -71,6 +71,7 @@
         $software->screenshots->isNotEmpty() ? ['id' => 'screenshots', 'label' => __('site.screenshots')] : null,
         $software->activeBeforeAfterSlides->isNotEmpty() ? ['id' => 'before_after', 'label' => __('site.before_after.title')] : null,
         $software->fileFormats->where('is_active', true)->isNotEmpty() ? ['id' => 'formats', 'label' => __('formats.section')] : null,
+        $addons->isNotEmpty() ? ['id' => 'addons', 'label' => __('software.section.addons')] : null,
         $software->has3dModel() ? ['id' => 'model3d', 'label' => __('software.section.model')] : null,
         $software->hasCode() ? ['id' => 'code', 'label' => __('software.section.code')] : null,
         $software->requirements->isNotEmpty() ? ['id' => 'requirements', 'label' => __('site.requirements')] : null,
@@ -85,6 +86,17 @@
         <span class="opacity-50">/</span>
         <span class="text-gray-600 truncate">{{ $software->name }}</span>
     </nav>
+
+    {{-- This item is an addon → point back to the program it extends --}}
+    @if ($software->addonFor && $software->addonFor->status->value === 'published')
+        <a href="{{ route('software.show', $software->addonFor) }}"
+           class="mb-5 inline-flex items-center gap-2 rounded-xl border border-saudi-green/25 bg-saudi-green/5 px-4 py-2.5 text-sm transition hover:border-saudi-green/50">
+            <i class="fa-solid fa-puzzle-piece text-saudi-green"></i>
+            <span class="text-gray-500">{{ __('software.addon_for_label') }}</span>
+            <span class="font-bold text-saudi-green">{{ $software->addonFor->name }}</span>
+            <i class="fa-solid fa-arrow-left text-xs text-saudi-green rtl:rotate-0 ltr:rotate-180"></i>
+        </a>
+    @endif
 
     {{-- Dismissible notice / announcement (per-software, managed from admin) --}}
     @if ($software->notice_enabled && filled($software->notice_text))
@@ -429,6 +441,23 @@
                             <a href="{{ route('formats.index') }}#{{ $format->extension }}">
                                 <x-format-badge :format="$format" />
                             </a>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+            {{-- Addons / plugins available for this program --}}
+            @if ($addons->isNotEmpty())
+                <div id="addons" data-spy class="card-luxury p-6 scroll-mt-32">
+                    <h2 class="font-cairo font-bold text-xl mb-1 flex items-center gap-2">
+                        <i class="fa-solid fa-puzzle-piece text-saudi-green"></i>
+                        {{ __('software.section.addons') }}
+                        <span class="rounded-full bg-saudi-green/10 px-2 py-0.5 text-xs font-bold text-saudi-green" dir="ltr">{{ $addons->count() }}</span>
+                    </h2>
+                    <p class="text-sm text-gray-500 mb-4">{{ __('software.addons_hint') }}</p>
+                    <div class="space-y-3">
+                        @foreach ($addons as $addon)
+                            @include('partials.software-list-row', ['software' => $addon])
                         @endforeach
                     </div>
                 </div>
