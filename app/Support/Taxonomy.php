@@ -92,7 +92,7 @@ class Taxonomy
         ],
         'cae-simulation' => ['simsolid', 'altair', 'vmgsim', 'openvsp', 'ansys', 'abaqus', 'comsol', 'nastran', 'hypermesh', 'aspen'],
         'graphics' => [
-            'photoshop', 'illustrator', 'lightroom', 'indesign', 'affinity', 'dxo', 'photolab',
+            'photoshop', 'illustrator', 'lightroom', 'indesign', 'incopy', 'affinity', 'dxo', 'photolab',
             'topaz', 'coreldraw', 'capture one', 'master collection', 'kid pix',
         ],
     ];
