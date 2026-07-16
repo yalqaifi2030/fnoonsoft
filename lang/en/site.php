@@ -30,7 +30,7 @@ return [
         'trust' => [
             'verified' => 'Verified publishers',
             'malware' => 'Malware-free',
-            'large' => 'Files up to 30 GB',
+            'large' => 'Files up to 40 GB',
             'cdn' => 'Global CDN delivery',
         ],
     ],
@@ -52,7 +52,7 @@ return [
         ],
         'large' => [
             'title' => 'Built for big files',
-            'text' => 'Resumable engine handles single files up to 30 GB without breaking a sweat.',
+            'text' => 'Resumable engine handles single files up to 40 GB without breaking a sweat.',
         ],
         'curated' => [
             'title' => 'Curated quality',

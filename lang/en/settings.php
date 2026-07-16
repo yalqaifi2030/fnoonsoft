@@ -214,7 +214,7 @@ return [
         'nav' => 'Storage (S3)',
         'title' => 'Storage settings',
         'section' => 'S3-compatible object storage',
-        'hint' => 'Used by the 30GB upload engine. Saved values take effect immediately.',
+        'hint' => 'Used by the 40GB upload engine. Saved values take effect immediately.',
         'provider' => 'Provider',
         'custom' => 'Custom S3',
         'key' => 'Access key ID',

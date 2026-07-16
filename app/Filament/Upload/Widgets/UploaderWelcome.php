@@ -21,7 +21,7 @@ class UploaderWelcome extends Widget
         return [
             'name' => auth()->user()?->name,
             'uploadUrl' => UploadCenter::getUrl(),
-            'maxGb' => (int) (env('UPLOAD_MAX_BYTES', 32212254720) / 1073741824),
+            'maxGb' => (int) (env('UPLOAD_MAX_BYTES', 42949672960) / 1073741824),
         ];
     }
 }

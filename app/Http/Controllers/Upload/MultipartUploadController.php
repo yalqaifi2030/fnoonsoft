@@ -329,7 +329,7 @@ class MultipartUploadController extends Controller
 
     private function maxBytes(): int
     {
-        return (int) env('UPLOAD_MAX_BYTES', 32212254720); // 30 GB
+        return (int) env('UPLOAD_MAX_BYTES', 42949672960); // 40 GB
     }
 
     private function session(Request $request, string $uuid): UploadSession

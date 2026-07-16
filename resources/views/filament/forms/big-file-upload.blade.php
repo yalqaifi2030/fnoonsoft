@@ -4,7 +4,7 @@
 <div
     x-data="fnoonAdminUploader({
         target: 'fnoon-admin-uploader',
-        maxBytes: {{ (int) env('UPLOAD_MAX_BYTES', 32212254720) }},
+        maxBytes: {{ (int) env('UPLOAD_MAX_BYTES', 42949672960) }},
         partSize: {{ (int) env('UPLOAD_PART_SIZE', 33554432) }},
         concurrency: {{ max(1, (int) env('UPLOAD_CONCURRENCY', 6)) }},
         createUrl: @js(route('upload.multipart.create')),
@@ -29,7 +29,7 @@
             <x-filament::icon icon="heroicon-o-cloud-arrow-up" class="h-5 w-5" />
             {{ __('software.uploader.title') }}
             <span class="ms-auto rounded-full bg-primary-600 px-2 py-0.5 text-[11px] font-bold text-white" dir="ltr">
-                {{ number_format((int) env('UPLOAD_MAX_BYTES', 32212254720) / 1073741824, 0) }} GB
+                {{ number_format((int) env('UPLOAD_MAX_BYTES', 42949672960) / 1073741824, 0) }} GB
             </span>
         </div>
         <p class="mb-2 text-xs text-gray-500 dark:text-gray-400">{{ __('software.uploader.hint') }}</p>

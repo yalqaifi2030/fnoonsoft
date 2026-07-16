@@ -88,7 +88,7 @@ class UploadCenter extends Page
         $provider = \App\Models\Setting::get('storage_provider');
 
         return [
-            'maxBytes' => (int) env('UPLOAD_MAX_BYTES', 32212254720),
+            'maxBytes' => (int) env('UPLOAD_MAX_BYTES', 42949672960),
             'partSize' => (int) env('UPLOAD_PART_SIZE', 33554432),
             'concurrency' => max(1, (int) env('UPLOAD_CONCURRENCY', 6)),
             'assets' => $this->recentAssets,

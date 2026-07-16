@@ -65,7 +65,7 @@ class ProcessUploadedFile implements ShouldQueue
             }
 
             // 2) Checksums (skippable for very large files via env).
-            $maxHash = (int) env('CHECKSUM_MAX_BYTES', 32212254720);
+            $maxHash = (int) env('CHECKSUM_MAX_BYTES', 42949672960);
             if ($actualSize <= $maxHash) {
                 $hashes = $onLocal
                     ? $checksums->forPath($local->path($session->r2_key))
