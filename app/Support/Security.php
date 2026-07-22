@@ -81,6 +81,43 @@ class Security
         return false;
     }
 
+    /**
+     * Log an arbitrary security signal (e.g. origin/host violations) and, past
+     * the threshold, auto-block the IP. Returns true if the IP got blocked.
+     */
+    public static function flag(Request $request, string $type, string $severity, string $detail): bool
+    {
+        $ip = $request->ip();
+        if ($ip === null) {
+            return false;
+        }
+
+        $weight = self::WEIGHTS[$severity] ?? 25;
+        $score = self::addScore($ip, $weight);
+        $willBlock = $severity === 'critical' || $score >= self::THRESHOLD;
+
+        self::log([
+            'ip' => $ip,
+            'type' => $type,
+            'severity' => $severity,
+            'method' => $request->method(),
+            'path' => mb_substr('/'.ltrim($request->path(), '/'), 0, 1000),
+            'detail' => mb_substr($detail, 0, 1000),
+            'user_id' => $request->user()?->id,
+            'country' => self::country($request),
+            'user_agent' => mb_substr((string) $request->userAgent(), 0, 500),
+            'blocked' => $willBlock,
+        ]);
+
+        if ($willBlock && self::block($ip, $type, __('security_admin.reason_auto', ['type' => $type]))) {
+            self::alertStaff($ip, ['type' => $type, 'severity' => $severity, 'detail' => $detail]);
+
+            return true;
+        }
+
+        return false;
+    }
+
     /** Brute-force guard: called on every failed login attempt. */
     public static function flagFailedLogin(string $ip, ?string $email = null): void
     {
@@ -136,9 +173,10 @@ class Security
 
         if ($existing) {
             $existing->increment('hits');
-            // Extend an auto block's window; leave manual/permanent blocks untouched.
+            // Auto blocks: a repeat offender (3rd strike) becomes PERMANENT;
+            // otherwise just extend the window. Manual/permanent blocks untouched.
             if ($auto && $existing->auto && $existing->expires_at !== null) {
-                $existing->update(['expires_at' => $expires]);
+                $existing->update(['expires_at' => $existing->hits >= 3 ? null : $expires]);
             }
         } else {
             BlockedIp::create([

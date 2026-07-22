@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnforceOrigin;
 use App\Http\Middleware\EnsureSiteIsAvailable;
 use App\Http\Middleware\SecurityGuard;
 use App\Http\Middleware\SecurityHeaders;
@@ -20,6 +21,12 @@ return Application::configure(basePath: dirname(__DIR__))
         // Trust the X-Forwarded-* headers so Laravel knows the request is HTTPS and
         // generates https:// asset URLs (otherwise Filament CSS is blocked as mixed content).
         $middleware->trustProxies(at: '*');
+
+        // Origin protection runs FIRST and GLOBALLY (every route incl. the
+        // Filament /admin + /upload panels — the panels don't use the 'web'
+        // group alias) — reject raw-IP / off-domain access, and, when enabled,
+        // anything that didn't come through Cloudflare.
+        $middleware->prepend(EnforceOrigin::class);
 
         $middleware->web(append: [
             SetLocale::class,

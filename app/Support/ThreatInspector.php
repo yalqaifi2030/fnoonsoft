@@ -21,6 +21,8 @@ class ThreatInspector
         'administrator/index', 'cgi-bin', 'shell.php', 'c99.php', 'r57.php', 'alfa.php',
         '.htaccess', 'backup.sql', 'database.sql', 'dump.sql', 'server-status',
         'solr/admin', 'struts', 'hnap1', 'boaform', 'goform', '/.well-known/../',
+        '_ignition', 'telescope/requests', 'server-info', 'config.php', 'wp-content',
+        '.env.local', '.env.production', '.env.dev', 'actuator/env', 'druid/index',
     ];
 
     /** Our own top-level routes — never honeypot-scanned (their slugs are legit). */
@@ -38,6 +40,8 @@ class ThreatInspector
         'sqlmap', 'nikto', 'nmap', 'masscan', 'acunetix', 'nessus', 'dirbuster',
         'gobuster', 'wpscan', 'fimap', 'netsparker', 'zgrab', 'nuclei', 'hydra',
         'jsql', 'arachni', 'w3af', 'skipfish', 'openvas', 'metasploit',
+        'censys', 'httpx', 'feroxbuster', 'dirsearch', 'wfuzz', 'xsser',
+        'sqlninja', 'l9explore', 'internetmeasurement', 'zmeu', 'muhstik',
     ];
 
     /** [regex, type, severity] — matched against the decoded path + query + body. */
