@@ -33,17 +33,19 @@ class EnforceOrigin
             }
 
             // 1) Host must be one of ours (blocks raw-IP / unknown-host access).
+            //    No legitimate client ever sends a wrong Host → block on sight.
             $host = strtolower(trim($request->getHost()));
             $allowed = array_map('strtolower', (array) config('security.allowed_hosts'));
             if ($allowed && ! in_array($host, $allowed, true)) {
-                return $this->deny($request, 'bad host: '.$host);
+                return $this->deny($request, 'bad host: '.$host, 'critical');
             }
 
             // 2) Optionally require the request to have come through Cloudflare.
+            //    Softer (high) — a paused Cloudflare shouldn't permaban real users.
             if (config('security.require_cloudflare')
                 && ! $request->headers->has('cf-ray')
                 && ! $request->headers->has('cf-connecting-ip')) {
-                return $this->deny($request, 'direct origin (no Cloudflare)');
+                return $this->deny($request, 'direct origin (no Cloudflare)', 'high');
             }
         } catch (\Throwable $e) {
             // Security must never take the site down — fail open.
@@ -52,10 +54,10 @@ class EnforceOrigin
         return $next($request);
     }
 
-    private function deny(Request $request, string $detail): Response
+    private function deny(Request $request, string $detail, string $severity = 'high'): Response
     {
         try {
-            Security::flag($request, 'origin', 'high', $detail);
+            Security::flag($request, 'origin', $severity, $detail);
         } catch (\Throwable $e) {
             // best-effort logging
         }
