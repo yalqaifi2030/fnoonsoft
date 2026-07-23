@@ -33,6 +33,14 @@ class RealEmail implements ValidationRule
         'dropmail.me', 'mvrht.net', 'harakirimail.com', 'einrot.com', 'jetable.org',
     ];
 
+    /**
+     * Synthetic "parking" MX hosts that this host's DNS returns for NON-existent
+     * domains (NXDOMAIN hijacking). A domain whose MX points ONLY here is fake.
+     */
+    private const SYNTHETIC_MX = [
+        'inbound-mx.net', 'inbound-mx.org',
+    ];
+
     /** Obvious placeholder / non-deliverable domains. */
     private const PLACEHOLDER = [
         'example.com', 'example.org', 'example.net', 'test.com', 'test.net',
@@ -68,15 +76,37 @@ class RealEmail implements ValidationRule
             }
         }
 
-        // 3) The domain must actually accept mail: require a real MX record.
-        //    (Every genuine mail provider publishes MX; parked/fake domains — even
-        //    when a wildcard/hijacking resolver invents an A record — do not.)
-        //    getmxrr is used over checkdnsrr so we can confirm a non-empty host list.
+        // 3) The domain must actually accept mail: require a REAL MX record.
+        //    This host's network hijacks NXDOMAIN and answers non-existent domains
+        //    with a synthetic "parking" MX (inbound-mx.net / .org). Real providers
+        //    return their own servers (google / outlook / hostinger …), so we reject
+        //    when there's no MX at all OR every MX points to the parking service.
         //    Fails OPEN on a DNS error so a transient hiccup never blocks a real user.
         try {
             $hosts = [];
-            $hasMx = @getmxrr($domain, $hosts) && ! empty($hosts);
-            if (! $hasMx) {
+            if (! @getmxrr($domain, $hosts) || empty($hosts)) {
+                $fail(__('newsletter.invalid_email'));
+
+                return;
+            }
+
+            $allSynthetic = true;
+            foreach ($hosts as $h) {
+                $h = mb_strtolower($h);
+                $isSynthetic = false;
+                foreach (self::SYNTHETIC_MX as $s) {
+                    if (str_contains($h, $s)) {
+                        $isSynthetic = true;
+                        break;
+                    }
+                }
+                if (! $isSynthetic) {
+                    $allSynthetic = false;
+                    break;
+                }
+            }
+
+            if ($allSynthetic) {
                 $fail(__('newsletter.invalid_email'));
             }
         } catch (\Throwable $e) {
