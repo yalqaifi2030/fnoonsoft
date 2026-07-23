@@ -17,6 +17,7 @@ class Dashboard extends BaseDashboard
         return [
             Widgets\AdminWelcome::class,
             Widgets\StatsOverview::class,
+            Widgets\TopContent::class,
             Widgets\Analytics\VisitorsStats::class,
             Widgets\NewContentChart::class,
             Widgets\Analytics\TopCountries::class,

@@ -29,6 +29,23 @@
                 </div>
             </div>
 
+            {{-- Today at a glance --}}
+            @if (!empty($kpis))
+                <div style="display:flex; gap:.6rem; margin-top:1.3rem; flex-wrap:wrap;">
+                    @foreach ($kpis as $k)
+                        <div style="display:flex; align-items:center; gap:.7rem; flex:1 1 140px; min-width:140px; border-radius:.9rem; background:rgba(255,255,255,.08); padding:.7rem .9rem; box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);">
+                            <span style="display:flex; height:2.2rem; width:2.2rem; flex:0 0 auto; align-items:center; justify-content:center; border-radius:.6rem; background:rgba(201,169,97,.18);">
+                                <i class="fa-solid {{ $k['icon'] }}" style="color:#fcd34d; font-size:.85rem;"></i>
+                            </span>
+                            <div>
+                                <div style="font-size:1.15rem; font-weight:800; line-height:1;" dir="ltr">{{ $k['value'] }}</div>
+                                <div style="font-size:.68rem; color:#bbf7d0; margin-top:.15rem;">{{ $k['label'] }}</div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+
             {{-- Attention + quick actions --}}
             <div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-top:1.4rem; flex-wrap:wrap;">
                 <div style="display:flex; align-items:center; gap:.5rem; flex-wrap:wrap;">

@@ -7,9 +7,13 @@ use App\Filament\Resources\ReviewResource;
 use App\Filament\Resources\SoftwareResource;
 use App\Filament\Resources\SupportTicketResource;
 use App\Models\Contact;
+use App\Models\DownloadLog;
 use App\Models\Review;
 use App\Models\SupportTicket;
+use App\Models\User;
+use App\Models\Visit;
 use Filament\Widgets\Widget;
+use Illuminate\Support\Facades\Schema;
 
 class AdminWelcome extends Widget
 {
@@ -46,10 +50,30 @@ class AdminWelcome extends Widget
             ],
         ], fn ($a) => $a['count'] > 0));
 
+        // Today-at-a-glance KPI strip for the hero.
+        $kpis = array_values(array_filter([
+            [
+                'icon' => 'fa-arrow-down',
+                'value' => number_format(DownloadLog::whereDate('created_at', today())->count()),
+                'label' => __('dashboard.today.downloads'),
+            ],
+            [
+                'icon' => 'fa-user-plus',
+                'value' => number_format(User::whereDate('created_at', today())->count()),
+                'label' => __('dashboard.today.members'),
+            ],
+            Schema::hasTable('visits') ? [
+                'icon' => 'fa-eye',
+                'value' => number_format(Visit::whereDate('created_at', today())->distinct('visitor_id')->count('visitor_id')),
+                'label' => __('dashboard.today.visitors'),
+            ] : null,
+        ]));
+
         return [
             'name' => $user?->name,
             'roles' => $user?->getRoleNames()->implode(' · '),
             'date' => now()->translatedFormat('l، j F Y'),
+            'kpis' => $kpis,
             'attention' => $attention,
             'actions' => [
                 ['label' => __('dashboard.quick.new_content'), 'icon' => 'fa-plus', 'url' => SoftwareResource::getUrl('create')],
