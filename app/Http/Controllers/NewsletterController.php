@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\NewsletterSubscriber;
+use App\Rules\RealEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -13,7 +14,7 @@ class NewsletterController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'email' => ['required', 'email', 'max:160'],
+            'email' => ['required', 'email:rfc', 'max:160', new RealEmail],
         ]);
 
         // Instant subscribe (no double opt-in): re-subscribing reactivates a

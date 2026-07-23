@@ -2,6 +2,7 @@
 
 return [
     'subscribed' => 'Subscribed! Thanks for joining.',
+    'invalid_email' => 'Please enter a real email address — temporary or fake addresses aren’t accepted.',
     'unsubscribe' => 'Unsubscribe',
     'email_reason' => 'You’re receiving this because you subscribed to our newsletter.',
 
