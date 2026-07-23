@@ -68,12 +68,15 @@ class RealEmail implements ValidationRule
             }
         }
 
-        // 3) Must be able to receive mail: has an MX (or at least an A) record.
-        //    Fail open on lookup errors so a DNS hiccup never blocks a real user.
+        // 3) The domain must actually accept mail: require a real MX record.
+        //    (Every genuine mail provider publishes MX; parked/fake domains — even
+        //    when a wildcard/hijacking resolver invents an A record — do not.)
+        //    getmxrr is used over checkdnsrr so we can confirm a non-empty host list.
+        //    Fails OPEN on a DNS error so a transient hiccup never blocks a real user.
         try {
-            $hasMx = checkdnsrr($domain, 'MX');
-            $hasA = $hasMx ? true : (checkdnsrr($domain, 'A') || checkdnsrr($domain, 'AAAA'));
-            if (! $hasMx && ! $hasA) {
+            $hosts = [];
+            $hasMx = @getmxrr($domain, $hosts) && ! empty($hosts);
+            if (! $hasMx) {
                 $fail(__('newsletter.invalid_email'));
             }
         } catch (\Throwable $e) {
