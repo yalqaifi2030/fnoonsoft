@@ -36,6 +36,22 @@ class Security
     }
 
     /**
+     * The REAL visitor IP. All live traffic now arrives through Cloudflare, which
+     * sets CF-Connecting-IP to the true client. This matters because the origin
+     * guard runs before Laravel's trust-proxy layer, so $request->ip() there would
+     * otherwise be the Cloudflare edge IP, not the attacker. Falls back to ip().
+     */
+    public static function clientIp(Request $request): string
+    {
+        $cf = $request->headers->get('CF-Connecting-IP');
+        if ($cf && filter_var($cf, FILTER_VALIDATE_IP)) {
+            return $cf;
+        }
+
+        return (string) $request->ip();
+    }
+
+    /**
      * Handle one request's detections: log the top one, add to the IP's score,
      * and block if the threshold is reached. Returns true if the IP got blocked.
      *
@@ -52,7 +68,7 @@ class Security
         usort($detections, fn ($a, $b) => ($order[$b['severity']] ?? 0) <=> ($order[$a['severity']] ?? 0));
         $top = $detections[0];
 
-        $ip = $request->ip();
+        $ip = self::clientIp($request);
         $weight = self::WEIGHTS[$top['severity']] ?? 10;
         $score = self::addScore($ip, $weight);
         $willBlock = $top['severity'] === 'critical' || $score >= self::THRESHOLD;
@@ -87,8 +103,8 @@ class Security
      */
     public static function flag(Request $request, string $type, string $severity, string $detail): bool
     {
-        $ip = $request->ip();
-        if ($ip === null) {
+        $ip = self::clientIp($request);
+        if ($ip === '') {
             return false;
         }
 

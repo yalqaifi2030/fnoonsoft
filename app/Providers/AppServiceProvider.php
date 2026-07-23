@@ -54,7 +54,7 @@ class AppServiceProvider extends ServiceProvider
             function (\Illuminate\Auth\Events\Failed $event): void {
                 try {
                     \App\Support\Security::flagFailedLogin(
-                        request()->ip(),
+                        \App\Support\Security::clientIp(request()),
                         \is_array($event->credentials) ? ($event->credentials['email'] ?? null) : null,
                     );
                 } catch (\Throwable $e) {

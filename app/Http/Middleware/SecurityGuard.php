@@ -25,9 +25,9 @@ class SecurityGuard
                 return $next($request);
             }
 
-            $ip = $request->ip();
+            $ip = Security::clientIp($request);
 
-            if ($ip && Security::isBlocked($ip)) {
+            if ($ip !== '' && Security::isBlocked($ip)) {
                 return $this->blocked();
             }
 
