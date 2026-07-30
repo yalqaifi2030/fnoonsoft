@@ -1,9 +1,10 @@
 @extends('layouts.app')
 
-@section('title', $software->name)
-@section('meta_description', $software->short_description)
-@section('og_title', $software->name)
-@section('og_description', $software->short_description)
+@section('title', $software->meta_title ?: $software->name)
+@section('meta_description', $software->meta_description ?: $software->short_description)
+@section('og_type', 'product')
+@section('og_title', $software->meta_title ?: $software->name)
+@section('og_description', $software->meta_description ?: $software->short_description)
 @section('og_image', $software->icon ? \Illuminate\Support\Facades\Storage::disk('public')->url($software->icon) : '')
 
 @push('jsonld')

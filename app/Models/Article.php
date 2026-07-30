@@ -50,4 +50,34 @@ class Article extends Model
     {
         return 'slug';
     }
+
+    /** Schema.org BlogPosting structured data (JSON-LD) for rich results. */
+    public function structuredData(): array
+    {
+        $seoName = \App\Models\Setting::text('site_name', config('app.name'));
+        $image = $this->cover_image
+            ? \Illuminate\Support\Facades\Storage::disk('public')->url($this->cover_image)
+            : (\App\Support\SiteBranding::logo() ?: null);
+
+        return array_filter([
+            '@context' => 'https://schema.org',
+            '@type' => 'BlogPosting',
+            'headline' => \Illuminate\Support\Str::limit((string) $this->title, 110, ''),
+            'description' => $this->excerpt ?: \Illuminate\Support\Str::limit(strip_tags((string) $this->body), 200),
+            'image' => $image,
+            'datePublished' => $this->published_at?->toAtomString(),
+            'dateModified' => ($this->updated_at ?? $this->published_at)?->toAtomString(),
+            'author' => [
+                '@type' => 'Person',
+                'name' => $this->author?->name ?: $seoName,
+            ],
+            'publisher' => [
+                '@type' => 'Organization',
+                'name' => $seoName,
+                'logo' => ['@type' => 'ImageObject', 'url' => \App\Support\SiteBranding::logo() ?: asset('favicon.ico')],
+            ],
+            'mainEntityOfPage' => ['@type' => 'WebPage', '@id' => route('blog.show', $this)],
+            'articleSection' => $this->category?->name,
+        ], fn ($v) => $v !== null && $v !== '' && $v !== []);
+    }
 }

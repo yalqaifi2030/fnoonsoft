@@ -242,7 +242,12 @@ class Software extends Model
             'softwareVersion' => $this->current_version ?: null,
             'operatingSystem' => (is_array($this->os_support) && $this->os_support) ? implode(', ', $this->os_support) : null,
             'datePublished' => $this->published_at?->toDateString(),
+            'dateModified' => ($this->updated_at ?? $this->published_at)?->toDateString(),
             'image' => $this->icon ? \Illuminate\Support\Facades\Storage::disk('public')->url($this->icon) : null,
+            'screenshot' => $this->relationLoaded('screenshots')
+                ? $this->screenshots->take(6)->map(fn ($s) => \Illuminate\Support\Facades\Storage::disk('public')->url($s->path))->values()->all()
+                : null,
+            'inLanguage' => (is_array($this->languages) && $this->languages) ? implode(', ', $this->languages) : null,
             'offers' => [
                 '@type' => 'Offer',
                 'price' => $this->isPaid() ? (string) $this->price : '0',
@@ -260,7 +265,7 @@ class Software extends Model
             ];
         }
 
-        return array_filter($data, fn ($v) => $v !== null && $v !== '');
+        return array_filter($data, fn ($v) => $v !== null && $v !== '' && $v !== []);
     }
 
     public function tags(): BelongsToMany

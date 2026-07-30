@@ -31,6 +31,11 @@ class SitemapController extends Controller
         $add(route('formats.index'), '0.5', 'monthly');
         $add(route('contact'), '0.3', 'monthly');
 
+        // One landing per content type (Software, Scripts, Templates, Mobile apps, Plugins).
+        foreach (\App\Enums\ContentType::cases() as $type) {
+            $add(route('browse', ['type' => $type->value]), '0.7', 'weekly');
+        }
+
         // Published software (with image entries for Google Images).
         Software::published()
             ->with('screenshots:id,software_id,path')
