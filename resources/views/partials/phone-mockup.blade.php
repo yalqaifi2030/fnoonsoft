@@ -33,7 +33,8 @@
 
                 {{-- live app (loads on play) --}}
                 <template x-if="run">
-                    <iframe class="pm-iframe" src="{{ $software->livePreviewSrc() }}" loading="lazy" scrolling="no"
+                    <iframe id="pmAppFrame" class="pm-iframe" src="{{ $software->livePreviewSrc() }}"
+                            data-base="{{ $software->livePreviewSrc() }}" loading="lazy" scrolling="no"
                             title="{{ $software->name }}"
                             allow="fullscreen; clipboard-write; accelerometer; gyroscope"></iframe>
                 </template>
@@ -58,7 +59,9 @@
                 <div class="pm-punch and-only"></div>
                 <div class="pm-home ios-only"></div>
                 <div class="pm-nav and-only">
-                    <i class="fa-solid fa-caret-left"></i><i class="fa-regular fa-circle"></i><i class="fa-regular fa-square"></i>
+                    <button type="button" class="pm-nav-btn" @click="window.pmNav('back')" aria-label="Back"><i class="fa-solid fa-caret-left"></i></button>
+                    <button type="button" class="pm-nav-btn" @click="window.pmNav('home')" aria-label="Home"><i class="fa-regular fa-circle"></i></button>
+                    <button type="button" class="pm-nav-btn" @click="window.pmNav('recent')" aria-label="Recent"><i class="fa-regular fa-square"></i></button>
                 </div>
 
                 <div class="pm-sheen"></div>
@@ -111,6 +114,10 @@
             .pm-nav { position:absolute; inset-inline:0; bottom:0; z-index:40; height:50px;
                 display:flex; align-items:center; justify-content:center; gap:3.5rem;
                 background:#0b0b0d; color:rgba(255,255,255,.9); border-top:1px solid rgba(255,255,255,.08); }
+            .pm-nav-btn { background:transparent; border:0; color:inherit; cursor:pointer; padding:.35rem .55rem;
+                border-radius:.55rem; display:inline-flex; align-items:center; justify-content:center; transition:background .15s, transform .1s; }
+            .pm-nav-btn:hover { background:rgba(255,255,255,.1); }
+            .pm-nav-btn:active { background:rgba(255,255,255,.2); transform:scale(.9); }
             .pm-nav i { font-size:1.15rem; }
             .pm-nav .fa-caret-left { font-size:1.5rem; }
 
@@ -130,5 +137,24 @@
             .b-power-and{ inset-inline-end:-3px;   top:22%; width:3px; height:8%; }
             .b-vol-and  { inset-inline-end:-3px;   top:32%; width:3px; height:11%; }
         </style>
+    @endpush
+
+    @push('scripts')
+        <script>
+            // Bottom navigation bar → drive the live app inside the (same-origin) iframe.
+            window.pmNav = function (action) {
+                var f = document.getElementById('pmAppFrame');
+                if (!f) { return; }           // not launched yet
+                var base = f.getAttribute('data-base');
+                try {
+                    if (action === 'back') { f.contentWindow.history.back(); }
+                    else if (action === 'home') { if (base) { f.src = base; } }
+                    else if (action === 'recent') { f.contentWindow.location.reload(); }
+                } catch (e) {
+                    // cross-origin fallback: restart the app
+                    if (base) { try { f.src = base; } catch (_) {} }
+                }
+            };
+        </script>
     @endpush
 @endonce
