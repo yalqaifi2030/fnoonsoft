@@ -19,7 +19,7 @@
     $shots = $software->screenshots->map(fn ($s) => ['src' => \Illuminate\Support\Facades\Storage::disk('public')->url($s->path), 'cap' => (string) $s->caption])->values();
 @endphp
 
-<div x-data="{ run: false, lb: false, i: 0, imgs: @js($shots),
+<div x-data="{ run: false, device: 'ios', lb: false, i: 0, imgs: @js($shots),
         open(idx){ this.i = idx; this.lb = true },
         next(){ if (this.imgs.length) this.i = (this.i + 1) % this.imgs.length },
         prev(){ if (this.imgs.length) this.i = (this.i - 1 + this.imgs.length) % this.imgs.length },
@@ -115,21 +115,7 @@
             {{-- right: live phone preview --}}
             <div id="app-preview" class="flex flex-col items-center scroll-mt-24">
                 @if ($software->hasLivePreview())
-                    <div class="relative w-[300px] max-w-full">
-                        <div class="relative overflow-hidden rounded-[2.6rem] border-[11px] border-black bg-black shadow-2xl" style="aspect-ratio: 9 / 19.5;">
-                            <div class="absolute left-1/2 top-0 z-20 h-5 w-28 -translate-x-1/2 rounded-b-2xl bg-black"></div>
-                            <button type="button" x-show="!run" @click="run = true"
-                                    class="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 rounded-[1.7rem] bg-gradient-to-br from-saudi-green to-saudi-green-dark text-white">
-                                <span class="flex h-16 w-16 items-center justify-center rounded-full bg-white/20 text-2xl"><i class="fa-solid fa-play ms-1"></i></span>
-                                <span class="font-cairo font-bold">{{ __('site.live_preview.play') }}</span>
-                            </button>
-                            <template x-if="run">
-                                <iframe src="{{ $software->livePreviewSrc() }}" loading="lazy" scrolling="no"
-                                        class="absolute inset-0 h-full w-full rounded-[1.7rem] bg-white" style="overflow:hidden;"
-                                        title="{{ $software->name }}" allow="fullscreen; clipboard-write; accelerometer; gyroscope"></iframe>
-                            </template>
-                        </div>
-                    </div>
+                    @include('partials.phone-mockup')
 
                     @if ($software->hasPreviewCredentials())
                         <div class="mt-4 w-[300px] max-w-full rounded-2xl bg-white/10 p-3 text-sm ring-1 ring-white/15">
