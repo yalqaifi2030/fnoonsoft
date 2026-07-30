@@ -70,19 +70,20 @@
 @once
     @push('styles')
         <style>
-            .pm-phone { position:relative; width:300px; max-width:86vw; filter:drop-shadow(0 30px 45px rgba(0,0,0,.45)); }
+            .pm-phone { position:relative; width:400px; max-width:92vw; filter:drop-shadow(0 34px 55px rgba(0,0,0,.5)); }
 
-            .pm-frame { padding:11px; border-radius:3rem;
+            .pm-frame { padding:13px; border-radius:3.4rem;
                 background:linear-gradient(145deg,#e2e4e9,#8b8e96 40%,#5a5c63 60%,#c7c9cf);
-                box-shadow:inset 0 0 0 1px rgba(255,255,255,.4), inset 0 0 5px rgba(0,0,0,.5); }
-            .pm-phone.android .pm-frame { padding:9px; border-radius:2.2rem;
+                box-shadow:inset 0 0 0 1px rgba(255,255,255,.4), inset 0 0 6px rgba(0,0,0,.5); }
+            .pm-phone.android .pm-frame { padding:11px; border-radius:2.5rem;
                 background:linear-gradient(145deg,#42444a,#161719 55%,#303237); }
 
-            .pm-screen { position:relative; aspect-ratio:9 / 19.5; overflow:hidden; background:#000; border-radius:2.2rem; }
-            .pm-phone.android .pm-screen { border-radius:1.5rem; }
+            /* ~7-inch feel: a taller, larger screen (5:9 gives a big-tablet look) */
+            .pm-screen { position:relative; aspect-ratio:5 / 9; overflow:hidden; background:#000; border-radius:2.5rem; }
+            .pm-phone.android .pm-screen { border-radius:1.7rem; }
 
-            .pm-iframe { position:absolute; left:0; width:100%; border:0; background:#fff; top:34px; height:calc(100% - 34px); }
-            .pm-phone.android .pm-iframe { top:28px; height:calc(100% - 62px); }
+            .pm-iframe { position:absolute; left:0; width:100%; border:0; background:#fff; top:38px; height:calc(100% - 38px); }
+            .pm-phone.android .pm-iframe { top:32px; height:calc(100% - 82px); }
 
             .pm-play { position:absolute; inset:0; z-index:10; display:flex; flex-direction:column; align-items:center;
                 justify-content:center; gap:1rem; color:#fff; border:0; cursor:pointer;
@@ -93,21 +94,25 @@
                 font-size:1.25rem; padding-inline-start:.2rem; transition:transform .2s; }
             .pm-play:hover .pm-play-btn { transform:scale(1.1); }
 
-            .pm-status { position:absolute; inset-inline:0; top:0; z-index:30; height:34px; padding:0 20px;
+            .pm-status { position:absolute; inset-inline:0; top:0; z-index:30; height:38px; padding:0 24px;
                 display:flex; align-items:center; justify-content:space-between; color:#fff; }
-            .pm-phone.android .pm-status { height:28px; padding:0 14px; }
-            .pm-time { font-size:12px; font-weight:700; }
-            .pm-status-icons { display:flex; align-items:center; gap:6px; font-size:11px; }
+            .pm-phone.android .pm-status { height:32px; padding:0 18px; }
+            .pm-time { font-size:14px; font-weight:700; }
+            .pm-status-icons { display:flex; align-items:center; gap:7px; font-size:13px; }
 
-            .pm-island { position:absolute; top:9px; left:50%; transform:translateX(-50%); z-index:40;
-                width:95px; height:26px; border-radius:9999px; background:#000; }
-            .pm-punch { position:absolute; top:9px; left:50%; transform:translateX(-50%); z-index:40;
-                width:11px; height:11px; border-radius:9999px; background:#000; box-shadow:0 0 0 2px #111; }
-            .pm-home { position:absolute; bottom:7px; left:50%; transform:translateX(-50%); z-index:40;
-                width:110px; height:4px; border-radius:9999px; background:rgba(255,255,255,.7); pointer-events:none; }
-            .pm-nav { position:absolute; inset-inline:0; bottom:0; z-index:30; height:34px;
-                display:flex; align-items:center; justify-content:center; gap:2.75rem; background:#000; color:rgba(255,255,255,.85); }
-            .pm-nav .fa-caret-left { font-size:1.1rem; }
+            .pm-island { position:absolute; top:12px; left:50%; transform:translateX(-50%); z-index:40;
+                width:120px; height:30px; border-radius:9999px; background:#000; }
+            .pm-punch { position:absolute; top:12px; left:50%; transform:translateX(-50%); z-index:40;
+                width:13px; height:13px; border-radius:9999px; background:#000; box-shadow:0 0 0 2px #111; }
+            .pm-home { position:absolute; bottom:9px; left:50%; transform:translateX(-50%); z-index:40;
+                width:140px; height:5px; border-radius:9999px; background:rgba(255,255,255,.75); pointer-events:none; }
+
+            /* Bottom navigation bar (Android) — clearly present */
+            .pm-nav { position:absolute; inset-inline:0; bottom:0; z-index:40; height:50px;
+                display:flex; align-items:center; justify-content:center; gap:3.5rem;
+                background:#0b0b0d; color:rgba(255,255,255,.9); border-top:1px solid rgba(255,255,255,.08); }
+            .pm-nav i { font-size:1.15rem; }
+            .pm-nav .fa-caret-left { font-size:1.5rem; }
 
             .pm-sheen { position:absolute; inset:0; z-index:50; pointer-events:none;
                 background:linear-gradient(135deg, rgba(255,255,255,.16), transparent 38%); }
@@ -116,14 +121,14 @@
             .pm-phone.ios .and-only { display:none !important; }
             .pm-phone.android .ios-only { display:none !important; }
 
-            /* physical side buttons */
+            /* physical side buttons — percentage-based so they scale with the phone */
             .pm-btn { position:absolute; z-index:1; border-radius:3px; background:linear-gradient(90deg,#6b6d74,#3a3c42); }
-            .b-silent   { inset-inline-start:-3px; top:92px;  width:3px; height:24px; }
-            .b-volup    { inset-inline-start:-3px; top:128px; width:3px; height:42px; }
-            .b-voldn    { inset-inline-start:-3px; top:180px; width:3px; height:42px; }
-            .b-power-ios{ inset-inline-end:-3px;   top:148px; width:3px; height:66px; }
-            .b-power-and{ inset-inline-end:-3px;   top:150px; width:3px; height:52px; }
-            .b-vol-and  { inset-inline-end:-3px;   top:212px; width:3px; height:72px; }
+            .b-silent   { inset-inline-start:-3px; top:13%; width:3px; height:4%; }
+            .b-volup    { inset-inline-start:-3px; top:19%; width:3px; height:7%; }
+            .b-voldn    { inset-inline-start:-3px; top:27%; width:3px; height:7%; }
+            .b-power-ios{ inset-inline-end:-3px;   top:22%; width:3px; height:10%; }
+            .b-power-and{ inset-inline-end:-3px;   top:22%; width:3px; height:8%; }
+            .b-vol-and  { inset-inline-end:-3px;   top:32%; width:3px; height:11%; }
         </style>
     @endpush
 @endonce
