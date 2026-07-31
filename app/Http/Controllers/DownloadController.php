@@ -32,6 +32,23 @@ class DownloadController extends Controller
         return view('download.gateway', compact('software', 'link'));
     }
 
+    /**
+     * True when the rating gate is on and this visitor hasn't rated the item yet
+     * (the session key is set by the quick-rate + review endpoints). Staff are
+     * exempt so they can always fetch files.
+     */
+    private function rateGateBlocks(Request $request, Software $software): bool
+    {
+        if (! (bool) \App\Models\Setting::get('download_rating_gate', true)) {
+            return false;
+        }
+        if ($request->user()?->isStaff()) {
+            return false;
+        }
+
+        return ! $request->session()->get('reviewed.'.$software->id);
+    }
+
     /** Private items hide downloads behind login — block guests at the source. */
     private function guardPrivate(Software $software): ?RedirectResponse
     {
@@ -53,6 +70,13 @@ class DownloadController extends Controller
 
         if ($redirect = $this->guardPrivate($software)) {
             return $redirect;
+        }
+
+        // Mandatory rate-before-download gate: without a rating in this session,
+        // send the visitor to the gateway (which enforces the one-tap rating).
+        // Download endpoints are robots-disallowed, so this never affects SEO.
+        if ($this->rateGateBlocks($request, $software)) {
+            return redirect()->route('download.gateway', [$software, $link]);
         }
 
         $this->log($request, $software, $link);

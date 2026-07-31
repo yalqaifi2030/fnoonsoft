@@ -262,7 +262,28 @@ class Software extends Model
                 'ratingValue' => (string) $this->rating_avg,
                 'reviewCount' => (string) $this->reviews_count,
                 'bestRating' => '5',
+                'worstRating' => '1',
             ];
+
+            // A few real reviews for richer Google snippets (only when loaded).
+            if ($this->relationLoaded('approvedReviews')) {
+                $reviews = $this->approvedReviews
+                    ->sortByDesc('created_at')
+                    ->take(5)
+                    ->map(fn ($r) => array_filter([
+                        '@type' => 'Review',
+                        'reviewRating' => ['@type' => 'Rating', 'ratingValue' => (string) $r->rating, 'bestRating' => '5', 'worstRating' => '1'],
+                        'author' => ['@type' => 'Person', 'name' => $r->authorName()],
+                        'datePublished' => $r->created_at?->toDateString(),
+                        'reviewBody' => $r->body ? \Illuminate\Support\Str::limit(strip_tags((string) $r->body), 280) : null,
+                        'name' => $r->title ?: null,
+                    ], fn ($v) => $v !== null && $v !== ''))
+                    ->values()->all();
+
+                if ($reviews) {
+                    $data['review'] = $reviews;
+                }
+            }
         }
 
         return array_filter($data, fn ($v) => $v !== null && $v !== '' && $v !== []);
