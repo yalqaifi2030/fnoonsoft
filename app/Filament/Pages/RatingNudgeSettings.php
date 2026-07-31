@@ -53,6 +53,7 @@ class RatingNudgeSettings extends Page implements HasForms
             'cta_url' => Setting::text('rating_nudge_cta_url', ''),
             'delay' => (int) (Setting::get('rating_nudge_delay') ?: 8),
             'duration' => (int) (Setting::get('rating_nudge_duration') ?: 10),
+            'download_gate' => (bool) Setting::get('download_rating_gate', true),
         ]);
     }
 
@@ -66,6 +67,15 @@ class RatingNudgeSettings extends Page implements HasForms
                         Toggle::make('enabled')
                             ->label(__('settings.nudge.enabled'))
                             ->helperText(__('settings.nudge.enabled_hint'))
+                            ->columnSpanFull(),
+                    ]),
+
+                Section::make(__('settings.nudge.gate_section'))
+                    ->icon('heroicon-o-lock-closed')
+                    ->schema([
+                        Toggle::make('download_gate')
+                            ->label(__('settings.nudge.gate_enabled'))
+                            ->helperText(__('settings.nudge.gate_hint'))
                             ->columnSpanFull(),
                     ]),
 
@@ -115,6 +125,7 @@ class RatingNudgeSettings extends Page implements HasForms
         Setting::put('rating_nudge_cta_url', $d['cta_url'] ?: '', 'string', 'nudge');
         Setting::put('rating_nudge_delay', (string) ((int) ($d['delay'] ?? 8)), 'string', 'nudge');
         Setting::put('rating_nudge_duration', (string) ((int) ($d['duration'] ?? 10)), 'string', 'nudge');
+        Setting::put('download_rating_gate', ! empty($d['download_gate']) ? '1' : '0', 'boolean', 'nudge');
 
         Notification::make()->success()->title(__('settings.saved'))->send();
     }

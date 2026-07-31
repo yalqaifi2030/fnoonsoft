@@ -8,11 +8,37 @@ use App\Models\Software;
 use App\Models\User;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
+    /**
+     * One-tap star rating from the download gateway. A bare star (no text) has
+     * nothing to moderate, so it's auto-approved and counts toward the average
+     * immediately. Guarded to one per visitor per software (session).
+     */
+    public function quickRate(Request $request, Software $software): JsonResponse
+    {
+        abort_unless($software->status === ContentStatus::Published, 404);
+
+        $data = $request->validate(['rating' => ['required', 'integer', 'min:1', 'max:5']]);
+
+        $key = 'reviewed.'.$software->id;
+        if (! $request->session()->get($key)) {
+            $software->reviews()->create([
+                'user_id' => $request->user()?->id,
+                'author_name' => $request->user()?->displayName() ?: __('review.guest'),
+                'rating' => $data['rating'],
+                'status' => 'approved',
+            ]);
+            $request->session()->put($key, true);
+        }
+
+        return response()->json(['ok' => true]);
+    }
+
     public function store(Request $request, Software $software): RedirectResponse
     {
         abort_unless($software->status === ContentStatus::Published, 404);

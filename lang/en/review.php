@@ -44,6 +44,11 @@ return [
     'already' => 'You have already rated this program. Thank you!',
     'gateway_title' => 'Liked the program? Rate it',
     'gateway_hint' => 'While your download starts, share your rating of the program.',
+    'gate_title' => 'Rate it with a star to start your download',
+    'gate_hint' => 'Tap one star to rate the program and your download begins instantly — your rating helps other visitors.',
+    'gate_note' => 'Just one tap — and you won’t be asked again.',
+    'gate_unlocking' => 'Thank you! Your download is starting…',
+    'comment_optional' => 'Add a comment (optional)',
     'stars' => [
         '1' => 'Poor',
         '2' => 'Fair',

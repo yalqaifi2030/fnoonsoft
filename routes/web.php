@@ -170,6 +170,9 @@ Route::post('/software/{software}/comments', [\App\Http\Controllers\CommentContr
 // Public star reviews/ratings on a product (moderated)
 Route::post('/software/{software}/reviews', [\App\Http\Controllers\ReviewController::class, 'store'])
     ->middleware('throttle:5,1')->name('reviews.store');
+// One-tap star rating (download gateway) — quick, auto-approved star only.
+Route::post('/software/{software}/quick-rate', [\App\Http\Controllers\ReviewController::class, 'quickRate'])
+    ->middleware('throttle:10,1')->name('reviews.quick');
 
 // "My downloads" — the visitor's browser (localStorage) history; members also
 // have an account-based history inside their dashboard.
