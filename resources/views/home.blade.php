@@ -4,7 +4,7 @@
 
 @push('jsonld')
     <script type="application/ld+json">{!! json_encode([
-        '@context' => 'https://schema.org',
+        '@'.'context' => 'https://schema.org',
         '@type' => 'WebSite',
         'name' => \App\Models\Setting::text('site_name', config('app.name')),
         'url' => url('/'),

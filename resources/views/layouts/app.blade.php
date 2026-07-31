@@ -32,7 +32,7 @@
     {{-- Site-wide structured data: Organization + WebSite (enables Google's
          sitelinks search box). Per-page schema is pushed via @stack('jsonld'). --}}
     <script type="application/ld+json">{!! json_encode([
-        '@context' => 'https://schema.org',
+        '@'.'context' => 'https://schema.org',
         '@graph' => [
             [
                 '@type' => 'Organization',
