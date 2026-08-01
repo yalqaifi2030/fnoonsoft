@@ -259,7 +259,7 @@ return [
         'website' => 'الموقع',
     ],
     'signup_promo' => [
-        'title' => 'سجّل مجانًا واحصل على :gb مساحة تخزين لرفع ملفاتك — بلا حذف نهائي!',
+        'title' => 'سجّل مجانًا: تصفّح <strong class="font-black text-royal-gold">بلا إعلانات</strong> + :gb مساحة تخزين لملفاتك بلا حذف!',
         'cta' => 'أنشئ حسابك المجاني',
     ],
     'stores' => [

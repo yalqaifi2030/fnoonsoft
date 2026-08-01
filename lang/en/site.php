@@ -259,7 +259,7 @@ return [
         'website' => 'Website',
     ],
     'signup_promo' => [
-        'title' => 'Sign up free and get :gb of storage for your files — never deleted!',
+        'title' => 'Sign up free: browse <strong class="font-black text-royal-gold">ad-free</strong> + :gb of storage for your files, never deleted!',
         'cta' => 'Create your free account',
     ],
     'stores' => [
