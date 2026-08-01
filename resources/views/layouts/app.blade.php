@@ -283,6 +283,9 @@
 
     <x-ad placement="footer" class="max-w-7xl mx-auto w-full px-4 mb-6" />
 
+    {{-- "Sign in → no ads" prompt (guests only, when ads are actually served) --}}
+    @include('partials.adfree-cta')
+
     @include('partials.footer')
 
     {{-- Report-a-problem widget (floating button + screenshot modal) --}}

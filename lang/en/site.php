@@ -262,6 +262,12 @@ return [
         'title' => 'Sign up free: browse <strong class="font-black text-royal-gold">ad-free</strong> + :gb of storage for your files, never deleted!',
         'cta' => 'Create your free account',
     ],
+    'adfree' => [
+        'title' => 'Browse the site ad-free!',
+        'subtitle' => 'Ads show for guests only. Sign in (free) and all ads disappear — a faster, cleaner experience.',
+        'register' => 'Sign up free & remove ads',
+        'login' => 'I have an account — Sign in',
+    ],
     'stores' => [
         'title' => 'Get the app',
         'get_on' => 'GET IT ON',
