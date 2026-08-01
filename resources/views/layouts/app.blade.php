@@ -92,7 +92,7 @@
     {{-- Google AdSense (admin-toggled). Auto Ads place themselves; manual units use <x-ad>. --}}
     @php($ads = app(\App\Support\Ads::class))
     @if ($ads->enabled())
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ $ads->publisherId() }}" crossorigin="anonymous"></script>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ $ads->clientId() }}" crossorigin="anonymous"></script>
     @endif
 
     {{-- Fonts --}}

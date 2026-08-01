@@ -11,7 +11,7 @@
         @endif
         <ins class="adsbygoogle"
              style="display:block"
-             data-ad-client="{{ $ads->publisherId() }}"
+             data-ad-client="{{ $ads->clientId() }}"
              data-ad-slot="{{ $ads->slot($placement) }}"
              data-ad-format="{{ $format }}"
              data-full-width-responsive="true"></ins>

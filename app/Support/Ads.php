@@ -48,6 +48,27 @@ class Ads
         return $id ? trim((string) $id) : null;
     }
 
+    /**
+     * The 'ca-pub-XXXX' client id the AdSense loader + units REQUIRE. Google
+     * rejects a bare 'pub-XXXX', so normalise whatever the admin typed
+     * (ca-pub-…, pub-…, or bare digits) into the correct 'ca-pub-…' form.
+     */
+    public function clientId(): ?string
+    {
+        $pub = $this->publisherId();
+        if (! $pub) {
+            return null;
+        }
+        if (str_starts_with($pub, 'ca-')) {
+            return $pub;
+        }
+        if (str_starts_with($pub, 'pub-')) {
+            return 'ca-'.$pub;
+        }
+
+        return 'ca-pub-'.ltrim($pub, '-');
+    }
+
     /** 'auto' (Google places ads) or 'manual' (our <x-ad> units). */
     public function mode(): string
     {
