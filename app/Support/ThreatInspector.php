@@ -114,7 +114,10 @@ class ThreatInspector
                     ? str_contains($pathLower, $trap)                       // multi-part trap
                     : self::segmentMatch($segments, $trap);                 // single-token trap
                 if ($hit) {
-                    $found[] = ['type' => 'honeypot', 'severity' => 'critical', 'detail' => 'path: '.self::snippet($path)];
+                    // A browser fetching a trap for another site (<img src="/.env">) is not the attacker.
+                    $found[] = self::isCrossSite($request)
+                        ? ['type' => 'honeypot', 'severity' => 'low', 'detail' => '[passive] path: '.self::snippet($path), 'passive' => true]
+                        : ['type' => 'honeypot', 'severity' => 'critical', 'detail' => 'path: '.self::snippet($path)];
                     break;
                 }
             }
@@ -130,13 +133,35 @@ class ThreatInspector
         }
         $haystack = mb_substr($haystack, 0, 8000);
 
+        $passive = self::isPassive($request);
         foreach (self::SIGNATURES as [$rx, $type, $sev]) {
             if (preg_match($rx, $haystack, $m)) {
-                $found[] = ['type' => $type, 'severity' => $sev, 'detail' => self::snippet($m[0])];
+                $found[] = $passive
+                    ? ['type' => $type, 'severity' => 'low', 'detail' => '[passive] '.self::snippet($m[0]), 'passive' => true]
+                    : ['type' => $type, 'severity' => $sev, 'detail' => self::snippet($m[0])];
             }
         }
 
         return $found;
+    }
+
+    /**
+     * Payload-looking requests the visitor didn't author: anything the browser
+     * sends on behalf of ANOTHER site (an <img>/link planted elsewhere — the
+     * browser-set Sec-Fetch-Site header can't be forged by a web page), and our
+     * own search box (people search for code like "eval(" or "; DELETE FROM").
+     * Logged for the console, but never scored — otherwise any forum post could
+     * get every reader's IP (admins included) auto-banned.
+     */
+    private static function isPassive(Request $request): bool
+    {
+        return self::isCrossSite($request)
+            || ($request->isMethod('GET') && $request->is('search', 'search/*', 'assistant/*'));
+    }
+
+    private static function isCrossSite(Request $request): bool
+    {
+        return in_array(strtolower((string) $request->headers->get('Sec-Fetch-Site')), ['cross-site', 'same-site'], true);
     }
 
     /** A single-token trap matches a whole path segment or a "<trap>.<ext>" filename. */

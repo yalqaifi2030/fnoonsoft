@@ -77,6 +77,37 @@ class AssetController extends Controller
         return response()->download($absolute, $asset->downloadName());
     }
 
+    /**
+     * Inline view of a PROTECTED image/PDF (or one of its image variants) — the
+     * stand-in for its /storage URL while it lives on the private disk. Same
+     * rules as the landing page; the owner and staff always see their files.
+     */
+    public function view(Request $request, Asset $asset, ?string $size = null)
+    {
+        abort_unless($asset->isImage() || $asset->isPdf(), 404);
+
+        $user = $request->user();
+        $privileged = $user && ($asset->user_id === $user->id || $user->isStaff());
+
+        if (! $privileged) {
+            abort_unless($asset->is_active, 404);
+            abort_if($asset->isExpired(), 410, __('asset.expired'));
+            abort_if($asset->hasPassword() && ! $this->unlocked($request, $asset), 403);
+        }
+
+        $path = $size ? data_get($asset->variants, "{$size}.path") : $asset->path;
+        abort_unless(is_string($path) && $path !== '', 404);
+
+        $absolute = \Illuminate\Support\Facades\Storage::disk($asset->mediaDisk())->path($path);
+        abort_unless(is_file($absolute), 404);
+
+        return response()->file($absolute, [
+            'Content-Type' => $asset->isPdf() ? 'application/pdf' : (mime_content_type($absolute) ?: 'application/octet-stream'),
+            'X-Content-Type-Options' => 'nosniff',
+            'Cache-Control' => 'private, max-age=300',
+        ]);
+    }
+
     /** Congratulate the owner when their file crosses a download milestone. */
     private function notifyMilestone(Asset $asset): void
     {

@@ -11,9 +11,9 @@
         rateUrl: '{{ route('reviews.quick', $software) }}',
         slug: '{{ $software->slug }}',
         gate: {{ $rateGate ? 'true' : 'false' }},
-        rated: false, rating: 0, hover: 0, sending: false,
+        {{-- Server-decided (session + cookie + member review): never trust localStorage here --}}
+        rated: {{ $rated ? 'true' : 'false' }}, rating: 0, hover: 0, sending: false,
         init() {
-            try { const a = JSON.parse(localStorage.getItem('fnoon_rated') || '[]'); if (Array.isArray(a) && a.includes(this.slug)) this.rated = true; } catch (e) {}
             if (!this.gate || this.rated) { this.begin(); }
         },
         begin() {
@@ -25,11 +25,13 @@
             this.sending = true; this.rating = s;
             const self = this;
             fetch(this.rateUrl, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content }, body: JSON.stringify({ rating: s }) })
-                .catch(() => {})
-                .finally(() => {
-                    try { let a = JSON.parse(localStorage.getItem('fnoon_rated') || '[]'); if (!Array.isArray(a)) a = []; if (a.indexOf(self.slug) < 0) { a.push(self.slug); localStorage.setItem('fnoon_rated', JSON.stringify(a)); } } catch (e) {}
-                    self.rated = true; self.seconds = 3; self.begin();
-                });
+                .then((res) => {
+                    // Only a stored rating unlocks the download (else /go bounces back here).
+                    if (res.ok) { self.rated = true; self.seconds = 3; self.begin(); return; }
+                    if (res.status === 419) { window.location.reload(); return; } // expired page token
+                    self.sending = false; self.rating = 0;
+                })
+                .catch(() => { self.sending = false; self.rating = 0; });
         }
      }">
     {{-- Anti-misleading-ad warning (above the download card) --}}

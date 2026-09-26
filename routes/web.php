@@ -145,6 +145,10 @@ Route::post('/d/{asset}/unlock', [\App\Http\Controllers\AssetController::class, 
     ->middleware('throttle:10,1')->name('assets.unlock');
 Route::get('/d/{asset}/download', [\App\Http\Controllers\AssetController::class, 'download'])
     ->middleware('throttle:60,1')->name('assets.download');
+// Guarded inline view for protected (password/expiring/disabled) images & PDF.
+Route::get('/d/{asset}/view/{size?}', [\App\Http\Controllers\AssetController::class, 'view'])
+    ->whereIn('size', ['thumb', 'medium', 'large', 'og', 'small'])
+    ->middleware('throttle:240,1')->name('assets.view');
 
 // Public member "creator" profile (/u/{username}) — their avatar, bio & public files.
 Route::get('/u/{user:username}', [\App\Http\Controllers\MemberProfileController::class, 'show'])

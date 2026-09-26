@@ -6,6 +6,7 @@ use App\Enums\ContentStatus;
 use App\Models\Setting;
 use App\Models\Software;
 use App\Models\User;
+use App\Support\RatedItems;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 use Illuminate\Http\JsonResponse;
@@ -25,16 +26,17 @@ class ReviewController extends Controller
 
         $data = $request->validate(['rating' => ['required', 'integer', 'min:1', 'max:5']]);
 
-        $key = 'reviewed.'.$software->id;
-        if (! $request->session()->get($key)) {
+        // RatedItems also knows a member's stored review — a member rating again
+        // (new device/session) used to hit the unique(software_id,user_id) key → 500.
+        if (! RatedItems::has($request, $software)) {
             $software->reviews()->create([
                 'user_id' => $request->user()?->id,
                 'author_name' => $request->user()?->displayName() ?: __('review.guest'),
                 'rating' => $data['rating'],
                 'status' => 'approved',
             ]);
-            $request->session()->put($key, true);
         }
+        RatedItems::remember($request, $software);
 
         return response()->json(['ok' => true]);
     }
@@ -55,9 +57,8 @@ class ReviewController extends Controller
         // Always land on the product page reviews (works from the gateway too).
         $dest = fn () => redirect()->to(route('software.show', $software).'#reviews');
 
-        // One review per visitor per software (soft guard via the session).
-        $key = 'reviewed.'.$software->id;
-        if ($request->session()->get($key)) {
+        // One review per visitor per software (session/cookie; members by account).
+        if (RatedItems::has($request, $software)) {
             return $dest()->with('review_status', __('review.already'));
         }
 
@@ -74,7 +75,7 @@ class ReviewController extends Controller
             'status' => $status,
         ]);
 
-        $request->session()->put($key, true);
+        RatedItems::remember($request, $software);
 
         // The average is recomputed automatically by the Review model hook.
         $this->notifyAdmins($software, $review->authorName(), $status);

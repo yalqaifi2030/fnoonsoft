@@ -42,10 +42,13 @@ class Asset extends Model
     /** Remove the stored file (+ image variants) whenever an asset is deleted. */
     protected static function booted(): void
     {
+        // Keep protected images/PDF off the public web root (see syncVisibility).
+        static::saved(fn (Asset $asset) => $asset->syncVisibility());
+
         static::deleting(function (Asset $asset) {
             foreach ((array) $asset->variants as $variant) {
                 if (! empty($variant['path'])) {
-                    Storage::disk('public')->delete($variant['path']);
+                    Storage::disk($asset->mediaDisk())->delete($variant['path']);
                 }
             }
             try {
@@ -124,6 +127,54 @@ class Asset extends Model
         return $this->is_active && ! $this->isExpired();
     }
 
+    // --- Protection / visibility ----------------------------------------
+
+    /** Password, an expiry date, or disabled → must not be reachable by a raw /storage URL. */
+    public function isProtected(): bool
+    {
+        return $this->hasPassword() || $this->expires_at !== null || ! $this->is_active;
+    }
+
+    /** Images & PDF: the disk their original + variants currently live on. */
+    public function mediaDisk(): string
+    {
+        return $this->disk === 'local' ? 'local' : 'public';
+    }
+
+    /**
+     * Images/PDF are born on the public disk (hotlinkable). While protected they
+     * move to the private disk and are served only via /d/{slug}/view, which
+     * enforces password/expiry/active — previously the direct /storage/... URL
+     * (already handed out in the share kit) kept working and bypassed all three.
+     */
+    public function syncVisibility(): void
+    {
+        if (! ($this->isImage() || $this->isPdf())) {
+            return;
+        }
+
+        $from = $this->mediaDisk();
+        $to = $this->isProtected() ? 'local' : 'public';
+        if ($from === $to) {
+            return;
+        }
+
+        $paths = array_filter([$this->path, ...array_map(fn ($v) => $v['path'] ?? null, (array) $this->variants)]);
+        foreach ($paths as $p) {
+            $src = Storage::disk($from)->path($p);
+            if (! is_file($src)) {
+                continue;
+            }
+            $dst = Storage::disk($to)->path($p);
+            if (! is_dir(dirname($dst))) {
+                mkdir(dirname($dst), 0775, true);
+            }
+            rename($src, $dst);
+        }
+
+        $this->forceFill(['disk' => $to])->saveQuietly();
+    }
+
     // --- URLs ------------------------------------------------------------
 
     /** Public landing page with the share kit. */
@@ -163,6 +214,11 @@ class Asset extends Model
             return Storage::disk('public')->url($this->path);
         }
 
+        // Protected image/PDF: inline view through the guarded route.
+        if ($this->isImage() || $this->isPdf()) {
+            return route('assets.view', $this);
+        }
+
         // Non-public files are only reachable through the download route.
         return $this->downloadUrl();
     }
@@ -173,6 +229,10 @@ class Asset extends Model
 
         if (! $path) {
             return $this->directUrl();
+        }
+
+        if ($this->disk !== 'public') {
+            return route('assets.view', ['asset' => $this, 'size' => $size]);
         }
 
         return Storage::disk('public')->url($path);

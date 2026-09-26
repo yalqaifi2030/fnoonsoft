@@ -72,9 +72,12 @@ class Security
         $top = $detections[0];
 
         $ip = self::clientIp($request);
-        $weight = self::WEIGHTS[$top['severity']] ?? 10;
-        $score = self::addScore($ip, $weight);
-        $willBlock = $top['severity'] === 'critical' || $score >= self::THRESHOLD;
+
+        // Passive detections (see ThreatInspector::isPassive) are logged only.
+        $passive = ! empty($top['passive']);
+        $weight = $passive ? 0 : (self::WEIGHTS[$top['severity']] ?? 10);
+        $score = $weight > 0 ? self::addScore($ip, $weight) : 0;
+        $willBlock = ! $passive && ($top['severity'] === 'critical' || $score >= self::THRESHOLD);
 
         $types = implode(',', array_values(array_unique(array_map(fn ($d) => $d['type'], $detections))));
 

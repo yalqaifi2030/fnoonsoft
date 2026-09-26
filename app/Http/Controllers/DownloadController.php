@@ -29,7 +29,11 @@ class DownloadController extends Controller
             return $redirect;
         }
 
-        return view('download.gateway', compact('software', 'link'));
+        // The server decides whether the gate is still open — the page no longer
+        // trusts its own localStorage (that mismatch caused a redirect loop).
+        $rated = ! $this->rateGateBlocks(request(), $software);
+
+        return view('download.gateway', compact('software', 'link', 'rated'));
     }
 
     /**
@@ -46,7 +50,7 @@ class DownloadController extends Controller
             return false;
         }
 
-        return ! $request->session()->get('reviewed.'.$software->id);
+        return ! \App\Support\RatedItems::has($request, $software);
     }
 
     /** Private items hide downloads behind login — block guests at the source. */

@@ -73,7 +73,14 @@ class MultipartUploadController extends Controller
                 ], 422);
             }
 
-            if ($data['size'] > $user->storageRemainingBytes()) {
+            // Uploads still in flight count too — else parallel create() calls
+            // could each pass the check and together blow through the quota.
+            $inFlight = (int) UploadSession::where('user_id', $user->id)
+                ->where('status', UploadStatus::Pending)
+                ->where('expires_at', '>', now())
+                ->sum('size_bytes');
+
+            if ($data['size'] > $user->storageRemainingBytes() - $inFlight) {
                 return response()->json([
                     'message' => __('member.errors.quota', [
                         'used' => round($user->storageUsedBytes() / 1024 ** 3, 2),
@@ -96,7 +103,8 @@ class MultipartUploadController extends Controller
             ? $this->r2->createMultipartUpload($key, $data['type'] ?? null)
             : $this->local->createMultipart();
 
-        $partSize = (int) env('UPLOAD_PART_SIZE', 16 * 1024 * 1024);
+        // Must match the chunk size the browser (Uppy) uses — same env + default.
+        $partSize = (int) env('UPLOAD_PART_SIZE', 33554432);
         $partsTotal = (int) ceil($data['size'] / $partSize);
 
         $session = UploadSession::create([
@@ -137,6 +145,11 @@ class MultipartUploadController extends Controller
 
         $session = UploadSession::where('r2_key', $data['key'])->firstOrFail();
         abort_unless($this->owns($request, $session), 403);
+        $this->ensureOpen($session);
+
+        foreach (array_filter([$data['partNumber'] ?? null, ...($data['partNumbers'] ?? [])]) as $n) {
+            abort_if((int) $n > $session->parts_total, 422, 'Part number beyond the declared file size.');
+        }
 
         // Local fallback OR proxy mode: hand back a signed same-origin URL the
         // browser PUTs to (the server then stores it / relays it to S3).
@@ -185,12 +198,19 @@ class MultipartUploadController extends Controller
         $model = UploadSession::where('uuid', $session)->firstOrFail();
         abort_unless($this->owns($request, $model), 403);
         abort_unless($model->storage_disk === 'local' || $model->proxied, 404);
+        $this->ensureOpen($model);
 
         $partNumber = (int) $request->query('partNumber');
-        abort_if($partNumber < 1, 422, 'Invalid part number.');
+        abort_if($partNumber < 1 || $partNumber > $model->parts_total, 422, 'Invalid part number.');
+
+        // A part is at most one chunk — together with the part-number cap this
+        // bounds the bytes a session can put on disk to its declared size.
+        $length = (int) $request->header('Content-Length', 0);
+        abort_if($length > $model->part_size, 413, 'Part larger than the chunk size.');
 
         $contents = $request->getContent();
         abort_if($contents === '', 422, 'Empty part body.');
+        abort_if(strlen($contents) > $model->part_size, 413, 'Part larger than the chunk size.');
 
         // Both local and proxy mode buffer the chunk on the server's local disk.
         $etag = $this->local->storePart($model, $partNumber, $contents);
@@ -215,6 +235,14 @@ class MultipartUploadController extends Controller
         ]);
 
         $session = $this->session($request, $data['sessionUuid']);
+        $this->ensureOpen($session);
+
+        // Claim the session atomically: a second (or replayed) complete() can't
+        // re-assemble and silently swap an already-scanned, shared file.
+        $claimed = UploadSession::whereKey($session->id)
+            ->where('status', UploadStatus::Pending)
+            ->update(['status' => UploadStatus::Uploaded]);
+        abort_unless($claimed === 1, 409, 'Upload already finalised.');
 
         try {
             if ($session->proxied || $session->storage_disk === 'local') {
@@ -228,6 +256,15 @@ class MultipartUploadController extends Controller
             } else {
                 $this->r2->completeMultipartUpload($session->r2_key, $session->r2_upload_id, $data['parts']);
                 $assetDisk = 'r2';
+            }
+
+            // The quota was checked against the size the CLIENT declared — the
+            // stored object must match it, or it is discarded.
+            $actual = $assetDisk === 'r2' ? $this->r2->size($session->r2_key) : $this->local->size($session->r2_key);
+            if ($actual !== (int) $session->size_bytes) {
+                $assetDisk === 'r2' ? $this->r2->delete($session->r2_key) : $this->local->delete($session->r2_key);
+
+                throw new \RuntimeException("Size mismatch: declared {$session->size_bytes}, received {$actual}.");
             }
         } catch (\Throwable $e) {
             $session->update([
@@ -290,6 +327,11 @@ class MultipartUploadController extends Controller
 
         $session = $this->session($request, $data['sessionUuid']);
 
+        // Only an in-progress upload can be aborted (never a finished, shared one).
+        if ($session->status !== UploadStatus::Pending) {
+            return response()->json(['ok' => true]);
+        }
+
         // Proxy & local sessions only ever have a local buffer — there is no real
         // S3 multipart to abort (the uploadId is a synthetic "local-…"), so aborting
         // it on S3 would throw NoSuchUpload. Just drop the local parts.
@@ -338,6 +380,17 @@ class MultipartUploadController extends Controller
         abort_unless($this->owns($request, $session), 403);
 
         return $session;
+    }
+
+    /** Parts/completion are accepted only while the session is in progress and unexpired. */
+    private function ensureOpen(UploadSession $session): void
+    {
+        abort_unless(
+            $session->status === UploadStatus::Pending
+                && ($session->expires_at === null || $session->expires_at->isFuture()),
+            409,
+            'This upload session is closed.',
+        );
     }
 
     private function owns(Request $request, UploadSession $session): bool
