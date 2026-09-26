@@ -30,6 +30,8 @@ class MediaUploadController extends Controller
                 'required', 'file',
                 // SVG deliberately excluded — same-origin SVG can carry <script> (stored XSS).
                 'mimes:jpg,jpeg,png,gif,webp,pdf',
+                // …and the NAME must agree: the stored extension picks the served Content-Type.
+                'extensions:jpg,jpeg,png,gif,webp,pdf',
                 'max:'.(int) env('MEDIA_MAX_KB', 51200), // 50 MB
             ],
         ]);
@@ -53,7 +55,12 @@ class MediaUploadController extends Controller
                 ], 422);
             }
         }
-        $ext = strtolower($file->getClientOriginalExtension() ?: $file->extension());
+        // Store under the extension sniffed from the CONTENT (mimes: above already
+        // pinned it to the allowlist), never the client's — a GIF/HTML polyglot
+        // named x.html must not land on the public disk as .html.
+        $ext = strtolower((string) $file->guessExtension());
+        $ext = $ext === 'jpeg' ? 'jpg' : $ext;
+        abort_unless(in_array($ext, ['jpg', 'png', 'gif', 'webp', 'pdf'], true), 422);
         $isPdf = $ext === 'pdf';
 
         $slug = $this->assets->newSlug();

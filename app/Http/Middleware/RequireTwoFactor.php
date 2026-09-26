@@ -21,8 +21,13 @@ class RequireTwoFactor
         if ($user
             && method_exists($user, 'hasTwoFactorEnabled')
             && $user->hasTwoFactorEnabled()
-            && ! $request->session()->get('2fa_passed')
+            && ! \App\Support\TwoFactor::passed($user)
             && ! $this->isLogout($request)) {
+            // Livewire/JSON calls can't follow a redirect page — refuse them outright.
+            if ($request->expectsJson() || $request->is('livewire/*') || ! $request->isMethod('GET')) {
+                abort(403);
+            }
+
             $request->session()->put('url.intended', $request->fullUrl());
 
             return redirect()->route('two-factor.challenge');

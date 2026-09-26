@@ -12,6 +12,12 @@ use Filament\Pages\Page;
  */
 class SettingsHub extends Page
 {
+    /** Site-wide settings: super admin or roles granted "manage settings" only. */
+    public static function canAccess(): bool
+    {
+        return \App\Policies\StaffPermissionPolicy::allows(auth()->user(), 'manage settings');
+    }
+
     protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
 
     protected static ?int $navigationSort = 0;

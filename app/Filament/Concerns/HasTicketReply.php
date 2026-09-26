@@ -24,7 +24,8 @@ trait HasTicketReply
         $this->validate(
             [
                 'replyBody' => 'required|string|max:5000',
-                'replyFile' => 'nullable|file|max:5120',
+                // Images/PDF only — anything else on the public disk could be served as a page (XSS).
+                'replyFile' => 'nullable|file|max:5120|mimes:jpg,jpeg,png,gif,webp,pdf|extensions:jpg,jpeg,png,gif,webp,pdf',
             ],
             ['replyBody.required' => __('ticket.reply_required')],
         );
@@ -33,7 +34,11 @@ trait HasTicketReply
         $internal = $isStaff && $this->replyInternal;
 
         $path = $this->replyFile
-            ? $this->replyFile->store('ticket-attachments', 'public')
+            ? $this->replyFile->storeAs(
+                'ticket-attachments',
+                \Illuminate\Support\Str::random(40).'.'.\App\Support\SafeUpload::extension($this->replyFile),
+                'public',
+            )
             : null;
 
         $this->record->messages()->create([

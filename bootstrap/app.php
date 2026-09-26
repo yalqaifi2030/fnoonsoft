@@ -17,16 +17,28 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // Behind Coolify/Traefik (TLS terminates at the proxy, forwards as HTTP).
-        // Trust the X-Forwarded-* headers so Laravel knows the request is HTTPS and
-        // generates https:// asset URLs (otherwise Filament CSS is blocked as mixed content).
-        $middleware->trustProxies(at: '*');
+        // Behind Cloudflare (and locally a Docker/Traefik proxy). Trust X-Forwarded-*
+        // ONLY from those peers, and never X-Forwarded-Host: Cloudflare forwards a
+        // client-supplied one, which poisoned generated URLs (password-reset links).
+        $middleware->trustProxies(
+            at: \App\Support\TrustedProxies::all(),
+            headers: \Illuminate\Http\Request::HEADER_X_FORWARDED_FOR
+                | \Illuminate\Http\Request::HEADER_X_FORWARDED_PORT
+                | \Illuminate\Http\Request::HEADER_X_FORWARDED_PROTO,
+        );
 
         // Origin protection runs FIRST and GLOBALLY (every route incl. the
         // Filament /admin + /upload panels — the panels don't use the 'web'
         // group alias) — reject raw-IP / off-domain access, and, when enabled,
         // anything that didn't come through Cloudflare.
         $middleware->prepend(EnforceOrigin::class);
+
+        // Two-factor gate for authenticated routes that live outside the panels.
+        $middleware->alias(['two-factor' => \App\Http\Middleware\RequireTwoFactor::class]);
+
+        // There is no global "login" route (each panel has its own) — guests hitting
+        // an auth-only web route went to a 500 "Route [login] not defined".
+        $middleware->redirectGuestsTo(fn () => route('home'));
 
         $middleware->web(append: [
             SetLocale::class,

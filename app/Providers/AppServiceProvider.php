@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Setting;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Support\Facades\FilamentView;
 use Filament\Tables\Filters\SelectFilter;
@@ -31,7 +32,6 @@ class AppServiceProvider extends ServiceProvider
         if (str_starts_with((string) config('app.url'), 'https://')) {
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
-
         // Panels are Arabic, but numbers must stay Western (0-9), not Arabic-Indic
         // (٠-٩). Force the Filament number locale to English everywhere (tables +
         // infolists) regardless of the 'ar' app locale; translations stay Arabic.
@@ -42,6 +42,11 @@ class AppServiceProvider extends ServiceProvider
         // media — e.g. tutorial videos — aren't rejected before a field's own
         // maxSize applies. PHP's post_max_size still bounds the real maximum.
         config(['livewire.temporary_file_upload.rules' => ['file', 'max:1536000']]); // 1.5 GB
+
+        // Role-based access inside the admin panel (see StaffPermissionPolicy).
+        foreach (array_keys(\App\Policies\StaffPermissionPolicy::MAP) as $model) {
+            \Illuminate\Support\Facades\Gate::policy($model, \App\Policies\StaffPermissionPolicy::class);
+        }
 
         // Apply storage (S3/iDrive) + mail settings saved from the admin panel,
         // overriding .env so they take effect immediately without a redeploy.
@@ -61,6 +66,13 @@ class AppServiceProvider extends ServiceProvider
                     // never break the auth flow over the security log
                 }
             },
+        );
+
+        // A fresh login (any account, incl. remember-me) must pass its own 2FA
+        // challenge — never inherit a "passed" flag left in the session.
+        \Illuminate\Support\Facades\Event::listen(
+            \Illuminate\Auth\Events\Login::class,
+            fn () => \App\Support\TwoFactor::forget(),
         );
 
         // Send the branded welcome email once a member verifies their address.
@@ -85,6 +97,16 @@ class AppServiceProvider extends ServiceProvider
 
         SelectFilter::configureUsing(function (SelectFilter $filter): void {
             $filter->native(false);
+        });
+
+        // Every panel upload is stored as <ulid>.<safe ext> — never the client's
+        // extension (public-disk files are served raw from /storage on our origin,
+        // so ".html"/".svg" from a member meant stored XSS). SVG: staff only.
+        FileUpload::configureUsing(function (FileUpload $upload): void {
+            $upload->getUploadedFileNameForStorageUsing(
+                fn (\Livewire\Features\SupportFileUploads\TemporaryUploadedFile $file): string => \Illuminate\Support\Str::ulid()
+                    .'.'.\App\Support\SafeUpload::extension($file, \App\Support\SafeUpload::staffMayUseSvg())
+            );
         });
 
         // Clipboard helper that also works on insecure (http) origins where the

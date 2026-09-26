@@ -100,6 +100,6 @@ class MemberPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
                 \App\Http\Middleware\RequireTwoFactor::class,
-            ]);
+            ], isPersistent: true); // also on Livewire calls — else 2FA could be skipped via /livewire/update
     }
 }

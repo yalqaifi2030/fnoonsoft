@@ -34,7 +34,7 @@ class EditProfile extends BaseEditProfile
                     FileUpload::make('cover')
                         ->label(__('profile.cover'))
                         ->helperText(__('profile.cover_hint'))
-                        ->image()->imageEditor()
+                        ->image()->acceptedFileTypes(\App\Support\SafeUpload::RASTER_MIMES)->imageEditor()
                         ->imageEditorAspectRatios(['16:9', '21:9'])
                         ->disk('public')->directory('covers')->maxSize(4096)
                         ->columnSpanFull(),
@@ -42,7 +42,7 @@ class EditProfile extends BaseEditProfile
                     FileUpload::make('avatar')
                         ->label(__('profile.avatar'))
                         ->helperText(__('profile.avatar_hint'))
-                        ->avatar()->image()->imageEditor()->circleCropper()
+                        ->avatar()->image()->acceptedFileTypes(\App\Support\SafeUpload::RASTER_MIMES)->imageEditor()->circleCropper()
                         ->disk('public')->directory('avatars')->maxSize(2048)
                         ->columnSpan(1),
 

@@ -24,6 +24,12 @@ use Filament\Pages\Page;
  */
 class ManageSettings extends Page implements HasForms
 {
+    /** Site-wide settings: super admin or roles granted "manage settings" only. */
+    public static function canAccess(): bool
+    {
+        return \App\Policies\StaffPermissionPolicy::allows(auth()->user(), 'manage settings');
+    }
+
     use InteractsWithForms;
 
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';

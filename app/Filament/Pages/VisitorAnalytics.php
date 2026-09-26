@@ -15,6 +15,12 @@ use Filament\Pages\Dashboard\Concerns\HasFiltersForm;
  */
 class VisitorAnalytics extends BaseDashboard
 {
+    /** Site-wide settings: super admin or roles granted "manage settings" only. */
+    public static function canAccess(): bool
+    {
+        return \App\Policies\StaffPermissionPolicy::allows(auth()->user(), 'manage settings');
+    }
+
     use HasFiltersForm;
 
     protected static ?string $navigationIcon = 'heroicon-o-chart-bar';

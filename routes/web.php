@@ -122,7 +122,7 @@ Route::get('/go/{software}/{link}', [DownloadController::class, 'start'])
 | Upload engine (multipart → R2). Session-authenticated uploaders only.
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth'])->prefix('upload/multipart')->name('upload.multipart.')->group(function () {
+Route::middleware(['auth', 'two-factor'])->prefix('upload/multipart')->name('upload.multipart.')->group(function () {
     Route::post('/create', [MultipartUploadController::class, 'create'])->name('create');
     Route::post('/sign', [MultipartUploadController::class, 'sign'])->name('sign');
     Route::post('/list-parts', [MultipartUploadController::class, 'listParts'])->name('list-parts');
@@ -136,7 +136,7 @@ Route::middleware(['auth'])->prefix('upload/multipart')->name('upload.multipart.
 });
 
 // Direct media upload (images & PDF) — public, hotlinkable, with share kit.
-Route::middleware(['auth'])->post('/upload/media', [\App\Http\Controllers\Upload\MediaUploadController::class, 'store'])
+Route::middleware(['auth', 'two-factor'])->post('/upload/media', [\App\Http\Controllers\Upload\MediaUploadController::class, 'store'])
     ->name('upload.media');
 
 // Public shared-asset landing + download (/d/{slug}) — above the {software} catch-all.
@@ -157,11 +157,11 @@ Route::post('/system/clear-cache', function () {
     \Filament\Notifications\Notification::make()->success()->title(__('admin.cache_cleared'))->send();
 
     return back();
-})->middleware('auth')->name('system.clear-cache');
+})->middleware(['auth', 'two-factor'])->name('system.clear-cache');
 
 // Maintenance-page preview for signed-in staff (the live toggle is in admin settings).
 Route::get('/preview/maintenance', fn () => view('maintenance', \App\Support\MaintenancePage::data()))
-    ->middleware('auth')->name('maintenance.preview');
+    ->middleware(['auth', 'two-factor'])->name('maintenance.preview');
 
 // Public comments on a product
 Route::post('/software/{software}/comments', [\App\Http\Controllers\CommentController::class, 'store'])
@@ -184,7 +184,7 @@ Route::get('/model-preview/{software}', function (\App\Models\Software $software
     abort_unless($software->has3dModel(), 404);
 
     return view('model-preview-embed', compact('software'));
-})->name('model.preview');
+})->middleware(['auth', 'two-factor'])->name('model.preview');
 
 // Product page — slug catch-all, registered last so it can't shadow the above.
 Route::get('/software/{software}', [SoftwareController::class, 'show'])->name('software.show');

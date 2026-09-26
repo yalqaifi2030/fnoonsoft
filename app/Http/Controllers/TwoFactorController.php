@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Support\Totp;
+use App\Support\TwoFactor;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -20,7 +20,7 @@ class TwoFactorController extends Controller
         if (! $user || ! $user->hasTwoFactorEnabled()) {
             return redirect('/');
         }
-        if ($request->session()->get('2fa_passed')) {
+        if (TwoFactor::passed($user)) {
             return redirect()->intended('/');
         }
 
@@ -34,10 +34,21 @@ class TwoFactorController extends Controller
         $user = $request->user();
         $code = trim((string) $request->input('code'));
 
-        if ($user && $this->passes($user, $code)) {
-            $request->session()->put('2fa_passed', true);
+        if ($user && TwoFactor::attempt($user, $code)) {
+            $request->session()->regenerate(); // fresh session id once fully signed in
+            TwoFactor::markPassed($user);
 
             return redirect()->intended('/dashboard');
+        }
+
+        if ($user && ($wait = TwoFactor::lockedFor($user)) > 0) {
+            try {
+                \App\Support\Security::flag($request, 'two_factor', 'medium', '2FA locked after repeated wrong codes (user #'.$user->getKey().')');
+            } catch (\Throwable $e) {
+                // best-effort logging
+            }
+
+            return back()->withErrors(['code' => __('auth.throttle', ['seconds' => $wait, 'minutes' => (int) ceil($wait / 60)])]);
         }
 
         return back()->withErrors(['code' => __('security.bad_code')]);
@@ -50,15 +61,5 @@ class TwoFactorController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/');
-    }
-
-    private function passes($user, string $code): bool
-    {
-        if ($user->two_factor_secret && Totp::verify($user->two_factor_secret, $code)) {
-            return true;
-        }
-
-        // Recovery codes are stored upper-cased.
-        return $user->useRecoveryCode(strtoupper($code));
     }
 }

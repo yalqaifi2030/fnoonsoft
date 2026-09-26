@@ -84,7 +84,7 @@ class Security extends Page
             'two_factor_recovery_codes' => $codes,
         ])->save();
 
-        session(['2fa_passed' => true]); // they just proved possession
+        \App\Support\TwoFactor::markPassed($user); // they just proved possession
 
         $this->recoveryCodes = $codes;
         $this->showingSetup = false;

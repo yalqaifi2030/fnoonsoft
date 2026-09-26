@@ -8,7 +8,7 @@
 @section('og_image', $software->icon ? \Illuminate\Support\Facades\Storage::disk('public')->url($software->icon) : '')
 
 @push('jsonld')
-    <script type="application/ld+json">{!! json_encode($software->structuredData(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+    <script type="application/ld+json">{!! json_encode($software->structuredData(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) !!}</script>
     <script type="application/ld+json">{!! json_encode([
         '@'.'context' => 'https://schema.org',
         '@type' => 'BreadcrumbList',
@@ -17,7 +17,7 @@
             ['@type' => 'ListItem', 'position' => 2, 'name' => $software->content_type->label(), 'item' => route('browse', ['type' => $software->content_type->value])],
             ['@type' => 'ListItem', 'position' => 3, 'name' => (string) $software->name, 'item' => route('software.show', $software)],
         ],
-    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) !!}</script>
 @endpush
 
 @section('content')

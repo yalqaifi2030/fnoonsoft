@@ -43,8 +43,11 @@ class Security
      */
     public static function clientIp(Request $request): string
     {
+        // Only believe CF-Connecting-IP when the peer really is Cloudflare/our
+        // proxy — otherwise anyone could pick an IP to dodge (or frame) a block.
         $cf = $request->headers->get('CF-Connecting-IP');
-        if ($cf && filter_var($cf, FILTER_VALIDATE_IP)) {
+        if ($cf && filter_var($cf, FILTER_VALIDATE_IP)
+            && TrustedProxies::isTrusted($request->server('REMOTE_ADDR'))) {
             return $cf;
         }
 

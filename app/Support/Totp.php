@@ -39,20 +39,26 @@ class Totp
     /** Verify a user-entered code against the secret (±$window 30s steps for clock drift). */
     public static function verify(string $secret, string $code, int $window = 1): bool
     {
+        return self::match($secret, $code, $window) !== null;
+    }
+
+    /** Like verify(), but returns the matched 30s counter (for replay protection) or null. */
+    public static function match(string $secret, string $code, int $window = 1): ?int
+    {
         $code = preg_replace('/\D/', '', (string) $code);
         if (! preg_match('/^\d{6}$/', $code)) {
-            return false;
+            return null;
         }
 
         $counter = (int) floor(time() / self::PERIOD);
 
         for ($i = -$window; $i <= $window; $i++) {
             if (hash_equals(self::codeAt($secret, $counter + $i), $code)) {
-                return true;
+                return $counter + $i;
             }
         }
 
-        return false;
+        return null;
     }
 
     /** The 6-digit code for a given 30s counter (HOTP). */

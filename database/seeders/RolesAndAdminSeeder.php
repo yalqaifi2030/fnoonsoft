@@ -17,7 +17,7 @@ class RolesAndAdminSeeder extends Seeder
         $permissions = [
             'manage software', 'manage categories', 'manage developers',
             'manage reviews', 'manage articles', 'manage pages',
-            'manage users', 'manage settings', 'upload files',
+            'manage users', 'manage settings', 'upload files', 'manage support',
         ];
 
         foreach ($permissions as $perm) {
@@ -26,14 +26,19 @@ class RolesAndAdminSeeder extends Seeder
 
         $roles = [
             'super_admin' => $permissions, // everything
-            'editor' => ['manage software', 'manage categories', 'manage developers', 'manage reviews', 'manage articles', 'upload files'],
+            'editor' => ['manage software', 'manage categories', 'manage developers', 'manage reviews', 'manage articles', 'upload files', 'manage support'],
             'author' => ['manage software', 'upload files'],
-            'moderator' => ['manage reviews'],
+            'moderator' => ['manage reviews', 'manage support'],
         ];
 
         foreach ($roles as $name => $perms) {
             $role = Role::firstOrCreate(['name' => $name]);
             $role->syncPermissions($perms);
+        }
+
+        // Demo logins (password "password") must never exist on a live site.
+        if (app()->isProduction()) {
+            return;
         }
 
         $admin = User::updateOrCreate(
