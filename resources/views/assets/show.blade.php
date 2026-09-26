@@ -13,7 +13,18 @@
 
 <div class="max-w-5xl mx-auto px-4 py-10">
 
-    @if ($expired)
+    @if ($removed ?? false)
+        {{-- ===== Removed by moderation ===== --}}
+        <div class="card-luxury mx-auto max-w-lg p-10 text-center">
+            <span class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-red-50 text-red-500">
+                <i class="fa-solid fa-ban text-2xl"></i>
+            </span>
+            <h1 class="font-cairo text-xl font-bold">{{ __('moderation.public.removed_title') }}</h1>
+            <p class="mt-2 text-sm text-gray-500">{{ __('moderation.public.removed_body') }}</p>
+            <a href="{{ route('home') }}" class="btn-primary mt-6 inline-flex">{{ __('site.nav.home') }}</a>
+        </div>
+
+    @elseif ($expired)
         {{-- ===== Expired ===== --}}
         <div class="card-luxury p-10 text-center">
             <span class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-red-50 text-red-500">
@@ -123,6 +134,48 @@
                             <div class="mt-1 break-all font-mono text-[10px]" dir="ltr">{{ $asset->pageUrl() }}</div>
                         </div>
                     </div>
+
+                    {{-- Report this file (moderation) --}}
+                    <div x-data="{ open: {{ $errors->hasAny(['reason', 'message', 'email']) ? 'true' : 'false' }} }" class="mt-4 border-t border-gray-100 pt-4">
+                        @if (session('report_status'))
+                            <div class="rounded-xl bg-green-50 px-4 py-3 text-sm text-green-700">
+                                <i class="fa-solid fa-circle-check"></i> {{ session('report_status') }}
+                            </div>
+                        @else
+                            <button type="button" @click="open = !open"
+                                    class="inline-flex items-center gap-1.5 text-xs font-medium text-gray-400 transition hover:text-red-500">
+                                <i class="fa-regular fa-flag"></i> {{ __('moderation.public.report') }}
+                            </button>
+
+                            <form x-show="open" x-cloak x-transition method="POST" action="{{ route('assets.report', $asset) }}"
+                                  class="mt-3 space-y-3 rounded-xl border border-red-100 bg-red-50/40 p-4">
+                                @csrf
+                                <div>
+                                    <div class="font-cairo text-sm font-bold text-gray-800">{{ __('moderation.public.report_title') }}</div>
+                                    <p class="mt-0.5 text-xs text-gray-500">{{ __('moderation.public.report_intro') }}</p>
+                                </div>
+                                <input type="text" name="website" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true">
+
+                                <x-select name="reason" icon="fa-solid fa-flag" :placeholder="__('moderation.public.reason')"
+                                          :options="collect(\App\Support\FileModeration::REASONS)->mapWithKeys(fn ($r) => [$r => __('moderation.reason.'.$r)])->all()"
+                                          :value="old('reason')" />
+                                @error('reason')<p class="text-xs text-red-500">{{ $message }}</p>@enderror
+
+                                <textarea name="message" rows="3" maxlength="2000" placeholder="{{ __('moderation.public.message') }}"
+                                          class="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm focus:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-100">{{ old('message') }}</textarea>
+                                <input type="email" name="email" value="{{ old('email') }}" placeholder="{{ __('moderation.public.email') }}" dir="ltr"
+                                       class="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm focus:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-100">
+                                @error('email')<p class="text-xs text-red-500">{{ $message }}</p>@enderror
+
+                                <div class="flex items-center gap-2">
+                                    <button type="submit" class="inline-flex items-center gap-1.5 rounded-xl bg-red-500 px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:bg-red-600">
+                                        <i class="fa-solid fa-paper-plane"></i> {{ __('moderation.public.submit') }}
+                                    </button>
+                                    <button type="button" @click="open = false" class="text-sm text-gray-500 hover:text-gray-700">{{ __('moderation.public.cancel') }}</button>
+                                </div>
+                            </form>
+                        @endif
+                    </div>
                 </div>
 
                 {{-- Share kit --}}
@@ -154,7 +207,7 @@
 </div>
 @endsection
 
-@if (! $expired && ! $locked)
+@if (! $expired && ! $locked && ! ($removed ?? false))
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
         <script>

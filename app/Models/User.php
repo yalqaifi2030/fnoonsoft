@@ -47,6 +47,8 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
             'two_factor_secret' => 'encrypted',
             'two_factor_recovery_codes' => 'encrypted:array',
             'two_factor_confirmed_at' => 'datetime',
+            'uploads_trusted' => 'boolean',
+            'uploads_banned_at' => 'datetime',
         ];
     }
 
@@ -164,7 +166,17 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
             return true;
         }
 
+        // Banned from uploading by a moderator (file moderation).
+        if ($this->isUploadBanned()) {
+            return false;
+        }
+
         return (bool) Setting::get('member_uploads_enabled', false) && $this->hasVerifiedEmail();
+    }
+
+    public function isUploadBanned(): bool
+    {
+        return $this->uploads_banned_at !== null;
     }
 
     /** Storage quota in bytes — staff are unlimited, members get the configured GB. */

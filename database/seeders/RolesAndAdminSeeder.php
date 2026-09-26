@@ -17,7 +17,7 @@ class RolesAndAdminSeeder extends Seeder
         $permissions = [
             'manage software', 'manage categories', 'manage developers',
             'manage reviews', 'manage articles', 'manage pages',
-            'manage users', 'manage settings', 'upload files', 'manage support',
+            'manage users', 'manage settings', 'upload files', 'manage support', 'moderate files',
         ];
 
         foreach ($permissions as $perm) {
@@ -26,9 +26,9 @@ class RolesAndAdminSeeder extends Seeder
 
         $roles = [
             'super_admin' => $permissions, // everything
-            'editor' => ['manage software', 'manage categories', 'manage developers', 'manage reviews', 'manage articles', 'upload files', 'manage support'],
+            'editor' => ['manage software', 'manage categories', 'manage developers', 'manage reviews', 'manage articles', 'upload files', 'manage support', 'moderate files'],
             'author' => ['manage software', 'upload files'],
-            'moderator' => ['manage reviews', 'manage support'],
+            'moderator' => ['manage reviews', 'manage support', 'moderate files'],
         ];
 
         foreach ($roles as $name => $perms) {

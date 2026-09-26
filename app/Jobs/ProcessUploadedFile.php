@@ -92,6 +92,13 @@ class ProcessUploadedFile implements ShouldQueue
                     'error_message' => 'File failed malware scan and was deleted.',
                 ]);
 
+                // Moderation: reject the share (link off, owner told, history kept).
+                \App\Models\Asset::where('upload_session_id', $session->id)->each(
+                    fn (\App\Models\Asset $asset) => \App\Support\FileModeration::reject(
+                        $asset, null, 'malware', 'Automatic: the antivirus scan flagged this file.'
+                    )
+                );
+
                 return;
             }
 

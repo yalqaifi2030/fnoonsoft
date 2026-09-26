@@ -92,7 +92,9 @@ return Application::configure(basePath: dirname(__DIR__))
                     // notification is best-effort; never block the redirect
                 }
 
-                return redirect($target);
+                // A plain RedirectResponse — inside a Filament page the redirect()
+                // helper is Livewire's Redirector, which isn't a Response (→ 500).
+                return new \Illuminate\Http\RedirectResponse($target);
             }
 
             // 404 — panels keep their own 404 page; the public site goes home.
@@ -100,6 +102,6 @@ return Application::configure(basePath: dirname(__DIR__))
                 return null;
             }
 
-            return redirect()->route('home');
+            return new \Illuminate\Http\RedirectResponse(route('home'));
         });
     })->create();

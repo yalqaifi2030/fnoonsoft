@@ -42,6 +42,21 @@ class Asset extends Model
     /** Remove the stored file (+ image variants) whenever an asset is deleted. */
     protected static function booted(): void
     {
+        // Moderation: members' uploads enter the review queue (staff/trusted → approved).
+        static::creating(function (Asset $asset) {
+            if (blank($asset->moderation_status) || $asset->moderation_status === \App\Support\FileModeration::PENDING) {
+                $asset->moderation_status = \App\Support\FileModeration::initialStatus($asset);
+            }
+        });
+        static::created(fn (Asset $asset) => \App\Support\FileModeration::afterCreated($asset));
+
+        // A rejected file stays off, whatever a later edit (e.g. by its owner) tries.
+        static::saving(function (Asset $asset) {
+            if ($asset->moderation_status === \App\Support\FileModeration::REJECTED) {
+                $asset->is_active = false;
+            }
+        });
+
         // Keep protected images/PDF off the public web root (see syncVisibility).
         static::saved(fn (Asset $asset) => $asset->syncVisibility());
 
@@ -93,6 +108,26 @@ class Asset extends Model
     public function uploadSession(): BelongsTo
     {
         return $this->belongsTo(UploadSession::class);
+    }
+
+    public function reviewer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    public function reviews(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(AssetReview::class)->latest('created_at')->latest('id');
+    }
+
+    public function reports(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(AssetReport::class)->latest();
+    }
+
+    public function isRejected(): bool
+    {
+        return $this->moderation_status === \App\Support\FileModeration::REJECTED;
     }
 
     // --- Type helpers ----------------------------------------------------

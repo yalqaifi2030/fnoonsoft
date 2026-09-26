@@ -151,6 +151,12 @@ Route::post('/d/{asset}/unlock', [\App\Http\Controllers\AssetController::class, 
     ->middleware('throttle:10,1')->name('assets.unlock');
 Route::get('/d/{asset}/download', [\App\Http\Controllers\AssetController::class, 'download'])
     ->middleware('throttle:60,1')->name('assets.download');
+// Visitor "report this file" (moderation queue).
+Route::post('/d/{asset}/report', [\App\Http\Controllers\ModerationController::class, 'report'])
+    ->middleware('throttle:5,1')->name('assets.report');
+// Moderator download of any member file (audited in the review history).
+Route::get('/moderation/files/{asset}/download', [\App\Http\Controllers\ModerationController::class, 'download'])
+    ->middleware(['auth', 'two-factor'])->name('moderation.download');
 // Guarded inline view for protected (password/expiring/disabled) images & PDF.
 Route::get('/d/{asset}/view/{size?}', [\App\Http\Controllers\AssetController::class, 'view'])
     ->whereIn('size', ['thumb', 'medium', 'large', 'og', 'small'])

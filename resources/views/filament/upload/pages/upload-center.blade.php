@@ -12,6 +12,19 @@
 
     <div class="space-y-6">
 
+        {{-- ===== Upload ban notice (file moderation) ===== --}}
+        @if ($me?->isUploadBanned())
+            <div style="display:flex; gap:.9rem; align-items:flex-start; border-radius:1rem; padding:1rem 1.15rem; background:#fef2f2; border:1px solid #fecaca;">
+                <span style="display:flex; height:2.4rem; width:2.4rem; flex:0 0 auto; align-items:center; justify-content:center; border-radius:.75rem; background:#dc2626; color:#fff;">
+                    <x-filament::icon icon="heroicon-o-no-symbol" class="h-5 w-5" />
+                </span>
+                <div>
+                    <div style="font-weight:800; color:#991b1b;">{{ __('moderation.member.banned_title') }}</div>
+                    <div style="font-size:.85rem; color:#7f1d1d; margin-top:.2rem;">{{ $me->uploads_ban_reason ?: __('moderation.member.banned_body') }}</div>
+                </div>
+            </div>
+        @endif
+
         {{-- ===== HERO HEADER ===== --}}
         @php $isLocal = ($storage ?? 'local') === 'local'; @endphp
         <div class="fc-hero">

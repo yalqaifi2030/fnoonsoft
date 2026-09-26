@@ -21,6 +21,13 @@ class AssetController extends Controller
 
     public function show(Request $request, Asset $asset)
     {
+        // Removed by moderation: say so plainly (410 Gone) instead of a bare 404.
+        if ($asset->isRejected()) {
+            return response()->view('assets.show', [
+                'asset' => $asset, 'expired' => false, 'locked' => false, 'removed' => true, 'kit' => [],
+            ], 410);
+        }
+
         abort_unless($asset->is_active, 404);
 
         $expired = $asset->isExpired();

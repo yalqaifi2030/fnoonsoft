@@ -100,6 +100,22 @@ class AssetResource extends Resource
                         'active' => 'success', 'expired' => 'danger', default => 'gray',
                     }),
 
+                Tables\Columns\TextColumn::make('moderation_status')
+                    ->label(__('moderation.member.status'))
+                    ->badge()
+                    ->formatStateUsing(fn (string $state) => __('moderation.member.'.$state))
+                    ->color(fn (string $state) => match ($state) {
+                        'approved' => 'success', 'rejected' => 'danger', default => 'warning',
+                    })
+                    ->icon(fn (string $state) => match ($state) {
+                        'approved' => 'heroicon-m-check-badge',
+                        'rejected' => 'heroicon-m-no-symbol',
+                        default => 'heroicon-m-clock',
+                    })
+                    ->tooltip(fn (Asset $r) => $r->isRejected()
+                        ? __('moderation.reason.'.($r->rejection_reason ?: 'other')).($r->rejection_note ? ' — '.$r->rejection_note : '')
+                        : null),
+
                 Tables\Columns\IconColumn::make('password')
                     ->label(__('asset_admin.protected'))
                     ->state(fn (Asset $r) => $r->hasPassword())
