@@ -12,7 +12,7 @@ class LocaleController extends Controller
             session(['locale' => $locale]);
         }
 
-        return back();
+        return $this->backHere();
     }
 
     /** Switch the Filament panels' locale (kept separate from the public site). */
@@ -22,6 +22,16 @@ class LocaleController extends Controller
             session(['panel_locale' => $locale]);
         }
 
-        return back();
+        return $this->backHere();
+    }
+
+    /** Back to the previous page — but only if it is on THIS site (Referer is attacker-controllable). */
+    private function backHere(): RedirectResponse
+    {
+        $previous = url()->previous();
+
+        return parse_url($previous, PHP_URL_HOST) === request()->getHost()
+            ? redirect()->to($previous)
+            : redirect()->route('home');
     }
 }

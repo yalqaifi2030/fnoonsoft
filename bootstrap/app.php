@@ -56,6 +56,9 @@ return Application::configure(basePath: dirname(__DIR__))
         // token (Uppy PUTs raw bytes with no token), so exempt that one endpoint.
         $middleware->validateCsrfTokens(except: [
             'upload/multipart/put-part/*',
+            // RFC 8058 one-click unsubscribe is POSTed by the mail provider (no
+            // token possible); the 40-char secret in the URL is the credential.
+            'newsletter/unsubscribe/*',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

@@ -54,7 +54,7 @@ Route::get('/learn/videos', [LearnController::class, 'videos'])->name('learn.vid
 Route::get('/learn/lab/{lab}', [LearnController::class, 'lab'])->name('learn.lab');
 Route::get('/learn/{category}', [LearnController::class, 'category'])->name('learn.category');
 
-Route::get('/search', [SearchController::class, 'index'])->name('search');
+Route::get('/search', [SearchController::class, 'index'])->middleware('throttle:60,1')->name('search');
 Route::get('/api/search/live', [SearchController::class, 'live'])
     ->middleware('throttle:60,1')->name('search.live');
 Route::post('/search/request', [SearchController::class, 'requestProgram'])
@@ -66,7 +66,9 @@ Route::get('/api/recommendations', [\App\Http\Controllers\RecommendationControll
 
 // AI "describe what you need" assistant
 Route::get('/assistant', [\App\Http\Controllers\AssistantController::class, 'index'])->name('assistant');
-Route::get('/assistant/recommend', [\App\Http\Controllers\AssistantController::class, 'recommend'])
+// POST + CSRF: each uncached call is a paid AI request — a GET could be fired
+// from any page (<img src=…>) by every visitor's browser.
+Route::post('/assistant/recommend', [\App\Http\Controllers\AssistantController::class, 'recommend'])
     ->middleware('throttle:12,1')->name('assistant.recommend');
 
 // Blog / articles
@@ -79,8 +81,12 @@ Route::post('/contact', [ContactController::class, 'store'])
     ->middleware('throttle:5,1')->name('contact.store');
 Route::post('/newsletter', [NewsletterController::class, 'store'])
     ->middleware('throttle:5,1')->name('newsletter.store');
-Route::get('/newsletter/unsubscribe/{token}', [NewsletterController::class, 'unsubscribe'])
+Route::get('/newsletter/confirm/{token}', [NewsletterController::class, 'confirm'])
+    ->middleware('throttle:20,1')->name('newsletter.confirm');
+Route::get('/newsletter/unsubscribe/{token}', [NewsletterController::class, 'unsubscribeForm'])
     ->name('newsletter.unsubscribe');
+Route::post('/newsletter/unsubscribe/{token}', [NewsletterController::class, 'unsubscribe'])
+    ->middleware('throttle:20,1')->name('newsletter.unsubscribe.do');
 
 // Human-readable sitemap (the XML one for crawlers stays at /sitemap.xml).
 Route::get('/sitemap', [\App\Http\Controllers\SitemapController::class, 'html'])->name('sitemap.html');

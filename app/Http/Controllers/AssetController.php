@@ -24,7 +24,10 @@ class AssetController extends Controller
         abort_unless($asset->is_active, 404);
 
         $expired = $asset->isExpired();
-        if (! $expired) {
+        // One view per visitor per hour (a refresh loop used to inflate it).
+        if (! $expired && \Illuminate\Support\Facades\Cache::add(
+            'asset-view:'.$asset->id.':'.md5(\App\Support\Security::clientIp($request)), 1, now()->addHour()
+        )) {
             $asset->increment('views_count');
         }
 

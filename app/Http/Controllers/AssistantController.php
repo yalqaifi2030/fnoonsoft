@@ -46,6 +46,12 @@ class AssistantController extends Controller
         $locale = app()->getLocale();
         $cacheKey = 'assistant:'.$locale.':'.md5(mb_strtolower($q));
 
+        // Budget guard for UNCACHED (paid) calls: a site-wide daily cap plus a
+        // per-visitor daily cap, so varying the text can't run up the API bill.
+        if (! Cache::has($cacheKey) && ! $this->withinBudget($request)) {
+            return response()->json(['error' => __('assistant.unavailable')], 429);
+        }
+
         $data = Cache::remember($cacheKey, now()->addHours(12), function () use ($q, $key, $locale) {
             return $this->ask($q, $key, $locale);
         });
@@ -56,6 +62,29 @@ class AssistantController extends Controller
         }
 
         return response()->json($data);
+    }
+
+    /** Count one paid call against today's site-wide + per-IP allowance. */
+    private function withinBudget(Request $request): bool
+    {
+        $day = now()->format('Ymd');
+        $siteKey = 'assistant:budget:'.$day;
+        $ipKey = 'assistant:budget:'.$day.':'.md5(\App\Support\Security::clientIp($request));
+
+        $siteLimit = max(1, (int) (Setting::get('assistant_daily_limit') ?: 300));
+        $ipLimit = max(1, (int) (Setting::get('assistant_daily_limit_ip') ?: 20));
+
+        Cache::add($siteKey, 0, now()->addDay());
+        Cache::add($ipKey, 0, now()->addDay());
+
+        if ((int) Cache::get($siteKey) >= $siteLimit || (int) Cache::get($ipKey) >= $ipLimit) {
+            return false;
+        }
+
+        Cache::increment($siteKey);
+        Cache::increment($ipKey);
+
+        return true;
     }
 
     /** Ask Claude to pick the best programs from our catalog. Returns null on failure. */

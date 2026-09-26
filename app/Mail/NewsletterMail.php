@@ -46,6 +46,8 @@ class NewsletterMail extends Mailable implements ShouldQueue
             ])
             ->withSymfonyMessage(function ($message) {
                 $message->getHeaders()->addTextHeader('List-Unsubscribe', '<'.$this->unsubscribeUrl.'>');
+                // RFC 8058 one-click (required by Gmail/Yahoo for bulk senders).
+                $message->getHeaders()->addTextHeader('List-Unsubscribe-Post', 'List-Unsubscribe=One-Click');
             });
     }
 }

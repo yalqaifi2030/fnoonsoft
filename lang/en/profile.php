@@ -42,4 +42,6 @@ return [
         'copied' => 'Copied!',
         'og_desc' => ":name on Fnoon — browse and download their shared files.",
     ],
+    'current_password' => 'Current password',
+    'current_password_hint' => 'Required only when changing your email or password.',
 ];

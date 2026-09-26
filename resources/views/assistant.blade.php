@@ -108,7 +108,11 @@
                     if (q.length < 3 || this.loading) return;
                     this.loading = true; this.error = ''; this.answered = false;
                     try {
-                        const res = await fetch(this.endpoint + '?q=' + encodeURIComponent(q), { headers: { 'Accept': 'application/json' } });
+                        const res = await fetch(this.endpoint, {
+                            method: 'POST',
+                            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content },
+                            body: JSON.stringify({ q }),
+                        });
                         const data = await res.json();
                         if (!res.ok) { this.error = data.error || '{{ __('assistant.error') }}'; }
                         else { this.intro = data.intro || ''; this.results = data.results || []; this.answered = true; }

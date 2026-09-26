@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DownloadLog extends Model
 {
+    use MassPrunable;
     use HasFactory;
 
     public $timestamps = false;
@@ -35,5 +37,11 @@ class DownloadLog extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /** Per-download log: kept two years (totals live on the counters). Pruned daily by model:prune. */
+    public function prunable()
+    {
+        return static::where('created_at', '<', now()->subDays(730));
     }
 }

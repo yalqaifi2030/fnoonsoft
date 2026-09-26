@@ -11,6 +11,8 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Pages\Auth\EditProfile as BaseEditProfile;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rule;
@@ -126,8 +128,43 @@ class EditProfile extends BaseEditProfile
                         ->prefixIcon('heroicon-m-key'),
                     $this->getPasswordConfirmationFormComponent()
                         ->prefixIcon('heroicon-m-key'),
+                    // A hijacked session must not be able to take over the
+                    // account by silently changing its email or password.
+                    TextInput::make('current_password')
+                        ->label(__('profile.current_password'))
+                        ->helperText(__('profile.current_password_hint'))
+                        ->password()->revealable()
+                        ->prefixIcon('heroicon-m-lock-closed')
+                        ->required(fn (Get $get): bool => filled($get('password'))
+                            || strcasecmp((string) $get('email'), (string) auth()->user()?->email) !== 0)
+                        ->rule('current_password')
+                        ->dehydrated(false)
+                        ->columnSpanFull(),
                 ]),
         ]);
+    }
+
+    /**
+     * A member who changes their email must verify the new address again —
+     * otherwise upload rights (which need a verified email) carried over to
+     * an address they never proved they own.
+     */
+    protected function handleRecordUpdate(Model $record, array $data): Model
+    {
+        $emailChanged = isset($data['email']) && strcasecmp((string) $data['email'], (string) $record->email) !== 0;
+
+        $record = parent::handleRecordUpdate($record, $data);
+
+        if ($emailChanged && ! $record->isStaff()) {
+            $record->forceFill(['email_verified_at' => null])->save();
+            try {
+                $record->sendEmailVerificationNotification();
+            } catch (\Throwable $e) {
+                // mail hiccup — they can request a new link from the verify page
+            }
+        }
+
+        return $record;
     }
 
     /** Reserved-name guard — applied to members only; staff keep their names. */

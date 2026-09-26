@@ -25,6 +25,9 @@ class SendNewsletter implements ShouldQueue
 
     public int $timeout = 900;
 
+    /** Never re-run the fan-out: a retry would mail every subscriber twice. */
+    public int $tries = 1;
+
     public function __construct(
         public string $subjectLine,
         public string $heading,

@@ -67,7 +67,7 @@ return [
         'disk' => null,        // Example: 'local', 's3'              | Default: 'default'
         'rules' => ['required', 'file', 'max:1536000'], // 1.5 GB (1,536,000 KB) — allow large learning-video uploads (Filament caps per-field)
         'directory' => null,   // Example: 'tmp'                      | Default: 'livewire-tmp'
-        'middleware' => null,  // Example: 'throttle:5,1'             | Default: 'throttle:60,1'
+        'middleware' => ['throttle:60,1', \App\Http\Middleware\LimitLivewireUploads::class], // non-staff capped at 20 MB
         'preview_mimes' => [   // Supported file types for temporary pre-signed file URLs...
             'png', 'gif', 'bmp', 'svg', 'wav', 'mp4',
             'mov', 'avi', 'wmv', 'mp3', 'm4a',

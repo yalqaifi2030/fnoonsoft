@@ -14,7 +14,7 @@ class SearchController extends Controller
 {
     public function index(Request $request): View
     {
-        $term = trim($request->string('q')->toString());
+        $term = self::clean($request->string('q')->toString());
         $results = $term ? $this->query($term)->paginate(24)->withQueryString() : null;
 
         if ($term && (int) $request->integer('page', 1) === 1) {
@@ -99,7 +99,7 @@ class SearchController extends Controller
     /** Live search endpoint for the hero autocomplete (Alpine/fetch). */
     public function live(Request $request): JsonResponse
     {
-        $term = trim($request->string('q')->toString());
+        $term = self::clean($request->string('q')->toString());
         if (mb_strlen($term) < 1) {
             return response()->json(['results' => []]);
         }
@@ -113,6 +113,18 @@ class SearchController extends Controller
         ]);
 
         return response()->json(['results' => $results]);
+    }
+
+    /**
+     * Bound the search text: every word becomes three leading-wildcard LIKEs
+     * (full-table scans), so an unbounded q was a one-request DB DoS — and each
+     * term is also stored in search_queries.
+     */
+    private static function clean(string $q): string
+    {
+        $words = preg_split('/\s+/u', trim($q), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+
+        return mb_substr(implode(' ', array_slice($words, 0, 8)), 0, 100);
     }
 
     private function query(string $term)

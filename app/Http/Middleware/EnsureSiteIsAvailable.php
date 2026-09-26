@@ -30,8 +30,9 @@ class EnsureSiteIsAvailable
             return $next($request);
         }
 
-        // Logged-in users (staff) keep full access to preview the live site.
-        if ($request->user()) {
+        // Signed-in STAFF keep full access to preview the live site (members
+        // don't — any self-registered account used to walk past maintenance).
+        if ($request->user()?->isStaff()) {
             return $next($request);
         }
 

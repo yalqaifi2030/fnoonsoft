@@ -83,15 +83,22 @@ class DownloadController extends Controller
             return redirect()->route('download.gateway', [$software, $link]);
         }
 
-        $this->log($request, $software, $link);
+        // Count a visitor once per link per hour — /go allowed 30 hits/min/IP,
+        // each bumping the public counters (download-count inflation).
+        $firstHit = \Illuminate\Support\Facades\Cache::add(
+            'dl:'.$link->id.':'.md5(\App\Support\Security::clientIp($request)), 1, now()->addHour()
+        );
 
-        $software->increment('downloads_count');
-        $link->increment('downloads_count');
+        if ($firstHit) {
+            $this->log($request, $software, $link);
+            $software->increment('downloads_count');
+            $link->increment('downloads_count');
+        }
 
         // The same physical file is often ALSO a member's shareable asset
         // (/dashboard/assets). Count the hit there too, so "My files" reflects
         // real downloads even when they go through the software gateway.
-        if ($link->r2_key) {
+        if ($firstHit && $link->r2_key) {
             try {
                 \App\Models\Asset::where('path', $link->r2_key)->increment('downloads_count');
             } catch (\Throwable $e) {
@@ -130,7 +137,8 @@ class DownloadController extends Controller
             'download_link_id' => $link->id,
             'user_id' => $request->user()?->id,
             'ip_address' => $request->ip(),
-            'country' => $request->header('CF-IPCountry'), // Cloudflare geo header
+            // Cloudflare geo header — validated (a raw value overflowed the 2-char column).
+            'country' => preg_match('/^[A-Z]{2}$/', (string) $request->header('CF-IPCountry')) ? $request->header('CF-IPCountry') : null,
             'user_agent' => substr((string) $request->userAgent(), 0, 255),
             'referer' => substr((string) $request->headers->get('referer'), 0, 255),
             'created_at' => now(),

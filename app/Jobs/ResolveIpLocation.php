@@ -60,11 +60,12 @@ class ResolveIpLocation implements ShouldQueue
                 'resolved_at' => now(),
             ]);
 
-            Cache::forever('iploc:'.$this->ip, [
+            // 30 days, not forever: one cache row per visitor IP piled up indefinitely.
+            Cache::put('iploc:'.$this->ip, [
                 'country' => $cc,
                 'region' => $d['regionName'] ?? null,
                 'city' => $d['city'] ?? null,
-            ]);
+            ], now()->addDays(30));
 
             // Back-fill visits already recorded for this IP before geo was known.
             $base = Visit::where('ip_address', $this->ip);

@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
  * Origin protection — the first line of defence. Runs before everything else.
  *
  *  • Host allowlist: a request whose Host header isn't one of ours (e.g. the raw
- *    server IP, as used in the "62.72.0.162/admin/login" probe) is refused.
+ *    server IP, as used in the "<origin-ip>/admin/login" probe) is refused.
  *  • Optional Cloudflare enforcement: when the domain is proxied by Cloudflare,
  *    reject anything that reached the origin directly (no CF-Ray header).
  *

@@ -15,6 +15,9 @@ class CommentController extends Controller
 {
     public function store(Request $request, Software $software): RedirectResponse
     {
+        // Drafts/unpublished items aren't public — no comments (or staff pings) on them.
+        abort_unless($software->status === \App\Enums\ContentStatus::Published, 404);
+
         $data = $request->validate([
             'author_name' => ['required', 'string', 'max:80'],
             'author_email' => ['nullable', 'email', 'max:160'],

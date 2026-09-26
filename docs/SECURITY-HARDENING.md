@@ -1,7 +1,7 @@
 # Security hardening — origin protection
 
 ## What happened
-An attacker reached the **origin server directly by IP** (`https://62.72.0.162/admin/login`).
+An attacker reached the **origin server directly by IP** (`https://<origin-ip>/admin/login`).
 Investigation showed `finunsoft.com` currently resolves **straight to the origin
 IP with no Cloudflare proxy** (`Server: nginx`, no `cf-ray`). So the origin IP is
 public via DNS and there was no edge firewall in front of it.
@@ -23,7 +23,7 @@ the scanner / honeypot signature lists were expanded.
 1. Create a free Cloudflare account and add `finunsoft.com`.
 2. At your domain registrar, change the **nameservers** to the two Cloudflare
    gives you.
-3. In Cloudflare DNS, the `A` record for `finunsoft.com` (→ `62.72.0.162`) must be
+3. In Cloudflare DNS, the `A` record for `finunsoft.com` (→ `<origin-ip>`) must be
    **Proxied (orange cloud)**, not DNS-only.
 4. SSL/TLS mode: **Full (strict)**.
 5. Turn on: **WAF managed rules**, **Bot Fight Mode**, and a rate-limit rule on
@@ -44,11 +44,13 @@ In the site's nginx config (aaPanel → site → Config), inside the `server {}`
 # Full current list: https://www.cloudflare.com/ips/
 include /www/server/nginx/conf/cloudflare_ips.conf;  # allow ...; entries
 deny all;
-
-# Restore the real visitor IP from Cloudflare.
-set_real_ip_from 0.0.0.0/0;  # replace with the CF ranges
-real_ip_header CF-Connecting-IP;
 ```
+
+Do **not** add `set_real_ip_from` / `real_ip_header` here: realip runs before the
+allow/deny check, so the lock would test the *visitor's* IP and deny everyone —
+and a `set_real_ip_from 0.0.0.0/0` would let any client spoof its IP. The app
+already reads the real IP safely (`App\Support\TrustedProxies` trusts
+`X-Forwarded-For` / `CF-Connecting-IP` only from Cloudflare ranges).
 
 Reload nginx. Now the origin IP is useless to attackers even if they find it.
 

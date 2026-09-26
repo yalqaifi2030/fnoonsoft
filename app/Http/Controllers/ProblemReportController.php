@@ -44,6 +44,15 @@ class ProblemReportController extends Controller
             return response()->json(['message' => __('report.need_info')], 422);
         }
 
+        // Guests can post images here: cap the reports per visitor per day so
+        // the form can't be used to fill the disk (the minute throttle alone
+        // still allowed ~100 GB/day from one IP).
+        $dayKey = 'report:day:'.now()->format('Ymd').':'.md5(\App\Support\Security::clientIp($request));
+        \Illuminate\Support\Facades\Cache::add($dayKey, 0, now()->addDay());
+        if (\Illuminate\Support\Facades\Cache::increment($dayKey) > 20) {
+            return response()->json(['message' => __('report.need_info')], 429);
+        }
+
         $user = $request->user();
         $source = in_array($data['source'] ?? '', ['download', 'web', 'error'], true) ? $data['source'] : 'web';
         $software = $data['software'] ?? null;
@@ -78,8 +87,8 @@ class ProblemReportController extends Controller
         ]);
 
         // Store screenshots on the public disk (same place as ticket attachments).
-        $shotPath = $hasShot ? $request->file('screenshot')->store('ticket-attachments', 'public') : null;
-        $filePath = $hasFile ? $request->file('attachment')->store('ticket-attachments', 'public') : null;
+        $shotPath = $hasShot ? $this->storeImage($request->file('screenshot')) : null;
+        $filePath = $hasFile ? $this->storeImage($request->file('attachment')) : null;
 
         $ticket->messages()->create([
             'user_id' => $user?->id,
@@ -104,6 +113,40 @@ class ProblemReportController extends Controller
             'ok' => true,
             'ticket' => $ticket->number(),
         ]);
+    }
+
+    /**
+     * Re-encode an uploaded image to a bounded JPEG (max 1600px wide): a few
+     * hundred KB instead of up to 6 MB, and nothing but pixels survives — no
+     * polyglot payload. Returns null if the file isn't a decodable image.
+     */
+    private function storeImage(\Illuminate\Http\UploadedFile $file): ?string
+    {
+        $src = @imagecreatefromstring((string) file_get_contents($file->getRealPath()));
+        if ($src === false) {
+            return null;
+        }
+
+        $w = imagesx($src);
+        $h = imagesy($src);
+        $nw = min($w, 1600);
+        $nh = max(1, (int) round($h * $nw / $w));
+
+        // White canvas so transparent PNG areas don't turn black in the JPEG.
+        $out = imagecreatetruecolor($nw, $nh);
+        imagefill($out, 0, 0, imagecolorallocate($out, 255, 255, 255));
+        imagecopyresampled($out, $src, 0, 0, 0, 0, $nw, $nh, $w, $h);
+        imagedestroy($src);
+
+        ob_start();
+        imagejpeg($out, null, 80);
+        $jpeg = (string) ob_get_clean();
+        imagedestroy($out);
+
+        $path = 'ticket-attachments/'.Str::random(40).'.jpg';
+        \Illuminate\Support\Facades\Storage::disk('public')->put($path, $jpeg);
+
+        return $path;
     }
 
     /** A readable message body: the user's words + a compact context block. */

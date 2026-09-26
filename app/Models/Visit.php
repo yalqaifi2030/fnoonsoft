@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Visit extends Model
 {
+    use MassPrunable;
+
     public const UPDATED_AT = null; // only created_at is tracked
 
     protected $fillable = [
@@ -26,5 +29,11 @@ class Visit extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /** Page-view log: kept one year (analytics looks back 90 days at most). Pruned daily by model:prune. */
+    public function prunable()
+    {
+        return static::where('created_at', '<', now()->subDays(365));
     }
 }
