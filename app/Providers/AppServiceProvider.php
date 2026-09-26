@@ -210,6 +210,19 @@ class AppServiceProvider extends ServiceProvider
                 'mail.mailers.smtp.encryption' => Setting::get('mail_encryption') ?: null,
             ]);
 
+            // The server's own Postfix (aaPanel mail server): a loopback hop that
+            // never leaves the machine — no STARTTLS (its certificate is for
+            // mail.<domain>, not 127.0.0.1) and no login (localhost may relay).
+            // Postfix + rspamd then DKIM-sign and deliver directly.
+            if (in_array(strtolower((string) Setting::get('mail_host')), ['127.0.0.1', 'localhost', '::1'], true)) {
+                config([
+                    'mail.mailers.smtp.auto_tls' => false,
+                    'mail.mailers.smtp.encryption' => null,
+                    'mail.mailers.smtp.username' => null,
+                    'mail.mailers.smtp.password' => null,
+                ]);
+            }
+
             if (filled(Setting::get('mail_from_address'))) {
                 config(['mail.from.address' => Setting::get('mail_from_address')]);
             }
