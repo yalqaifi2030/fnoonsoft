@@ -33,6 +33,11 @@ return Application::configure(basePath: dirname(__DIR__))
         // anything that didn't come through Cloudflare.
         $middleware->prepend(EnforceOrigin::class);
 
+        // SEO: 301 www. / http:// to the single https://<APP_URL host> address.
+        // Appended (not prepended) so TrustProxies has already applied
+        // Cloudflare's X-Forwarded-Proto — isSecure() must see the visitor's scheme.
+        $middleware->append(\App\Http\Middleware\CanonicalHost::class);
+
         // Two-factor gate for authenticated routes that live outside the panels.
         $middleware->alias(['two-factor' => \App\Http\Middleware\RequireTwoFactor::class]);
 
