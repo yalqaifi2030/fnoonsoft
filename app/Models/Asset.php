@@ -36,6 +36,7 @@ class Asset extends Model
             'meta' => 'array',
             'is_active' => 'boolean',
             'expires_at' => 'datetime',
+            'reviewed_at' => 'datetime', // moderation: formatted on the review page
         ];
     }
 
