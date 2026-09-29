@@ -24,9 +24,13 @@
 
         {{-- Form --}}
         <div class="lg:col-span-3">
-            <form action="{{ route('contact.store') }}" method="POST" class="card-luxury p-6 sm:p-8">
+            <form action="{{ route('contact.store') }}" method="POST" class="card-luxury p-6 sm:p-8"
+                  x-data @submit="$refs.js.value = [...$refs.ft.value.slice(-12)].reverse().join('')">
                 @csrf
                 <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off">
+                {{-- Anti-spam: signed timestamp + a proof only a real browser fills on submit --}}
+                <input type="hidden" name="_ft" x-ref="ft" value="{{ \App\Support\SpamGuard::token() }}">
+                <input type="hidden" name="_js" x-ref="js" value="">
 
                 @if (session('status'))
                     <div class="mb-5 flex items-center gap-2 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-700">

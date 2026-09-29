@@ -37,6 +37,7 @@ class StaffPermissionPolicy
         Models\User::class => 'manage users',
         Models\SupportTicket::class => 'manage support',
         Models\Contact::class => 'manage support',
+        Models\ContactBlock::class => 'manage support',
         Models\ProgramRequest::class => 'manage support',
         Models\NewsletterSubscriber::class => 'manage support',
         Models\BlockedIp::class => 'manage settings',
