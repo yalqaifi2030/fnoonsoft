@@ -28,4 +28,10 @@ return [
             : array_filter([$appHost, $appHost ? 'www.'.$appHost : null])
     ))),
 
+    // Alias domains we own that should 301 to APP_URL (not be blocked as hostile).
+    'redirect_hosts' => array_values(array_filter(array_map(
+        'trim',
+        explode(',', (string) env('SECURITY_REDIRECT_HOSTS', ''))
+    ))),
+
 ];

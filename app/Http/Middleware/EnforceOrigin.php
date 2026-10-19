@@ -35,6 +35,15 @@ class EnforceOrigin
             // 1) Host must be one of ours (blocks raw-IP / unknown-host access).
             //    No legitimate client ever sends a wrong Host → block on sight.
             $host = strtolower(trim($request->getHost()));
+
+            // Our own alias domains (e.g. finunsoft.net) are visitors who typed
+            // the wrong TLD, not attackers: 301 them to the main site instead of
+            // treating the host as hostile (which auto-banned their IP).
+            $aliases = array_map('strtolower', (array) config('security.redirect_hosts'));
+            if ($aliases && in_array($host, $aliases, true) && filled(config('app.url'))) {
+                return new \Illuminate\Http\RedirectResponse(rtrim((string) config('app.url'), '/').$request->getRequestUri(), 301);
+            }
+
             $allowed = array_map('strtolower', (array) config('security.allowed_hosts'));
             if ($allowed && ! in_array($host, $allowed, true)) {
                 return $this->deny($request, 'bad host: '.$host, 'critical');
